@@ -5,4 +5,8 @@ package doctus.sound
   */
 trait DoctusSound {
 
+  def noteOn: Unit;
+
+  def noteOff: Unit;
+
 }

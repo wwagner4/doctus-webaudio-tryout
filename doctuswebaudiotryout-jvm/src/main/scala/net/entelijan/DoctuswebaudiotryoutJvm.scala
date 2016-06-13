@@ -70,6 +70,9 @@ object DoctuswebaudiotryoutJvm extends App {
 
   case object DoctusSoundJvm extends DoctusSound {
 
+    override def noteOn: Unit = println("JVM soundOn")
+
+    override def noteOff: Unit = println("JVM soundOff")
   }
 
 }

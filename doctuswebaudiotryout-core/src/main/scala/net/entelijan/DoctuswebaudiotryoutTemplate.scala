@@ -52,7 +52,11 @@ case class DoctuswebaudiotryoutDoctusTemplate(canvas: DoctusCanvas, sound: Doctu
     val dy = h.toDouble / ny
     val i = math.floor(pos.x / dx).toInt
     val j = math.floor(pos.y / dy).toInt
-    println("clicked to (" + i + " " + j + ")")
+    (i, j) match {
+      case (0, 0) => sound.noteOn
+      case (1, 0) => sound.noteOff
+      case _ => // Nothing to do
+    }
   }
 
   def keyPressed(code: DoctusKeyCode): Unit = () // Nothing to do here
