@@ -29,12 +29,16 @@ case class DoctuswebaudiotryoutDoctusTemplate(canvas: DoctusCanvas) extends Doct
 
 
   def colors: Stream[DoctusColor] = {
-    def ranColor: DoctusColor = {
-      val hue = math.random * 365
-      val (r, g, b) = DoctusColorUtil.hsv2rgb(hue.toInt, 50, 100)
+    def nextColor(c: DoctusColor): DoctusColor = {
+      val (r1, g1, b1) = c.rgb
+      val (h, s, v) = DoctusColorUtil.rgb2hsv(r1, g1, b1)
+      val hue = (h + 30) % 360
+      val (r, g, b) = DoctusColorUtil.hsv2rgb(hue, s, v)
       DoctusColorRgb(r, g, b)
     }
-    Stream.iterate(ranColor)(_ => ranColor)
+    val (sr, sg, sb) = DoctusColorUtil.hsv2rgb(122, 100, 50)
+    val start: DoctusColor = DoctusColorRgb(sr, sg, sb)
+    Stream.iterate(start)(c => nextColor(c))
   }
 
   def pointableDragged(pos: DoctusPoint): Unit = () // Nothing to do here
