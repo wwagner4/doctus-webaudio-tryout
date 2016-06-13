@@ -4,8 +4,9 @@ import doctus.core._
 import doctus.core.util._
 import doctus.core.template._
 import doctus.core.color._
+import doctus.sound.DoctusSound
 
-case class DoctuswebaudiotryoutDoctusTemplate(canvas: DoctusCanvas) extends DoctusTemplate {
+case class DoctuswebaudiotryoutDoctusTemplate(canvas: DoctusCanvas, sound: DoctusSound) extends DoctusTemplate {
 
   val nx = 4
   val ny = 4
@@ -44,7 +45,15 @@ case class DoctuswebaudiotryoutDoctusTemplate(canvas: DoctusCanvas) extends Doct
 
   def pointablePressed(pos: DoctusPoint): Unit = () // Nothing to do here
 
-  def pointableReleased(pos: DoctusPoint): Unit = () // Nothing to do here
+  def pointableReleased(pos: DoctusPoint): Unit = {
+    val w = canvas.width
+    val h = canvas.height
+    val dx = w.toDouble / nx
+    val dy = h.toDouble / ny
+    val i = math.floor(pos.x / dx).toInt
+    val j = math.floor(pos.y / dy).toInt
+    println("clicked to (" + i + " " + j + ")")
+  }
 
   def keyPressed(code: DoctusKeyCode): Unit = () // Nothing to do here
 

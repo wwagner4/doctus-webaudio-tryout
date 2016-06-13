@@ -2,7 +2,6 @@ package net.entelijan
 
 import doctus.jvm._
 import doctus.core.template._
-
 import doctus.core._
 import java.util.ArrayList
 import java.util.List
@@ -19,6 +18,8 @@ import javafx.stage.WindowEvent
 import javafx.event.EventHandler
 import javafx.event.ActionEvent
 import javafx.event.Event
+
+import doctus.sound.DoctusSound
 
 
 object DoctuswebaudiotryoutJvm extends App {
@@ -48,7 +49,7 @@ object DoctuswebaudiotryoutJvm extends App {
       canvasFx.heightProperty().bind(scene.heightProperty())
 
       // Common to all platforms
-      val templ = DoctuswebaudiotryoutDoctusTemplate(canvas)
+      val templ = DoctuswebaudiotryoutDoctusTemplate(canvas, DoctusSoundJvm)
       DoctusTemplateController(templ, sched, canvas)
 
       stage.setScene(scene);
@@ -65,6 +66,10 @@ object DoctuswebaudiotryoutJvm extends App {
 
 
     }
+  }
+
+  case object DoctusSoundJvm extends DoctusSound {
+
   }
 
 }

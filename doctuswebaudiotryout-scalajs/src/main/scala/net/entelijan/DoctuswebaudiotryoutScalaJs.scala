@@ -5,6 +5,7 @@ import org.scalajs.dom
 import org.scalajs.dom.raw.HTMLCanvasElement
 import doctus.scalajs._
 import doctus.core.template._
+import doctus.sound.DoctusSoundJs
 
 @JSExport("DoctuswebaudiotryoutScalaJs")
 object DoctuswebaudiotryoutScalaJs {
@@ -16,9 +17,10 @@ object DoctuswebaudiotryoutScalaJs {
 
     val canvas = DoctusTemplateCanvasScalajs(canvasElem)
     val sched = DoctusSchedulerScalajs
+    val sound = new DoctusSoundJs
 
     // Common to all platforms
-    val templ = net.entelijan.DoctuswebaudiotryoutDoctusTemplate(canvas)
+    val templ = net.entelijan.DoctuswebaudiotryoutDoctusTemplate(canvas, sound)
     DoctusTemplateController(templ, sched, canvas)
 
 
