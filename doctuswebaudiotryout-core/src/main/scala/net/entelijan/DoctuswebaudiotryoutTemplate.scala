@@ -11,6 +11,8 @@ case class DoctuswebaudiotryoutDoctusTemplate(canvas: DoctusCanvas, sound: Doctu
   val nx = 4
   val ny = 4
 
+  val tilesCnt = nx * ny
+
   override def frameRate = None
 
   def draw(g: DoctusGraphics): Unit = {
@@ -32,11 +34,11 @@ case class DoctuswebaudiotryoutDoctusTemplate(canvas: DoctusCanvas, sound: Doctu
     def nextColor(c: DoctusColor): DoctusColor = {
       val (r1, g1, b1) = c.rgb
       val (h1, s1, v1) = DoctusColorUtil.rgb2hsv(r1, g1, b1)
-      val h2 = (h1 + 30) % 360
+      val h2 = (h1 + (360.toDouble / tilesCnt).toInt) % 360
       val (r2, g2, b2) = DoctusColorUtil.hsv2rgb(h2, s1, v1)
       DoctusColorRgb(r2, g2, b2)
     }
-    val (sr, sg, sb) = DoctusColorUtil.hsv2rgb(122, 100, 50)
+    val (sr, sg, sb) = DoctusColorUtil.hsv2rgb(55, 90, 80)
     val start: DoctusColor = DoctusColorRgb(sr, sg, sb)
     Stream.iterate(start)(nextColor)
   }
