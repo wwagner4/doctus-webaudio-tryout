@@ -1,0 +1,10 @@
+<project name="deploy">
+    <target name="deploy">
+        <exec executable="sbt" >
+            <arg line="-Dsbt.log.noformat=true clean fullOptJS"/>
+        </exec>
+    </target>
+
+
+
+</project>
