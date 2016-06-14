@@ -1,8 +1,22 @@
 <project name="deploy">
     <target name="deploy">
         <exec executable="sbt" >
-            <arg line="-Dsbt.log.noformat=true clean fullOptJS"/>
+            <arg line="-Dsbt.log.noformat=true fullOptJS"/>
         </exec>
+        <mkdir dir="staging"/>
+        <copy todir="staging">
+            <fileset dir="doctuswebaudiotryout-scalajs/target/scala-2.11">
+                <include name="doctuswebaudiotryout-scalajs-opt.js"/>
+            </fileset>
+        </copy>
+        <copy todir="staging">
+            <fileset dir="doctuswebaudiotryout-scalajs">
+                <include name="index.html"/>
+            </fileset>
+        </copy>
+        <replace file="staging/index.html"
+                 token="target/scala-2.11/doctuswebaudiotryout-scalajs-fastopt.js"
+                 value="doctuswebaudiotryout-scalajs-opt.js"/>
     </target>
 
 
