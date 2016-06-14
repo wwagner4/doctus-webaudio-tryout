@@ -55,8 +55,8 @@ case class DoctuswebaudiotryoutDoctusTemplate(canvas: DoctusCanvas, sound: Doctu
     val i = math.floor(pos.x / dx).toInt
     val j = math.floor(pos.y / dy).toInt
     (i, j) match {
-      case (0, 0) => sound.noteOn
-      case (1, 0) => sound.noteOff
+      case (0, 0) => sound.oscilOn
+      case (1, 0) => sound.oscilOff
       case _ => // Nothing to do
     }
   }

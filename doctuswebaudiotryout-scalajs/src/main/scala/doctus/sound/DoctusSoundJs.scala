@@ -13,16 +13,16 @@ class DoctusSoundJs extends DoctusSound {
 
   val oscil = ctx.createOscillator()
   oscil.frequency.value = 444
+  oscil.start()
 
-  override def noteOn: Unit = {
-    println("noteOn")
+
+  override def oscilOn: Unit = {
+    println("oscilOn")
     oscil.connect(ctx.destination)
-    oscil.start()
   }
 
-  override def noteOff: Unit = {
-    println("noteOff")
-    oscil.stop()
+  override def oscilOff: Unit = {
+    println("oscilOff")
     oscil.disconnect(ctx.destination)
   }
 
