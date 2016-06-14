@@ -25,13 +25,15 @@ class DoctusSoundJs extends DoctusSound {
   override def oscilOn: Unit = {
     println("oscilOn")
     val t = ctx.currentTime
-    gain.gain.linearRampToValueAtTime(1.0, t + 1.0)
+    gain.gain.setValueAtTime(0.0, t)
+    gain.gain.linearRampToValueAtTime(1.0, t + 0.1)
   }
 
   override def oscilOff: Unit = {
     println("oscilOff")
     val t = ctx.currentTime
-    gain.gain.linearRampToValueAtTime(0.0, t + 1.0)
+    gain.gain.setValueAtTime(1.0, t)
+    gain.gain.linearRampToValueAtTime(0.0, t + 0.1)
   }
 
 }
