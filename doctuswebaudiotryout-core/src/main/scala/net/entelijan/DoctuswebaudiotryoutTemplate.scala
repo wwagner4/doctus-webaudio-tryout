@@ -45,23 +45,31 @@ case class DoctuswebaudiotryoutDoctusTemplate(canvas: DoctusCanvas, sound: Doctu
 
   def pointableDragged(pos: DoctusPoint): Unit = () // Nothing to do here
 
-  def pointablePressed(pos: DoctusPoint): Unit = () // Nothing to do here
+  def pointablePressed(pos: DoctusPoint): Unit = {
+    tile(pos) match {
+      case (0, 0) => sound.oscilOn
+      case _ => // Nothing to do
+    }
+  }
 
   def pointableReleased(pos: DoctusPoint): Unit = {
+    tile(pos) match {
+      case (0, 0) => sound.oscilOff
+      case _ => // Nothing to do
+    }
+  }
+
+  def keyPressed(code: DoctusKeyCode): Unit = () // Nothing to do here
+
+  def tile(pos: DoctusPoint): (Int, Int) = {
     val w = canvas.width
     val h = canvas.height
     val dx = w.toDouble / nx
     val dy = h.toDouble / ny
     val i = math.floor(pos.x / dx).toInt
     val j = math.floor(pos.y / dy).toInt
-    (i, j) match {
-      case (0, 0) => sound.oscilOn
-      case (1, 0) => sound.oscilOff
-      case _ => // Nothing to do
-    }
+    (i, j)
   }
-
-  def keyPressed(code: DoctusKeyCode): Unit = () // Nothing to do here
 
 }
 

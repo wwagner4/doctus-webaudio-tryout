@@ -12,11 +12,12 @@ class DoctusSoundJs extends DoctusSound {
   val ctx = new AudioContext
 
   val oscil = ctx.createOscillator()
-  oscil.frequency.value = 444
+  oscil.frequency.value = 222
   oscil.start()
 
   val gain = ctx.createGain()
-  gain.gain.value = 0.0
+  val t1 = ctx.currentTime
+  gain.gain.setValueAtTime(0, t1)
 
   oscil.connect(gain)
   gain.connect(ctx.destination)
@@ -25,15 +26,17 @@ class DoctusSoundJs extends DoctusSound {
   override def oscilOn: Unit = {
     println("oscilOn")
     val t = ctx.currentTime
-    gain.gain.setValueAtTime(0.0, t)
-    gain.gain.linearRampToValueAtTime(1.0, t + 0.1)
+    gain.gain.cancelScheduledValues(t)
+    gain.gain.setValueAtTime(gain.gain.value, t)
+    gain.gain.linearRampToValueAtTime(0.1, t + 2)
   }
 
   override def oscilOff: Unit = {
     println("oscilOff")
     val t = ctx.currentTime
-    gain.gain.setValueAtTime(1.0, t)
-    gain.gain.linearRampToValueAtTime(0.0, t + 0.1)
+    gain.gain.cancelScheduledValues(t)
+    gain.gain.setValueAtTime(gain.gain.value, t)
+    gain.gain.linearRampToValueAtTime(0.0, t + 2)
   }
 
 }
