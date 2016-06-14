@@ -15,15 +15,23 @@ class DoctusSoundJs extends DoctusSound {
   oscil.frequency.value = 444
   oscil.start()
 
+  val gain = ctx.createGain()
+  gain.gain.value = 0.0
+
+  oscil.connect(gain)
+  gain.connect(ctx.destination)
+
 
   override def oscilOn: Unit = {
     println("oscilOn")
-    oscil.connect(ctx.destination)
+    val t = ctx.currentTime
+    gain.gain.linearRampToValueAtTime(1.0, t + 1.0)
   }
 
   override def oscilOff: Unit = {
     println("oscilOff")
-    oscil.disconnect(ctx.destination)
+    val t = ctx.currentTime
+    gain.gain.linearRampToValueAtTime(0.0, t + 1.0)
   }
 
 }
