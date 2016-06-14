@@ -17,8 +17,10 @@
         <replace file="staging/index.html"
                  token="target/scala-2.11/doctuswebaudiotryout-scalajs-fastopt.js"
                  value="doctuswebaudiotryout-scalajs-opt.js"/>
+        <scp remotetodir="root@entelijan.net:/var/www/webaudio" keyfile="${user.home}/.ssh/id_rsa">
+            <fileset dir="staging">
+                <include name="*"/>
+            </fileset>
+        </scp>
     </target>
-
-
-
 </project>
