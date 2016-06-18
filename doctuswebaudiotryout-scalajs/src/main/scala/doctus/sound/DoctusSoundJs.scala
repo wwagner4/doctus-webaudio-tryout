@@ -12,7 +12,7 @@ class DoctusSoundJs extends DoctusSound {
   val ctx = new AudioContext
 
   val oscil = ctx.createOscillator()
-  oscil.frequency.value = 222
+  oscil.frequency.value = 444
   oscil.start()
 
   val gain = ctx.createGain()

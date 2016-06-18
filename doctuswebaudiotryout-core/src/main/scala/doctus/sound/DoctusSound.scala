@@ -5,9 +5,9 @@ package doctus.sound
   */
 trait DoctusSound {
 
-  def tinitusStart: Unit;
+  def tinitusStart(): Unit
 
-  def tinitusStop: Unit;
+  def tinitusStop(): Unit
 
-  def melodyStart: Unit;
+  def melodyStart(): Unit
 }
