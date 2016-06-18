@@ -23,7 +23,7 @@ case class Melody(ctx: AudioContext, now: Double) {
   }
 
   private def ranBoolean(p: Double): Boolean = {
-    return ran.nextDouble() < p
+    ran.nextDouble() < p
   }
 
   private def playNote(time: Double, duration: Double, inst: Instrument): Unit = {
