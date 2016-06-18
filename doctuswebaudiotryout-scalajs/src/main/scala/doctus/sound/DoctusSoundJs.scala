@@ -1,5 +1,7 @@
 package doctus.sound
 
+import net.entelijan.Melody
+
 /**
   * ScalaJS implementation of the (experimental sound interface)
   */
@@ -38,6 +40,6 @@ class DoctusSoundJs extends DoctusSound {
   }
 
   override def melodyStart: Unit = {
-    println("melodyStart NOT IMPLEMENTED")
+    Melody(ctx, ctx.currentTime).start()
   }
 }
