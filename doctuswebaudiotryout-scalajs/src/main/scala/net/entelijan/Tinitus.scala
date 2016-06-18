@@ -21,7 +21,6 @@ case class Tinitus(ctx: AudioContext) {
   gain.connect(ctx.destination)
 
   def start: Unit = {
-    println("start")
     val t = ctx.currentTime
     gain.gain.cancelScheduledValues(t)
     gain.gain.setValueAtTime(gain.gain.value, t)
@@ -29,14 +28,9 @@ case class Tinitus(ctx: AudioContext) {
   }
 
   def stop: Unit = {
-    println("stop")
     val t = ctx.currentTime
     gain.gain.cancelScheduledValues(t)
     gain.gain.linearRampToValueAtTime(0.0, t + 2)
   }
-
-
-
-
 
 }
