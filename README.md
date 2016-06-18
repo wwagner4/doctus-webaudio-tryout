@@ -9,3 +9,4 @@ Trying out the components of the webaudio api and how they work together
 * Make a metallic sound using inharmonic partials
 * Designe a reusable ADSR envelope
 * Make a reusable noise AudioNode
+* Synchronize a new sequence of of notes with another already plying sequence
