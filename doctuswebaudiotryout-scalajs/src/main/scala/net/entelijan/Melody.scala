@@ -1,6 +1,6 @@
 package net.entelijan
 
-import org.scalajs.dom.AudioContext
+import org.scalajs.dom.{AudioContext, OscillatorNode}
 
 /**
   * Plays a melody
@@ -43,7 +43,8 @@ trait Instrument {
 
 case class MyInstrument(ctx: AudioContext, freq: Double) extends Instrument {
 
-  val oscil = ctx.createOscillator()
+  val oscils = Osclis(ctx)
+  val oscil = oscils.next()
   oscil.frequency.value = freq
   oscil.start()
 
@@ -62,4 +63,16 @@ case class MyInstrument(ctx: AudioContext, freq: Double) extends Instrument {
     gain.gain.setValueAtTime(1.0, time)
     gain.gain.linearRampToValueAtTime(0.0, time + 1.0)
   }
-}
+
+  case class Osclis(ctx: AudioContext) {
+
+    private val oscils = List.fill(10)(ctx.createOscillator())
+    private var idx = 0
+
+    def next(): OscillatorNode = {
+      idx = (idx + 1) % oscils.size
+      oscils(idx)
+    }
+
+  }}
+
