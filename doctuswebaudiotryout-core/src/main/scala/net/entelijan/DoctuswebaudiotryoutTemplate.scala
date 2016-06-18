@@ -8,12 +8,15 @@ import doctus.sound.DoctusSound
 
 case class DoctuswebaudiotryoutDoctusTemplate(canvas: DoctusCanvas, sound: DoctusSound) extends DoctusTemplate {
 
+  case class Tile(i: Int, j: Int, dx: Double, dy: Double)
+
   val nx = 4
   val ny = 4
 
   val tilesCnt = nx * ny
 
   override def frameRate = None
+
 
   def draw(g: DoctusGraphics): Unit = {
     val w = canvas.width
@@ -25,9 +28,23 @@ case class DoctuswebaudiotryoutDoctusTemplate(canvas: DoctusCanvas, sound: Doctu
     g.noStroke()
     for (i <- 0 until nx; j <- 0 until ny) {
       g.fill(colorsStream(cnt), 255)
+      val tile = Tile(i, j, dx, dy)
       g.rect(i * dx, j * dy, dx, dy)
+      writeText(g, tile)
       cnt += 1
     }
+  }
+
+  def writeText(g: DoctusGraphics, tile: Tile):Unit = {
+    tile match {
+      case Tile(0, 0, _, _) => writeText(g, tile, "tinitus")
+      case _ => writeText(g, tile, "-")
+    }
+  }
+  def writeText(g: DoctusGraphics, tile: Tile, text: String) : Unit = {
+    g.textSize(20)
+    g.fill(DoctusColorBlack, 255)
+    g.text(text, tile.i * tile.dx + 10, tile.j * tile.dy + 30, 0)
   }
 
   def colors: Stream[DoctusColor] = {
