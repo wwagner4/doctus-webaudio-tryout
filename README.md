@@ -2,7 +2,7 @@
 
 Trying out the components of the webaudio api and how they work together
 
-(Klick here to try it out)[http://entelijan.net/webaudio/]
+[Klick here to try it out](http://entelijan.net/webaudio/)
 
 #### Ideas
 * Implemet some sound where the cutoff frequency is controlled by the pitch, an envelope and/or a modulator
