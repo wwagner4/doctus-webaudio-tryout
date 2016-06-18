@@ -45,9 +45,10 @@ trait Instrument {
 
 case class MyInstrument(ctx: AudioContext, freq: Double) extends Instrument {
 
-  val maxGain = 0.03
+  val maxGain = 0.01
 
   val oscil = ctx.createOscillator()
+  oscil.`type` = "sawtooth"
   oscil.frequency.value = freq
   oscil.start()
 
