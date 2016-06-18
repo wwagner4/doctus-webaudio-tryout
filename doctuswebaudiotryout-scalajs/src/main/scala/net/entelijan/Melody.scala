@@ -5,7 +5,7 @@ import org.scalajs.dom.AudioContext
 /**
   * Plays a melody
   *
-  * Introduces the concept of an 'instrument' and an adsr envelope
+  * Introduces the concept of an 'instrument'
   *
   */
 case class Melody(ctx: AudioContext, now: Double) {

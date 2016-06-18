@@ -28,7 +28,7 @@ class DoctusSoundJs extends DoctusSound {
     val t = ctx.currentTime
     gain.gain.cancelScheduledValues(t)
     gain.gain.setValueAtTime(gain.gain.value, t)
-    gain.gain.linearRampToValueAtTime(0.1, t + 2)
+    gain.gain.linearRampToValueAtTime(1.0, t + 2)
   }
 
   override def tinitusStop: Unit = {
