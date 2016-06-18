@@ -1,13 +1,11 @@
 package doctus.sound
 
-import java.time.Period
-
 /**
   * ScalaJS implementation of the (experimental sound interface)
   */
 class DoctusSoundJs extends DoctusSound {
 
-  import org.scalajs.dom.{AudioBuffer, Event, XMLHttpRequest, GainNode, AudioContext}
+  import org.scalajs.dom.AudioContext
 
   val ctx = new AudioContext
 
@@ -39,4 +37,7 @@ class DoctusSoundJs extends DoctusSound {
     gain.gain.linearRampToValueAtTime(0.0, t + 2)
   }
 
+  override def melodyStart: Unit = {
+    println("melodyStart NOT IMPLEMENTED")
+  }
 }

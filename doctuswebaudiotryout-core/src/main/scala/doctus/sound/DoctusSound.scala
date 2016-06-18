@@ -9,4 +9,5 @@ trait DoctusSound {
 
   def tinitusStop: Unit;
 
+  def melodyStart: Unit;
 }
