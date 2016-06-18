@@ -16,7 +16,7 @@ case class Melody(ctx: AudioContext, now: Double) {
   val ran = new java.util.Random()
 
   def start(): Unit = {
-    for (t <- 0.0 to(20, 0.2)) {
+    for (t <- 0.0 to(10, 0.2)) {
       val i = ran.nextInt(freqs.size)
       if (ranBoolean(0.6)) {
         playNote(t, 0.2, MyInstrument(ctx, freqs(i)))
