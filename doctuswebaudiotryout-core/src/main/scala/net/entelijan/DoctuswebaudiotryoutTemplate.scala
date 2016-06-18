@@ -40,7 +40,8 @@ case class DoctuswebaudiotryoutDoctusTemplate(canvas: DoctusCanvas, sound: Doctu
     tile match {
       case Tile(0, 0, _, _) => writeText(g, tile, "tinitus")
       case Tile(0, 1, _, _) => writeText(g, tile, "melody")
-      case _ => writeText(g, tile, "-")
+      case Tile(0, 2, _, _) => writeText(g, tile, "noise")
+      case _ => // nothing to do here
     }
   }
   def writeText(g: DoctusGraphics, tile: Tile, text: String) : Unit = {
@@ -69,6 +70,7 @@ case class DoctuswebaudiotryoutDoctusTemplate(canvas: DoctusCanvas, sound: Doctu
     tile(pos) match {
       case (0, 0) => sound.tinitusStart
       case (0, 1) => sound.melodyStart
+      case (0, 2) => sound.noiseStart
       case _ => // Nothing to do
     }
   }
@@ -76,6 +78,7 @@ case class DoctuswebaudiotryoutDoctusTemplate(canvas: DoctusCanvas, sound: Doctu
   def pointableReleased(pos: DoctusPoint): Unit = {
     tile(pos) match {
       case (0, 0) => sound.tinitusStop
+      case (0, 2) => sound.noiseStop
       case _ => // Nothing to do
     }
   }

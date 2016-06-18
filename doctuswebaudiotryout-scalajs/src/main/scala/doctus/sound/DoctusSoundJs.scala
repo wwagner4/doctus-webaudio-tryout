@@ -17,7 +17,10 @@ class DoctusSoundJs extends DoctusSound {
 
   override def tinitusStop: Unit = tinitus.stop
 
-  override def melodyStart: Unit = {
-    Melody(ctx, ctx.currentTime).start()
-  }
+  override def noiseStart: Unit = ???
+
+  override def noiseStop: Unit = ???
+
+  override def melodyStart: Unit = Melody(ctx, ctx.currentTime).start()
+
 }

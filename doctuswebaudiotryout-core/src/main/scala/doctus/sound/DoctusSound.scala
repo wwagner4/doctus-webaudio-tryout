@@ -9,5 +9,9 @@ trait DoctusSound {
 
   def tinitusStop(): Unit
 
+  def noiseStart(): Unit
+
+  def noiseStop(): Unit
+
   def melodyStart(): Unit
 }
