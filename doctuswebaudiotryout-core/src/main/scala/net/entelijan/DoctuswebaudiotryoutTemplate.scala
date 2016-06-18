@@ -4,6 +4,7 @@ import doctus.core._
 import doctus.core.util._
 import doctus.core.template._
 import doctus.core.color._
+import doctus.core.text.DoctusFontNamed
 import doctus.sound.DoctusSound
 
 case class DoctuswebaudiotryoutDoctusTemplate(canvas: DoctusCanvas, sound: DoctusSound) extends DoctusTemplate {
@@ -44,8 +45,9 @@ case class DoctuswebaudiotryoutDoctusTemplate(canvas: DoctusCanvas, sound: Doctu
   }
   def writeText(g: DoctusGraphics, tile: Tile, text: String) : Unit = {
     g.textSize(20)
+    g.textFont(DoctusFontNamed("Life Savers"))
     g.fill(DoctusColorBlack, 255)
-    g.text(text, tile.i * tile.dx + 10, tile.j * tile.dy + 30, 0)
+    g.text(text, tile.i * tile.dx + 5, tile.j * tile.dy + 20, 0)
   }
 
   def colors: Stream[DoctusColor] = {

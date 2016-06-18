@@ -45,6 +45,8 @@ trait Instrument {
 
 case class MyInstrument(ctx: AudioContext, freq: Double) extends Instrument {
 
+  val maxGain = 0.03
+
   val oscil = ctx.createOscillator()
   oscil.frequency.value = freq
   oscil.start()
@@ -57,11 +59,11 @@ case class MyInstrument(ctx: AudioContext, freq: Double) extends Instrument {
 
   override def start(time: Double): Unit = {
     gain.gain.setValueAtTime(0, time)
-    gain.gain.linearRampToValueAtTime(0.5, time + 0.01)
+    gain.gain.linearRampToValueAtTime(maxGain, time + 0.01)
   }
 
   override def stop(time: Double): Unit = {
-    gain.gain.setValueAtTime(0.5, time)
+    gain.gain.setValueAtTime(maxGain, time)
     gain.gain.linearRampToValueAtTime(0.0, time + 1.0)
     oscil.stop(time + 1.5)
   }
