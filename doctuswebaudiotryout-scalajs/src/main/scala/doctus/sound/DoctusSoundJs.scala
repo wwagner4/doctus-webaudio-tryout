@@ -23,16 +23,16 @@ class DoctusSoundJs extends DoctusSound {
   gain.connect(ctx.destination)
 
 
-  override def oscilOn: Unit = {
-    println("oscilOn")
+  override def tinitusStart: Unit = {
+    println("start")
     val t = ctx.currentTime
     gain.gain.cancelScheduledValues(t)
     gain.gain.setValueAtTime(gain.gain.value, t)
     gain.gain.linearRampToValueAtTime(0.1, t + 2)
   }
 
-  override def oscilOff: Unit = {
-    println("oscilOff")
+  override def tinitusStop: Unit = {
+    println("stop")
     val t = ctx.currentTime
     gain.gain.cancelScheduledValues(t)
     gain.gain.setValueAtTime(gain.gain.value, t)

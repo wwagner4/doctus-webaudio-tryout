@@ -47,14 +47,14 @@ case class DoctuswebaudiotryoutDoctusTemplate(canvas: DoctusCanvas, sound: Doctu
 
   def pointablePressed(pos: DoctusPoint): Unit = {
     tile(pos) match {
-      case (0, 0) => sound.oscilOn
+      case (0, 0) => sound.tinitusStart
       case _ => // Nothing to do
     }
   }
 
   def pointableReleased(pos: DoctusPoint): Unit = {
     tile(pos) match {
-      case (0, 0) => sound.oscilOff
+      case (0, 0) => sound.tinitusStop
       case _ => // Nothing to do
     }
   }

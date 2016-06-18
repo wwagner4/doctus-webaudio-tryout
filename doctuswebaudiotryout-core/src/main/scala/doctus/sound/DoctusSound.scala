@@ -5,8 +5,8 @@ package doctus.sound
   */
 trait DoctusSound {
 
-  def oscilOn: Unit;
+  def tinitusStart: Unit;
 
-  def oscilOff: Unit;
+  def tinitusStop: Unit;
 
 }
