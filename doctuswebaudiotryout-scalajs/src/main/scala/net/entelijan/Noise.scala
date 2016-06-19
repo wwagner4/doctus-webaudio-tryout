@@ -9,9 +9,7 @@ import scala.util.Random
   */
 case class Noise(ctx: AudioContext) {
 
-  val ran = Random
-
-  val buffer = WebAudioUtil.createBufferNoise(ctx, ran, 0.3)
+  val buffer = WebAudioUtil.createBufferNoise(ctx, Random)
 
   var bufferSrcOpt = Option.empty[AudioBufferSourceNode]
 
@@ -33,12 +31,12 @@ case class Noise(ctx: AudioContext) {
 
 object WebAudioUtil {
 
-  def createBufferNoise(ctx: AudioContext, ran: Random, gain: Double): AudioBuffer = {
+  def createBufferNoise(ctx: AudioContext, ran: Random): AudioBuffer = {
     val bufferSize = 2 * ctx.sampleRate.toInt
     val buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate.toInt)
     val channel = buffer.getChannelData(0)
     for (i <- 0 until bufferSize) {
-      val v = (ran.nextFloat() * 2 - 1) * gain.toFloat
+      val v = ran.nextFloat() * 2 - 1
       channel.set(i, v)
     }
     buffer
