@@ -1,6 +1,6 @@
 package net.entelijan
 
-import org.scalajs.dom.{AudioBuffer, AudioBufferSourceNode, AudioContext, AudioNode}
+import org.scalajs.dom.{AudioBuffer, AudioBufferSourceNode, AudioContext}
 
 import scala.util.Random
 
