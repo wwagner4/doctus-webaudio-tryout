@@ -9,10 +9,21 @@ import scala.util.Random
   */
 case class Noise(ctx: AudioContext) {
 
-  //  val noiseBuffer = WebAudioUtil.createBufferNoise(ctx, 1.0, Random)
-  val noiseBuffer = WebAudioUtil.createBufferSine(ctx, 200, 0.5, 0.0)
+  val noiseBuffer = WebAudioUtil.createBufferNoise(ctx, 1.0, Random)
   val noiseGain = ctx.createGain()
   noiseGain.connect(ctx.destination)
+
+//  val cntrBuffer = WebAudioUtil.createBufferSine(ctx, 5, 0.5, 0.0)
+//  val cntrNode = WebAudioUtil.createBufferSourceLooping(ctx, cntrBuffer)
+
+  val cntrNode = ctx.createOscillator()
+  val cntrNodeGain = ctx.createGain()
+  cntrNodeGain.gain.value = 0.1
+  cntrNode.frequency.value = 10
+  noiseGain.gain.value = 0.1
+  cntrNode.connect(cntrNodeGain)
+  cntrNodeGain.connect(noiseGain.gain)
+  cntrNode.start()
 
   var bufferSrcOpt = Option.empty[AudioBufferSourceNode]
 
