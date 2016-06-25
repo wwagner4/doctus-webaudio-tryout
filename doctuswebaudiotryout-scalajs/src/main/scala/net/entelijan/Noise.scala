@@ -1,6 +1,6 @@
 package net.entelijan
 
-import org.scalajs.dom.{AudioBuffer, AudioBufferSourceNode, AudioContext}
+import org.scalajs.dom.{AudioBuffer, AudioBufferSourceNode, AudioContext, AudioNode}
 
 import scala.util.Random
 
@@ -10,26 +10,16 @@ import scala.util.Random
 case class Noise(ctx: AudioContext) {
 
   val noiseBuffer = WebAudioUtil.createBufferNoise(ctx, 1.0, Random)
-  val noiseGain = ctx.createGain()
-  noiseGain.connect(ctx.destination)
 
-//  val cntrBuffer = WebAudioUtil.createBufferSine(ctx, 5, 0.5, 0.0)
-//  val cntrNode = WebAudioUtil.createBufferSourceLooping(ctx, cntrBuffer)
-
-  val cntrNode = ctx.createOscillator()
-  val cntrNodeGain = ctx.createGain()
-  cntrNodeGain.gain.value = 0.1
-  cntrNode.frequency.value = 10
-  noiseGain.gain.value = 0.1
-  cntrNode.connect(cntrNodeGain)
-  cntrNodeGain.connect(noiseGain.gain)
-  cntrNode.start()
+  val tremolo = WebAudioUtil.createTremolo(ctx, 0.5, 0.6, 0.3)
+  tremolo.out.connect(ctx.destination)
+  tremolo.start(0)
 
   var bufferSrcOpt = Option.empty[AudioBufferSourceNode]
 
   def start(time: Double): Unit = {
     val noiseNode = WebAudioUtil.createBufferSourceLooping(ctx, noiseBuffer)
-    noiseNode.connect(noiseGain)
+    noiseNode.connect(tremolo.in)
     noiseNode.start()
     bufferSrcOpt = Some(noiseNode)
   }
@@ -42,7 +32,49 @@ case class Noise(ctx: AudioContext) {
 
 }
 
+trait CustomNode {
+
+  def in: AudioNode
+
+  def out: AudioNode
+
+  def start(time: Double): Unit
+
+  def stop(time: Double): Unit
+
+}
+
 object WebAudioUtil {
+
+  def createTremolo(ctx: AudioContext, frequency: Double, gain: Double, amplitude: Double): CustomNode = {
+
+    val oscil = ctx.createOscillator()
+    val amplGain = ctx.createGain()
+    val inOutGain = ctx.createGain()
+
+    amplGain.gain.value = amplitude
+    inOutGain.gain.value = gain
+    oscil.frequency.value = frequency
+
+    oscil.connect(amplGain)
+    amplGain.connect(inOutGain.gain)
+
+    new CustomNode {
+      def start(time: Double): Unit = {
+        oscil.start(time)
+      }
+
+      def stop(time: Double): Unit = {
+        oscil.stop(time)
+      }
+
+      override def in: AudioNode = inOutGain
+
+      override def out: AudioNode = inOutGain
+    }
+
+  }
+
 
   def createBufferNoise(ctx: AudioContext, amplitude: Double, ran: Random): AudioBuffer = {
     val bufferSize = ctx.sampleRate.toInt
