@@ -53,10 +53,12 @@ object WebAudioUtil {
     val inOutGain = ctx.createGain()
 
     amplGain.gain.value = amplitude
+    // Offset value
     inOutGain.gain.value = gain
     oscil.frequency.value = frequency
 
     oscil.connect(amplGain)
+    // The output of the oscil is added to the value previously set by amplGain.gain.value
     amplGain.connect(inOutGain.gain)
 
     new CustomNode {
