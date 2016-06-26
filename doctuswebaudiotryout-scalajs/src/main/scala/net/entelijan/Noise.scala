@@ -9,16 +9,17 @@ import scala.util.Random
   */
 case class Noise(ctx: AudioContext) {
 
-  val noiseBuffer = WebAudioUtil.createBufferNoise(ctx, 1.0, Random)
+  val ran = Random
+  val util = WebAudioUtil(ctx, ran)
 
-  val tremolo = WebAudioUtil.createTremolo(ctx, 0.5, 0.6, 0.3)
+  val tremolo = util.createTremolo(0.5, 0.2, 0.1)
   tremolo.out.connect(ctx.destination)
   tremolo.start(0)
 
   var bufferSrcOpt = Option.empty[AudioBufferSourceNode]
 
   def start(time: Double): Unit = {
-    val noiseNode = WebAudioUtil.createBufferSourceLooping(ctx, noiseBuffer)
+    val noiseNode = util.createNodeNoise(NT_White)
     noiseNode.connect(tremolo.in)
     noiseNode.start()
     bufferSrcOpt = Some(noiseNode)
@@ -32,9 +33,13 @@ case class Noise(ctx: AudioContext) {
 
 }
 
-trait CustomNode {
+trait CustomNode extends CustomSourceNode {
 
   def in: AudioNode
+
+}
+
+trait CustomSourceNode {
 
   def out: AudioNode
 
@@ -44,9 +49,24 @@ trait CustomNode {
 
 }
 
-object WebAudioUtil {
+sealed trait NoiseType
 
-  def createTremolo(ctx: AudioContext, frequency: Double, gain: Double, amplitude: Double): CustomNode = {
+case object NT_White extends NoiseType
+
+case object NT_Pink extends NoiseType
+
+case object NT_Red extends NoiseType
+
+case object NT_Brown extends NoiseType
+
+case class WebAudioUtil(ctx: AudioContext, ran: Random) {
+
+  private lazy val bufferNoiseWhite = createBufferNoise(() => ran.nextFloat() * 2 - 1)
+  private lazy val bufferNoisePink = createBufferNoise(() => ran.nextFloat() * 2 - 1)
+  private lazy val bufferNoiseRed = createBufferNoise(() => ran.nextFloat() * 2 - 1)
+  private lazy val bufferNoiseBrown = createBufferNoise(() => ran.nextFloat() * 2 - 1)
+
+  def createTremolo(frequency: Double, gain: Double, amplitude: Double): CustomNode = {
 
     val oscil = ctx.createOscillator()
     val amplGain = ctx.createGain()
@@ -77,31 +97,25 @@ object WebAudioUtil {
 
   }
 
+  def createNodeNoise(noiseType: NoiseType): AudioBufferSourceNode = noiseType match {
+    case NT_White => createBufferSourceLooping(bufferNoiseWhite)
+    case NT_Pink => createBufferSourceLooping(bufferNoisePink)
+    case NT_Red => createBufferSourceLooping(bufferNoiseRed)
+    case NT_Brown => createBufferSourceLooping(bufferNoiseBrown)
+  }
 
-  def createBufferNoise(ctx: AudioContext, amplitude: Double, ran: Random): AudioBuffer = {
+  private def createBufferNoise(f: () => Float): AudioBuffer = {
     val bufferSize = ctx.sampleRate.toInt
     val buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate.toInt)
     val channel = buffer.getChannelData(0)
-    val ampl = amplitude.toFloat
     for (i <- 0 until bufferSize) {
-      val v = ran.nextFloat() * ampl - ampl / 2f
+      val v = f()
       channel.set(i, v)
     }
     buffer
   }
 
-  def createBufferSine(ctx: AudioContext, frequency: Double, amplitude: Double, offset: Double): AudioBuffer = {
-    val bufferSize = ctx.sampleRate.toInt
-    val buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate.toInt)
-    val channel = buffer.getChannelData(0)
-    for (i <- 0 until bufferSize) {
-      val v = offset + amplitude * math.sin(i.toDouble * 2 * math.Pi * frequency / bufferSize)
-      channel.set(i, v.toFloat)
-    }
-    buffer
-  }
-
-  def createBufferSourceLooping(ctx: AudioContext, buffer: AudioBuffer): AudioBufferSourceNode = {
+  private def createBufferSourceLooping(buffer: AudioBuffer): AudioBufferSourceNode = {
     val bufferSrc = ctx.createBufferSource()
     bufferSrc.buffer = buffer
     bufferSrc.loop = true
