@@ -3,7 +3,7 @@
 
 .idea
 *.iml
-.cache
+.cache*
 .history
 .lib/
 dist/*
@@ -17,3 +17,7 @@ staging/
 .worksheet
 .project
 .classpath
+
+bin/
+.settings/
+
