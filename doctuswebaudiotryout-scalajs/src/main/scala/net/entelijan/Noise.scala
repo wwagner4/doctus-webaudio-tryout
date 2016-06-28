@@ -19,7 +19,7 @@ case class Noise(ctx: AudioContext) {
   var bufferSrcOpt = Option.empty[AudioBufferSourceNode]
 
   def start(time: Double): Unit = {
-    val noiseNode = util.createNodeNoise(NT_White)
+    val noiseNode = util.createNodeNoise(NT_Pink)
     noiseNode.connect(tremolo.in)
     noiseNode.start()
     bufferSrcOpt = Some(noiseNode)
@@ -61,10 +61,10 @@ case object NT_Brown extends NoiseType
 
 case class WebAudioUtil(ctx: AudioContext, ran: Random) {
 
-  private lazy val bufferNoiseWhite = createBufferNoise(() => ran.nextFloat() * 2 - 1)
-  private lazy val bufferNoisePink = createBufferNoise(() => ran.nextFloat() * 2 - 1)
-  private lazy val bufferNoiseRed = createBufferNoise(() => ran.nextFloat() * 2 - 1)
-  private lazy val bufferNoiseBrown = createBufferNoise(() => ran.nextFloat() * 2 - 1)
+  private lazy val bufferNoiseWhite = createBufferNoise(NoiseWhite)
+  private lazy val bufferNoisePink = createBufferNoise(NoisePink())
+  private lazy val bufferNoiseRed = createBufferNoise(NoiseWhite)
+  private lazy val bufferNoiseBrown = createBufferNoise(NoiseWhite)
 
   def createTremolo(frequency: Double, gain: Double, amplitude: Double): CustomNode = {
 
@@ -104,13 +104,12 @@ case class WebAudioUtil(ctx: AudioContext, ran: Random) {
     case NT_Brown => createBufferSourceLooping(bufferNoiseBrown)
   }
 
-  private def createBufferNoise(f: () => Float): AudioBuffer = {
-    val bufferSize = ctx.sampleRate.toInt
+  private def createBufferNoise(valSeq: ValueSequence): AudioBuffer = {
+    val bufferSize = ctx.sampleRate.toInt * 4
     val buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate.toInt)
     val channel = buffer.getChannelData(0)
     for (i <- 0 until bufferSize) {
-      val v = f()
-      channel.set(i, v)
+      channel.set(i, valSeq.nextValue.toFloat)
     }
     buffer
   }
