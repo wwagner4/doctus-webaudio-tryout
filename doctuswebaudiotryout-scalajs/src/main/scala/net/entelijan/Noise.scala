@@ -19,7 +19,7 @@ case class Noise(ctx: AudioContext) {
   var bufferSrcOpt = Option.empty[AudioBufferSourceNode]
 
   def start(time: Double): Unit = {
-    val noiseNode = util.createNodeNoise(NT_Pink)
+    val noiseNode = util.createNodeNoise(NT_Brown)
     noiseNode.connect(tremolo.in)
     noiseNode.start()
     bufferSrcOpt = Some(noiseNode)
@@ -63,8 +63,9 @@ case class WebAudioUtil(ctx: AudioContext, ran: Random) {
 
   private lazy val bufferNoiseWhite = createBufferNoise(NoiseWhite)
   private lazy val bufferNoisePink = createBufferNoise(NoisePink())
-  private lazy val bufferNoiseRed = createBufferNoise(NoiseWhite)
-  private lazy val bufferNoiseBrown = createBufferNoise(NoiseWhite)
+  // Brown and red noise is the same
+  private lazy val bufferNoiseRed = createBufferNoise(NoiseBrown(ctx.sampleRate))
+  private lazy val bufferNoiseBrown = createBufferNoise(NoiseBrown(ctx.sampleRate))
 
   def createTremolo(frequency: Double, gain: Double, amplitude: Double): CustomNode = {
 
