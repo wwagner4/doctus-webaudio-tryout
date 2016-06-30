@@ -10,13 +10,13 @@ case class NoiseBrown(sampleRate: Double) extends ValueSequence {
   val dt = 1.0 / sampleRate
   val RC = 1.0 / (2.0 * math.Pi * brownCutoffFreq)
   val brownAlpha = dt / (RC + dt)
-  var lastOutput = 2.0 * ran.nextDouble() - 1.0
+  var lastOutput = 0.001
 
   def nextValue: Double = {
     val white = 2.0 * ran.nextDouble() - 1.0
-    val output = brownAlpha * white + (1 - brownAlpha) * lastOutput;
-    lastOutput = output;
-    output * brownAmpCorr;
+    val output = brownAlpha * white + (1 - brownAlpha) * lastOutput
+    lastOutput = output
+    output * brownAmpCorr
   }
 
 }

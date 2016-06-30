@@ -38,7 +38,7 @@ object DoctuswebaudiotryoutJvm extends App {
       canvasFx.heightProperty().bind(scene.heightProperty())
 
       // Common to all platforms
-      val templ = DoctuswebaudiotryoutDoctusTemplate(canvas, DoctusSoundJvm)
+      val templ = DoctuswebaudiotryoutTemplate(canvas, DoctusSoundJvm)
       DoctusTemplateController(templ, sched, canvas)
 
       stage.setScene(scene)
@@ -59,15 +59,23 @@ object DoctuswebaudiotryoutJvm extends App {
 
   case object DoctusSoundJvm extends DoctusSound {
 
-    override def tinitusStart: Unit = println("JVM NOT IMPLEMENTED")
+    override def tinitusStart(): Unit = println("JVM NOT IMPLEMENTED")
 
-    override def tinitusStop: Unit = println("JVM NOT IMPLEMENTED")
+    override def tinitusStop(): Unit = println("JVM NOT IMPLEMENTED")
 
-    override def noiseStart: Unit = println("JVM NOT IMPLEMENTED")
+    override def noiseWhiteStart(): Unit = println("JVM NOT IMPLEMENTED")
 
-    override def noiseStop: Unit = println("JVM NOT IMPLEMENTED")
+    override def noiseWhiteStop(): Unit = println("JVM NOT IMPLEMENTED")
 
-    override def melodyStart: Unit = println("JVM NOT IMPLEMENTED")
+    override def noisePinkStart(): Unit = println("JVM NOT IMPLEMENTED")
+
+    override def noisePinkStop(): Unit = println("JVM NOT IMPLEMENTED")
+
+    override def noiseBrownRedStart(): Unit = println("JVM NOT IMPLEMENTED")
+
+    override def noiseBrownRedStop(): Unit = println("JVM NOT IMPLEMENTED")
+
+    override def melodyStart(): Unit = println("JVM NOT IMPLEMENTED")
   }
 
 }

@@ -1,13 +1,14 @@
 package net.entelijan
 
-import org.scalajs.dom.{AudioBuffer, AudioBufferSourceNode, AudioContext, AudioNode}
+import doctus.sound._
+import org.scalajs.dom._
 
 import scala.util.Random
 
 /**
   * Creating some noise.
   */
-case class Noise(ctx: AudioContext) {
+case class Noise(ctx: AudioContext, noiseType: NoiseType) {
 
   val ran = Random
   val util = WebAudioUtil(ctx, ran)
@@ -19,7 +20,7 @@ case class Noise(ctx: AudioContext) {
   var bufferSrcOpt = Option.empty[AudioBufferSourceNode]
 
   def start(time: Double): Unit = {
-    val noiseNode = util.createNodeNoise(NT_Brown)
+    val noiseNode = util.createNodeNoise(noiseType)
     noiseNode.connect(tremolo.in)
     noiseNode.start()
     bufferSrcOpt = Some(noiseNode)
@@ -48,16 +49,6 @@ trait CustomSourceNode {
   def stop(time: Double): Unit
 
 }
-
-sealed trait NoiseType
-
-case object NT_White extends NoiseType
-
-case object NT_Pink extends NoiseType
-
-case object NT_Red extends NoiseType
-
-case object NT_Brown extends NoiseType
 
 case class WebAudioUtil(ctx: AudioContext, ran: Random) {
 
@@ -106,7 +97,7 @@ case class WebAudioUtil(ctx: AudioContext, ran: Random) {
   }
 
   private def createBufferNoise(valSeq: ValueSequence): AudioBuffer = {
-    val bufferSize = ctx.sampleRate.toInt * 4
+    val bufferSize = ctx.sampleRate.toInt * 2
     val buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate.toInt)
     val channel = buffer.getChannelData(0)
     for (i <- 0 until bufferSize) {

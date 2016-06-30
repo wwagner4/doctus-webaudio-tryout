@@ -1,13 +1,13 @@
 package net.entelijan
 
 import doctus.core._
-import doctus.core.util._
-import doctus.core.template._
 import doctus.core.color._
+import doctus.core.template.DoctusTemplate
 import doctus.core.text.DoctusFontNamed
+import doctus.core.util.DoctusPoint
 import doctus.sound.DoctusSound
 
-case class DoctuswebaudiotryoutDoctusTemplate(canvas: DoctusCanvas, sound: DoctusSound) extends DoctusTemplate {
+case class DoctuswebaudiotryoutTemplate(canvas: DoctusCanvas, sound: DoctusSound) extends DoctusTemplate {
 
   case class Tile(i: Int, j: Int, dx: Double, dy: Double)
 
@@ -40,12 +40,14 @@ case class DoctuswebaudiotryoutDoctusTemplate(canvas: DoctusCanvas, sound: Doctu
     tile match {
       case Tile(0, 0, _, _) => writeText(g, tile, "tinitus")
       case Tile(0, 1, _, _) => writeText(g, tile, "melody")
-      case Tile(0, 2, _, _) => writeText(g, tile, "noise")
+      case Tile(0, 2, _, _) => writeText(g, tile, "white noise")
+      case Tile(0, 3, _, _) => writeText(g, tile, "pink noise")
+      case Tile(1, 0, _, _) => writeText(g, tile, "brown/red noise")
       case _ => // nothing to do here
     }
   }
   def writeText(g: DoctusGraphics, tile: Tile, text: String) : Unit = {
-    g.textSize(20)
+    g.textSize(15)
     g.textFont(DoctusFontNamed("Jura"))
     g.fill(DoctusColorBlack, 255)
     g.text(text, tile.i * tile.dx + 5, tile.j * tile.dy + 20, 0)
@@ -68,17 +70,21 @@ case class DoctuswebaudiotryoutDoctusTemplate(canvas: DoctusCanvas, sound: Doctu
 
   def pointablePressed(pos: DoctusPoint): Unit = {
     tile(pos) match {
-      case (0, 0) => sound.tinitusStart
-      case (0, 1) => sound.melodyStart
-      case (0, 2) => sound.noiseStart
+      case (0, 0) => sound.tinitusStart()
+      case (0, 1) => sound.melodyStart()
+      case (0, 2) => sound.noiseWhiteStart()
+      case (0, 3) => sound.noisePinkStart()
+      case (1, 0) => sound.noiseBrownRedStart()
       case _ => // Nothing to do
     }
   }
 
   def pointableReleased(pos: DoctusPoint): Unit = {
     tile(pos) match {
-      case (0, 0) => sound.tinitusStop
-      case (0, 2) => sound.noiseStop
+      case (0, 0) => sound.tinitusStop()
+      case (0, 2) => sound.noiseWhiteStop()
+      case (0, 3) => sound.noisePinkStop()
+      case (1, 0) => sound.noiseBrownRedStop()
       case _ => // Nothing to do
     }
   }

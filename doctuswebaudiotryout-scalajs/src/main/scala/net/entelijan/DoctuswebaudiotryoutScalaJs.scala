@@ -20,7 +20,7 @@ object DoctuswebaudiotryoutScalaJs {
     val sound = new DoctusSoundJs
 
     // Common to all platforms
-    val templ = net.entelijan.DoctuswebaudiotryoutDoctusTemplate(canvas, sound)
+    val templ = net.entelijan.DoctuswebaudiotryoutTemplate(canvas, sound)
     DoctusTemplateController(templ, sched, canvas)
 
 
