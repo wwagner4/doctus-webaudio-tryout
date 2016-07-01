@@ -16,6 +16,7 @@ class DoctusSoundJs extends DoctusSound {
   val noiseWhite = Noise(ctx, NT_White)
   val noisePink = Noise(ctx, NT_Pink)
   val noiseBrownRed = Noise(ctx, NT_Brown)
+  val adsr = AdsrTryout(ctx)
 
   override def tinitusStart(): Unit = tinitus.start
 
@@ -35,12 +36,11 @@ class DoctusSoundJs extends DoctusSound {
 
   override def melodyStart(): Unit = Melody(ctx, ctx.currentTime).start()
 
-  override def adsrStart(): Unit = AdsrTryout.start()
+  override def adsrStart(): Unit = adsr.start()
 
-  override def adsrStop(): Unit = AdsrTryout.stop()
+  override def adsrStop(): Unit = adsr.stop()
 
 }
-
 
 sealed trait NoiseType
 
