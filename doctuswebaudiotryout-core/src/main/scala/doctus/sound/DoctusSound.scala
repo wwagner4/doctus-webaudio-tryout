@@ -22,4 +22,8 @@ trait DoctusSound {
   def noiseBrownRedStop(): Unit
 
   def melodyStart(): Unit
+
+  def adsrStart(): Unit
+
+  def adsrStop(): Unit
 }

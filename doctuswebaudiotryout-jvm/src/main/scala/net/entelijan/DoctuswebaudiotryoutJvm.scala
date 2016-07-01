@@ -76,6 +76,10 @@ object DoctuswebaudiotryoutJvm extends App {
     override def noiseBrownRedStop(): Unit = println("JVM NOT IMPLEMENTED")
 
     override def melodyStart(): Unit = println("JVM NOT IMPLEMENTED")
+
+    override def adsrStart(): Unit = println("JVM NOT IMPLEMENTED")
+
+    override def adsrStop(): Unit = println("JVM NOT IMPLEMENTED")
   }
 
 }

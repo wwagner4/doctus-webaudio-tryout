@@ -1,6 +1,6 @@
 package doctus.sound
 
-import net.entelijan.{Melody, Noise, Tinitus}
+import net.entelijan.{AdsrTryout, Melody, Noise, Tinitus}
 
 /**
   * ScalaJS implementation of the (experimental sound interface)
@@ -34,6 +34,10 @@ class DoctusSoundJs extends DoctusSound {
   override def noiseBrownRedStop(): Unit = noiseBrownRed.stop(ctx.currentTime)
 
   override def melodyStart(): Unit = Melody(ctx, ctx.currentTime).start()
+
+  override def adsrStart(): Unit = AdsrTryout.start()
+
+  override def adsrStop(): Unit = AdsrTryout.stop()
 
 }
 

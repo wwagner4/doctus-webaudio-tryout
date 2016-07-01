@@ -43,6 +43,7 @@ case class DoctuswebaudiotryoutTemplate(canvas: DoctusCanvas, sound: DoctusSound
       case Tile(0, 2, _, _) => writeText(g, tile, "white noise")
       case Tile(0, 3, _, _) => writeText(g, tile, "pink noise")
       case Tile(1, 0, _, _) => writeText(g, tile, "brown/red noise")
+      case Tile(1, 1, _, _) => writeText(g, tile, "ADSR")
       case _ => // nothing to do here
     }
   }
@@ -76,6 +77,7 @@ case class DoctuswebaudiotryoutTemplate(canvas: DoctusCanvas, sound: DoctusSound
       case (0, 2) => sound.noiseWhiteStart()
       case (0, 3) => sound.noisePinkStart()
       case (1, 0) => sound.noiseBrownRedStart()
+      case (1, 1) => sound.adsrStart()
       case _ => // Nothing to do
     }
   }
@@ -86,6 +88,7 @@ case class DoctuswebaudiotryoutTemplate(canvas: DoctusCanvas, sound: DoctusSound
       case (0, 2) => sound.noiseWhiteStop()
       case (0, 3) => sound.noisePinkStop()
       case (1, 0) => sound.noiseBrownRedStop()
+      case (1, 1) => sound.adsrStop()
       case _ => // Nothing to do
     }
   }
