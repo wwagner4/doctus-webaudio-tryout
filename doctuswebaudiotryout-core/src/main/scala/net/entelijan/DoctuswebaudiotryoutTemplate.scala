@@ -46,6 +46,7 @@ case class DoctuswebaudiotryoutTemplate(canvas: DoctusCanvas, sound: DoctusSound
       case _ => // nothing to do here
     }
   }
+
   def writeText(g: DoctusGraphics, tile: Tile, text: String) : Unit = {
     g.textSize(15)
     g.textFont(DoctusFontNamed("Jura"))
