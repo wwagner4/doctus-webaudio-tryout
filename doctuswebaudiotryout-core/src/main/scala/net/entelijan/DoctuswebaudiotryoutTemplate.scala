@@ -36,7 +36,7 @@ case class DoctuswebaudiotryoutTemplate(canvas: DoctusCanvas, sound: DoctusSound
     }
   }
 
-  def writeText(g: DoctusGraphics, tile: Tile):Unit = {
+  def writeText(g: DoctusGraphics, tile: Tile): Unit = {
     tile match {
       case Tile(0, 0, _, _) => writeText(g, tile, "tinitus")
       case Tile(0, 1, _, _) => writeText(g, tile, "melody")
@@ -48,7 +48,7 @@ case class DoctuswebaudiotryoutTemplate(canvas: DoctusCanvas, sound: DoctusSound
     }
   }
 
-  def writeText(g: DoctusGraphics, tile: Tile, text: String) : Unit = {
+  def writeText(g: DoctusGraphics, tile: Tile, text: String): Unit = {
     g.textSize(15)
     g.textFont(DoctusFontNamed("Jura"))
     g.fill(DoctusColorBlack, 255)
@@ -77,7 +77,7 @@ case class DoctuswebaudiotryoutTemplate(canvas: DoctusCanvas, sound: DoctusSound
       case Tile(0, 2, _, _) => sound.noiseWhiteStart()
       case Tile(0, 3, _, _) => sound.noisePinkStart()
       case Tile(1, 0, _, _) => sound.noiseBrownRedStart()
-      case tile@ Tile(1, 1, _, _) => sound.adsrStart(nineth(pos, tile))
+      case tile@Tile(1, 1, _, _) => sound.adsrStart(nineth(pos, tile))
       case _ => // Nothing to do
     }
   }
@@ -107,12 +107,25 @@ case class DoctuswebaudiotryoutTemplate(canvas: DoctusCanvas, sound: DoctusSound
 
   def nineth(pos: DoctusPoint, tile: Tile): Nineth = {
 
-    def getRow(): Int = ???
-    def getCol(): Int = ???
+    def rowCol: (Int, Int) = {
+      val o = DoctusPoint(tile.dx * tile.i, tile.dy * tile.j)
+      val v = pos - o
+      val x1 = tile.dx / 3
+      val x2 = 2 * tile.dx / 3
+      val i =
+        if (v.x < x1) 0
+        else if (v.x < x2) 1
+        else 2
+      val y1 = tile.dy / 3
+      val y2 = 2 * tile.dy / 3
+      val j =
+        if (v.y < y1) 0
+        else if (v.y < y2) 1
+        else 2
+      (i, j)
+    }
 
-    val row = getRow()
-    val col = getCol()
-    (row, col) match {
+    rowCol match {
       case (0, 0) => N_00
       case (0, 1) => N_01
       case (0, 2) => N_02

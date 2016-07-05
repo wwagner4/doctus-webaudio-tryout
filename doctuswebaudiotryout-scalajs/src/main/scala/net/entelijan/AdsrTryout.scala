@@ -19,6 +19,7 @@ case class AdsrTryout(ctx: AudioContext) {
   oscil.start()
 
   def start(nineth: Nineth): Unit = {
+    println("start " + nineth)
     // TODO Use nineth here to control the adsr
     adsr.start(ctx.currentTime)
   }
