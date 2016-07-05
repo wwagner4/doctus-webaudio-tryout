@@ -1,4 +1,5 @@
 package net.entelijan
+import doctus.sound.Nineth
 import org.scalajs.dom.{AudioContext, AudioNode}
 
 /**
@@ -17,7 +18,8 @@ case class AdsrTryout(ctx: AudioContext) {
 
   oscil.start()
 
-  def start(): Unit = {
+  def start(nineth: Nineth): Unit = {
+    // TODO Use nineth here to control the adsr
     adsr.start(ctx.currentTime)
   }
 

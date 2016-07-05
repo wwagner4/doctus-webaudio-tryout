@@ -5,7 +5,7 @@ import doctus.core.color._
 import doctus.core.template.DoctusTemplate
 import doctus.core.text.DoctusFontNamed
 import doctus.core.util.DoctusPoint
-import doctus.sound.DoctusSound
+import doctus.sound._
 
 case class DoctuswebaudiotryoutTemplate(canvas: DoctusCanvas, sound: DoctusSound) extends DoctusTemplate {
 
@@ -72,38 +72,57 @@ case class DoctuswebaudiotryoutTemplate(canvas: DoctusCanvas, sound: DoctusSound
 
   def pointablePressed(pos: DoctusPoint): Unit = {
     tile(pos) match {
-      case (0, 0) => sound.tinitusStart()
-      case (0, 1) => sound.melodyStart()
-      case (0, 2) => sound.noiseWhiteStart()
-      case (0, 3) => sound.noisePinkStart()
-      case (1, 0) => sound.noiseBrownRedStart()
-      case (1, 1) => sound.adsrStart()
+      case Tile(0, 0, _, _) => sound.tinitusStart()
+      case Tile(0, 1, _, _) => sound.melodyStart()
+      case Tile(0, 2, _, _) => sound.noiseWhiteStart()
+      case Tile(0, 3, _, _) => sound.noisePinkStart()
+      case Tile(1, 0, _, _) => sound.noiseBrownRedStart()
+      case tile@ Tile(1, 1, _, _) => sound.adsrStart(nineth(pos, tile))
       case _ => // Nothing to do
     }
   }
 
   def pointableReleased(pos: DoctusPoint): Unit = {
     tile(pos) match {
-      case (0, 0) => sound.tinitusStop()
-      case (0, 2) => sound.noiseWhiteStop()
-      case (0, 3) => sound.noisePinkStop()
-      case (1, 0) => sound.noiseBrownRedStop()
-      case (1, 1) => sound.adsrStop()
+      case Tile(0, 0, _, _) => sound.tinitusStop()
+      case Tile(0, 2, _, _) => sound.noiseWhiteStop()
+      case Tile(0, 3, _, _) => sound.noisePinkStop()
+      case Tile(1, 0, _, _) => sound.noiseBrownRedStop()
+      case Tile(1, 1, _, _) => sound.adsrStop()
       case _ => // Nothing to do
     }
   }
 
   def keyPressed(code: DoctusKeyCode): Unit = () // Nothing to do here
 
-  def tile(pos: DoctusPoint): (Int, Int) = {
+  def tile(pos: DoctusPoint): Tile = {
     val w = canvas.width
     val h = canvas.height
     val dx = w.toDouble / nx
     val dy = h.toDouble / ny
     val i = math.floor(pos.x / dx).toInt
     val j = math.floor(pos.y / dy).toInt
-    (i, j)
+    Tile(i, j, dx, dy)
   }
 
+  def nineth(pos: DoctusPoint, tile: Tile): Nineth = {
+
+    def getRow(): Int = ???
+    def getCol(): Int = ???
+
+    val row = getRow()
+    val col = getCol()
+    (row, col) match {
+      case (0, 0) => N_00
+      case (0, 1) => N_01
+      case (0, 2) => N_02
+      case (1, 0) => N_10
+      case (1, 1) => N_11
+      case (1, 2) => N_12
+      case (2, 0) => N_20
+      case (2, 1) => N_21
+      case (2, 2) => N_22
+    }
+  }
 }
 

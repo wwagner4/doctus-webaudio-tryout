@@ -36,7 +36,7 @@ class DoctusSoundJs extends DoctusSound {
 
   override def melodyStart(): Unit = Melody(ctx, ctx.currentTime).start()
 
-  override def adsrStart(): Unit = adsr.start()
+  override def adsrStart(nineth: Nineth): Unit = adsr.start(nineth)
 
   override def adsrStop(): Unit = adsr.stop()
 

@@ -9,7 +9,7 @@ import javafx.stage.Stage
 
 import doctus.core.template._
 import doctus.jvm._
-import doctus.sound.DoctusSound
+import doctus.sound._
 
 
 object DoctuswebaudiotryoutJvm extends App {
@@ -77,7 +77,7 @@ object DoctuswebaudiotryoutJvm extends App {
 
     override def melodyStart(): Unit = println("JVM NOT IMPLEMENTED")
 
-    override def adsrStart(): Unit = println("JVM NOT IMPLEMENTED")
+    override def adsrStart(nineth: Nineth): Unit = println("JVM NOT IMPLEMENTED " + nineth)
 
     override def adsrStop(): Unit = println("JVM NOT IMPLEMENTED")
   }
