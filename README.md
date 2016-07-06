@@ -18,7 +18,7 @@ Trying out the components of the webaudio api and how they work together
 * Create some kind of 'TremoloNode'. 'noise'
 
 #### TODOs
-* Switch to latest version of scalaJS
 * Fix the 'mouse leave canvas' bug in doctus.
 
 #### Implemented TODOs
+* Switch to latest version of scalaJS
