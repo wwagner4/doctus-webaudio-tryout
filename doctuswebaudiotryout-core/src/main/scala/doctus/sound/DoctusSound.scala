@@ -21,15 +21,15 @@ trait DoctusSound {
 
   def tinitusStop(): Unit
 
-  def noiseWhiteStart(): Unit
+  def noiseWhiteStart(nineth: Nineth): Unit
 
   def noiseWhiteStop(): Unit
 
-  def noisePinkStart(): Unit
+  def noisePinkStart(nineth: Nineth): Unit
 
   def noisePinkStop(): Unit
 
-  def noiseBrownRedStart(): Unit
+  def noiseBrownRedStart(nineth: Nineth): Unit
 
   def noiseBrownRedStop(): Unit
 

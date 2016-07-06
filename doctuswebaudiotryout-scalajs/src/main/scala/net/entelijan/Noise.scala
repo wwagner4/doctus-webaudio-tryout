@@ -19,7 +19,8 @@ case class Noise(ctx: AudioContext, noiseType: NoiseType) {
 
   var bufferSrcOpt = Option.empty[AudioBufferSourceNode]
 
-  def start(time: Double): Unit = {
+  def start(time: Double, nineth: Nineth): Unit = {
+    // TODO Do something with the 'nineth' parameter
     val noiseNode = util.createNodeNoise(noiseType)
     noiseNode.connect(tremolo.in)
     noiseNode.start()

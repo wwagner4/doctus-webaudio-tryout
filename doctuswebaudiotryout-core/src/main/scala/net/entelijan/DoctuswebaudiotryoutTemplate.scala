@@ -74,10 +74,10 @@ case class DoctuswebaudiotryoutTemplate(canvas: DoctusCanvas, sound: DoctusSound
     tile(pos) match {
       case Tile(0, 0, _, _) => sound.tinitusStart()
       case Tile(0, 1, _, _) => sound.melodyStart()
-      case Tile(0, 2, _, _) => sound.noiseWhiteStart()
-      case Tile(0, 3, _, _) => sound.noisePinkStart()
-      case Tile(1, 0, _, _) => sound.noiseBrownRedStart()
-      case tile@Tile(1, 1, _, _) => sound.adsrStart(nineth(pos, tile))
+      case tile @ Tile(0, 2, _, _) => sound.noiseWhiteStart(nineth(pos, tile))
+      case tile @ Tile(0, 3, _, _) => sound.noisePinkStart(nineth(pos, tile))
+      case tile @ Tile(1, 0, _, _) => sound.noiseBrownRedStart(nineth(pos, tile))
+      case tile @ Tile(1, 1, _, _) => sound.adsrStart(nineth(pos, tile))
       case _ => // Nothing to do
     }
   }
