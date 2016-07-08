@@ -55,22 +55,6 @@ case class Noise(ctx: AudioContext, noiseType: NoiseType) {
 
 }
 
-trait CustomNode extends CustomSourceNode {
-
-  def in: AudioNode
-
-}
-
-trait CustomSourceNode {
-
-  def out: AudioNode
-
-  def start(time: Double): Unit
-
-  def stop(time: Double): Unit
-
-}
-
 case class WebAudioUtil(ctx: AudioContext, ran: Random) {
 
   private lazy val bufferNoiseWhite = createBufferNoise(NoiseWhite)
@@ -106,42 +90,5 @@ case class WebAudioUtil(ctx: AudioContext, ran: Random) {
 
 }
 
-case class Tremolo(ctx: AudioContext) extends CustomNode {
-  
-    private val oscil = ctx.createOscillator()
-    private val amplGain = ctx.createGain()
-    private val inOutGain = ctx.createGain()
-    
-    def frequency_= (value:Double):Unit = oscil.frequency.value = value 
-    def frequency = oscil.frequency.value 
-
-    def amplitude_= (value:Double):Unit = amplGain.gain.value = value 
-    def amplitude = amplGain.gain.value 
-
-    def amplitudeOffset_= (value:Double):Unit = inOutGain.gain.value = value 
-    def amplitudeOffset = inOutGain.gain.value 
-
-    // Amplitude
-    amplGain.gain.value = 0.1
-    // Offset Amplitude
-    inOutGain.gain.value = 0.5
-    oscil.frequency.value = 0.5
-
-    oscil.connect(amplGain)
-    // The output of the oscil is added to the value previously set by amplGain.gain.value
-    amplGain.connect(inOutGain.gain)
-
-      def start(time: Double): Unit = {
-        oscil.start(time)
-      }
-
-      def stop(time: Double): Unit = {
-        oscil.stop(time)
-      }
-
-      override def in: AudioNode = inOutGain
-
-      override def out: AudioNode = inOutGain
-}
 
 
