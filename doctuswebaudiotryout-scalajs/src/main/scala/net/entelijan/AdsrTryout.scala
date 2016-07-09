@@ -18,7 +18,8 @@ case class AdsrTryout(ctx: AudioContext) {
   oscil.frequency.value = 0f
 
   val adsr = Adsr(ctx)
-  adsr.release = 2.0
+  adsr.valRelease = 2.0
+  adsr.valDecay = 0.1
 
   oscil.connect(adsr.in)
   adsr.out.connect(ctx.destination)
@@ -30,34 +31,37 @@ case class AdsrTryout(ctx: AudioContext) {
     oscil.frequency.value = freqs(i)
     nineth match {
       case N_00 =>
-        adsr.attack = 0.001
-        adsr.sustain = 0.3
+        adsr.valAttack = 0.001
+        adsr.valSustain = 0.3
       case N_10 =>
-        adsr.attack = 0.01
-        adsr.sustain = 0.3
+        adsr.valAttack = 0.01
+        adsr.valSustain = 0.3
       case N_20 =>
-        adsr.attack = 0.6
-        adsr.sustain = 0.3
+        adsr.valAttack = 0.6
+        adsr.valDecay = 0.4
+        adsr.valSustain = 0.3
 
       case N_01 =>
-        adsr.attack = 0.001
-        adsr.sustain = 0.1
+        adsr.valAttack = 0.001
+        adsr.valSustain = 0.1
       case N_11 =>
-        adsr.attack = 0.01
-        adsr.sustain = 0.1
+        adsr.valAttack = 0.01
+        adsr.valSustain = 0.1
       case N_21 =>
-        adsr.attack = 0.6
-        adsr.sustain = 0.1
+        adsr.valAttack = 0.6
+        adsr.valDecay = 0.4
+        adsr.valSustain = 0.1
 
       case N_02 =>
-        adsr.attack = 0.001
-        adsr.sustain = 0.01
+        adsr.valAttack = 0.001
+        adsr.valSustain = 0.01
       case N_12 =>
-        adsr.attack = 0.01
-        adsr.sustain = 0.01
+        adsr.valAttack = 0.01
+        adsr.valSustain = 0.01
       case N_22 =>
-        adsr.attack = 0.6
-        adsr.sustain = 0.01
+        adsr.valAttack = 0.6
+        adsr.valDecay = 0.4
+        adsr.valSustain = 0.01
     }
     adsr.start(ctx.currentTime)
   }

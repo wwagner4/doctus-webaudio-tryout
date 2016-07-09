@@ -49,10 +49,10 @@ case class Tremolo(ctx: AudioContext) extends CustomNode {
 
 case class Adsr(ctx: AudioContext) extends CustomNode {
 
-  var attack = 0.01
-  var decay = 0.1
-  var sustain = 0.01
-  var release = 0.5
+  var valAttack = 0.01
+  var valDecay = 0.1
+  var valSustain = 0.01
+  var valRelease = 0.5
 
   val gain = ctx.createGain()
   gain.gain.setValueAtTime(0, 0)
@@ -60,14 +60,14 @@ case class Adsr(ctx: AudioContext) extends CustomNode {
   override def start(time: Double): Unit = {
     gain.gain.cancelScheduledValues(0)
     gain.gain.setValueAtTime(0, time)
-    gain.gain.linearRampToValueAtTime(1.0, time + attack)
-    gain.gain.linearRampToValueAtTime(sustain, time + attack + decay)
+    gain.gain.linearRampToValueAtTime(1.0, time + valAttack)
+    gain.gain.linearRampToValueAtTime(valSustain, time + valAttack + valDecay)
   }
 
   override def stop(time: Double): Unit = {
     gain.gain.cancelScheduledValues(0)
     gain.gain.setValueAtTime(gain.gain.value, time)
-    gain.gain.linearRampToValueAtTime(0.0, time + release)
+    gain.gain.linearRampToValueAtTime(0.0, time + valRelease)
   }
 
   override def in: AudioNode = gain
