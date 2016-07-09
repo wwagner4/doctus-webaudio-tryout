@@ -24,11 +24,6 @@ case class Tremolo(ctx: AudioContext) extends CustomNode {
     private val oscil = ctx.createOscillator()
     private val amplGain = ctx.createGain()
     private val inOutGain = ctx.createGain()
-    
-    def propFrequency = oscil.frequency
-		def propAmplitude = amplGain.gain
-		def propAmplitudeOffset = inOutGain.gain
-    
     // Amplitude
     amplGain.gain.value = 0.1
     // Offset Amplitude
@@ -39,17 +34,17 @@ case class Tremolo(ctx: AudioContext) extends CustomNode {
     // The output of the oscil is added to the value previously set by amplGain.gain.value
     amplGain.connect(inOutGain.gain)
 
-      def start(time: Double): Unit = {
-        oscil.start(time)
-      }
+    
+    def propFrequency = oscil.frequency
+		def propAmplitude = amplGain.gain
+		def propAmplitudeOffset = inOutGain.gain
+    
+    def start(time: Double): Unit = oscil.start(time)
 
-      def stop(time: Double): Unit = {
-        oscil.stop(time)
-      }
+    def stop(time: Double): Unit = oscil.stop(time)
 
-      override def in: AudioNode = inOutGain
-
-      override def out: AudioNode = inOutGain
+    override def in: AudioNode = inOutGain
+    override def out: AudioNode = inOutGain
 }
 
 case class Adsr(ctx: AudioContext) extends CustomNode {
