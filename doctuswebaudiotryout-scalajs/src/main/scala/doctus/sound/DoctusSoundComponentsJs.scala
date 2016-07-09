@@ -13,13 +13,17 @@ trait CustomSourceNode {
 
   def out: AudioNode
 
+}
+
+trait StartStoppable {
+
   def start(time: Double): Unit
 
   def stop(time: Double): Unit
 
 }
 
-case class Tremolo(ctx: AudioContext) extends CustomNode {
+case class Tremolo(ctx: AudioContext) extends CustomNode with StartStoppable {
   
     private val oscil = ctx.createOscillator()
     private val amplGain = ctx.createGain()
@@ -47,7 +51,7 @@ case class Tremolo(ctx: AudioContext) extends CustomNode {
     override def out: AudioNode = inOutGain
 }
 
-case class Adsr(ctx: AudioContext) extends CustomNode {
+case class Adsr(ctx: AudioContext) extends CustomNode with StartStoppable {
 
   var valAttack = 0.01
   var valDecay = 0.1
