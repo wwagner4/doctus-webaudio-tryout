@@ -22,8 +22,8 @@ case class Noise(ctx: AudioContext, noiseType: NoiseType) {
   def start(time: Double, nineth: Nineth): Unit = {
 
     def setTremolo(f: Double, a: Double): Unit = {
-        tremolo.frequency = f
-        tremolo.amplitude = a
+        tremolo.propFrequency.value = f
+        tremolo.propAmplitude.value = a
     }
     
     nineth match {
