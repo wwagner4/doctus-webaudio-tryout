@@ -14,7 +14,7 @@ case class Noise(ctx: AudioContext, noiseType: NoiseType) {
   val util = WebAudioUtil(ctx, ran)
 
   val tremolo = Tremolo(ctx)
-  tremolo.out.connect(ctx.destination)
+  tremolo.nodeOut.connect(ctx.destination)
   tremolo.start(0)
 
   var bufferSrcOpt = Option.empty[AudioBufferSourceNode]
@@ -42,7 +42,7 @@ case class Noise(ctx: AudioContext, noiseType: NoiseType) {
     }
     
     val noiseNode = util.createNodeNoise(noiseType)
-    noiseNode.connect(tremolo.in)
+    noiseNode.connect(tremolo.nodeIn)
     noiseNode.start()
     bufferSrcOpt = Some(noiseNode)
   }

@@ -21,8 +21,8 @@ case class AdsrTryout(ctx: AudioContext) {
   adsr.valRelease = 2.0
   adsr.valDecay = 0.1
 
-  oscil.connect(adsr.in)
-  adsr.out.connect(ctx.destination)
+  oscil.connect(adsr.nodeIn)
+  adsr.nodeOut.connect(ctx.destination)
 
   oscil.start()
 

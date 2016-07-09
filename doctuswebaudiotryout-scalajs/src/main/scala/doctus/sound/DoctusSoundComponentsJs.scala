@@ -3,19 +3,19 @@ package doctus.sound
 import org.scalajs.dom._
 
 
-trait CustomNode extends CustomSourceNode {
+trait NodeInOut extends NodeOut {
 
-  def in: AudioNode
-
-}
-
-trait CustomSourceNode {
-
-  def out: AudioNode
+  def nodeIn: AudioNode
 
 }
 
-trait StartStoppable {
+trait NodeOut {
+
+  def nodeOut: AudioNode
+
+}
+
+trait NodeStartStoppable {
 
   def start(time: Double): Unit
 
@@ -23,7 +23,7 @@ trait StartStoppable {
 
 }
 
-case class Tremolo(ctx: AudioContext) extends CustomNode with StartStoppable {
+case class Tremolo(ctx: AudioContext) extends NodeInOut with NodeStartStoppable {
   
     private val oscil = ctx.createOscillator()
     private val amplGain = ctx.createGain()
@@ -47,11 +47,11 @@ case class Tremolo(ctx: AudioContext) extends CustomNode with StartStoppable {
 
     def stop(time: Double): Unit = oscil.stop(time)
 
-    override def in: AudioNode = inOutGain
-    override def out: AudioNode = inOutGain
+    override def nodeIn: AudioNode = inOutGain
+    override def nodeOut: AudioNode = inOutGain
 }
 
-case class Adsr(ctx: AudioContext) extends CustomNode with StartStoppable {
+case class Adsr(ctx: AudioContext) extends NodeInOut with NodeStartStoppable {
 
   var valAttack = 0.01
   var valDecay = 0.1
@@ -74,9 +74,9 @@ case class Adsr(ctx: AudioContext) extends CustomNode with StartStoppable {
     gain.gain.linearRampToValueAtTime(0.0, time + valRelease)
   }
 
-  override def in: AudioNode = gain
+  override def nodeIn: AudioNode = gain
 
-  override def out: AudioNode = gain
+  override def nodeOut: AudioNode = gain
 
 }
 
