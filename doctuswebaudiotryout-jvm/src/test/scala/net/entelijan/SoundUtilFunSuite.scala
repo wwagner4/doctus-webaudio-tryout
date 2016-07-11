@@ -21,6 +21,8 @@ class SoundUtilFunSuite extends FunSuite {
     metalHarmonics_(baseFreq, List.empty[Double])
   }
 
+  def logDecay(x: Int)(base: Double): Double = math.pow(base, -x)
+
 
   test("metal harmonics") {
     val hl = metalHarmonics(100, 5)
@@ -41,6 +43,14 @@ class SoundUtilFunSuite extends FunSuite {
     assert(hl(4) > 565.5)
     assert(hl(4) < 565.7)
 
+  }
+  
+  test("logaritmic amplitudes") {
+    
+    // base from 1.01 - 5.0
+    val y = (0 to 10).toList.map { x => logDecay(x)(1.1) }
+    
+    println(y)
   }
 
 }
