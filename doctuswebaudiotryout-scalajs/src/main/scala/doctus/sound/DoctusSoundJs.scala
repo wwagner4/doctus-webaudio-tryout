@@ -17,6 +17,7 @@ class DoctusSoundJs extends DoctusSound {
   val noisePink = Noise(ctx, NT_Pink)
   val noiseBrownRed = Noise(ctx, NT_Brown)
   val adsrTryout = AdsrTryout(ctx)
+  val metalTryout = MetalTryout(ctx)
 
   override def tinitusStart(): Unit = tinitus.start
 
@@ -39,6 +40,10 @@ class DoctusSoundJs extends DoctusSound {
   override def adsrStart(nineth: Nineth): Unit = adsrTryout.start(nineth)
 
   override def adsrStop(): Unit = adsrTryout.stop()
+  
+  def metalStart(): Unit = metalTryout.start()
+  
+  def metalStop(): Unit = metalTryout.stop()
 
 }
 

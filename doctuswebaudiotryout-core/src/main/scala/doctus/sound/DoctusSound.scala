@@ -38,4 +38,9 @@ trait DoctusSound {
   def adsrStart(nineth: Nineth): Unit
 
   def adsrStop(): Unit
+  
+  def metalStart(): Unit
+  
+  def metalStop(): Unit
+  
 }
