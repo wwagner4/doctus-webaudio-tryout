@@ -5,8 +5,6 @@ import org.scalatest.FunSuite
 
 class SoundUtilFunSuite extends FunSuite {
 
-
-
   def metalHarmonics(baseFreq: Double, length: Int): List[Double] = {
     val sqrt2 = math.sqrt(2.0)
   
@@ -23,35 +21,86 @@ class SoundUtilFunSuite extends FunSuite {
 
   def logDecay(x: Int)(base: Double): Double = math.pow(base, -x)
 
+  case class T1(index: Int, value: Double)
 
-  test("metal harmonics") {
-    val hl = metalHarmonics(100, 5)
-    assert(hl.size === 5)
-    
-    assert(hl(0) > 141.3)
-    assert(hl(0) < 141.5)
-
-    assert(hl(1) > 199.9)
-    assert(hl(1) < 200.1)
-
-    assert(hl(2) > 282.7)
-    assert(hl(2) < 282.9)
-
-    assert(hl(3) > 399.9)
-    assert(hl(3) < 400.1)
-
-    assert(hl(4) > 565.5)
-    assert(hl(4) < 565.7)
-
+  {
+    val realVals = metalHarmonics(100, 5)
+    test("metalHarmonicsSize") {
+      assert(realVals.size === 5)
+    }
+      
+    val testVals = List(
+      T1(0, 141.2),
+      T1(1, 200.0),
+      T1(2, 282.8),
+      T1(3, 400.0),
+      T1(4, 565.6)) 
+  
+    testVals.foreach { t => 
+      val prec = 0.5
+      test(s"metalHarmonics_$t") {
+        assert(realVals(t.index) > t.value - prec) 
+        assert(realVals(t.index) < t.value + prec) 
+      }   
+    }
   }
   
-  test("logaritmic amplitudes") {
-    
-    // base from 1.01 - 5.0
-    val y = (0 to 10).toList.map { x => logDecay(x)(1.1) }
-    
-    println(y)
+  
+  {
+    val realVals = (0 to 5).toList.map { x => logDecay(x)(1.2) }
+    val testVals = List(
+      T1(0, 1.0), 
+      T1(1, 0.83), 
+      T1(2, 0.69), 
+      T1(3, 0.57), 
+      T1(4, 0.48), 
+      T1(5, 0.40))
+  
+    testVals.foreach { t => 
+      val prec = 0.1
+      test(s"logDecay_1.2_$t") {
+        assert(realVals(t.index) > t.value - prec) 
+        assert(realVals(t.index) < t.value + prec) 
+      }   
+    }
   }
+  
+  {
+    val realVals = (0 to 5).toList.map { x => logDecay(x)(2) }
+    val testVals = List(
+      T1(0, 1.0), 
+      T1(1, 0.5), 
+      T1(2, 0.25), 
+      T1(3, 0.125), 
+      T1(4, 0.0625), 
+      T1(5, 0.03125))
 
+    testVals.foreach { t => 
+      val prec = 0.1
+      test(s"logDecay_2.0_$t") {
+        assert(realVals(t.index) > t.value - prec) 
+        assert(realVals(t.index) < t.value + prec) 
+      }   
+    }
+  }
+  
+  {
+    val realVals = (0 to 5).toList.map { x => logDecay(x)(4) }
+    val testVals = List(
+      T1(0, 1.0), 
+      T1(1, 0.25), 
+      T1(2, 0.0625), 
+      T1(3, 0.015625), 
+      T1(4, 0.00390625))
+
+    testVals.foreach { t => 
+      val prec = 0.1
+      test(s"logDecay_4.0_$t") {
+        assert(realVals(t.index) > t.value - prec) 
+        assert(realVals(t.index) < t.value + prec) 
+      }   
+    }
+  }
+    
 }
 
