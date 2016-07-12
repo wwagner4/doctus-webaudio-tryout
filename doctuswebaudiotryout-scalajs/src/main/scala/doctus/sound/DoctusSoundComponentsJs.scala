@@ -1,7 +1,14 @@
+// Copyright (C) 2016 wolfgang wagner http://entelijan.net
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+
 package doctus.sound
 
 import org.scalajs.dom._
-
 
 trait NodeInOut extends NodeOut {
 
@@ -24,11 +31,11 @@ trait NodeStartStoppable {
 }
 
 case class Tremolo(ctx: AudioContext) extends NodeInOut with NodeStartStoppable {
-  
+
   private val oscil = ctx.createOscillator()
   private val amplGain = ctx.createGain()
   private val inOutGain = ctx.createGain()
-  
+
   // Amplitude
   amplGain.gain.value = 0.1
   // Offset Amplitude
@@ -38,11 +45,11 @@ case class Tremolo(ctx: AudioContext) extends NodeInOut with NodeStartStoppable 
   oscil.connect(amplGain)
   // The output of the oscil is added to the value previously set by amplGain.gain.value
   amplGain.connect(inOutGain.gain)
-    
-  def propFrequency = oscil.frequency
-  def propAmplitude = amplGain.gain
-	def propAmplitudeOffset = inOutGain.gain
-    
+
+  def propFrequency: AudioParam = oscil.frequency
+  def propAmplitude: AudioParam = amplGain.gain
+  def propAmplitudeOffset: AudioParam = inOutGain.gain
+
   def start(time: Double): Unit = oscil.start(time)
 
   def stop(time: Double): Unit = oscil.stop(time)

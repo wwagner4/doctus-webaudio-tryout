@@ -1,10 +1,18 @@
+// Copyright (C) 2016 wolfgang wagner http://entelijan.net
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+
 package doctus.sound
 
 import net.entelijan._
 
 /**
-  * ScalaJS implementation of the (experimental sound interface)
-  */
+ * ScalaJS implementation of the (experimental sound interface)
+ */
 class DoctusSoundJs extends DoctusSound {
 
   import org.scalajs.dom.AudioContext
@@ -40,9 +48,9 @@ class DoctusSoundJs extends DoctusSound {
   override def adsrStart(nineth: Nineth): Unit = adsrTryout.start(nineth)
 
   override def adsrStop(): Unit = adsrTryout.stop()
-  
+
   def metalStart(): Unit = metalTryout.start()
-  
+
   def metalStop(): Unit = metalTryout.stop()
 
 }

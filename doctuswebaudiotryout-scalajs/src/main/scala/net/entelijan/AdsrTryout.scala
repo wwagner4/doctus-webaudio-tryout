@@ -1,13 +1,21 @@
+// Copyright (C) 2016 wolfgang wagner http://entelijan.net
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+
 package net.entelijan
 
 import doctus.sound._
-import org.scalajs.dom.{AudioContext, AudioNode}
+import org.scalajs.dom._
 
 import scala.util.Random
 
 /**
-  * Sound using a reusable ADSR Curve
-  */
+ * Sound using a reusable ADSR Curve
+ */
 case class AdsrTryout(ctx: AudioContext) {
 
   val freqs = List(111, 222, 333, 444, 555)

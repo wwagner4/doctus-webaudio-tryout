@@ -1,3 +1,11 @@
+// Copyright (C) 2016 wolfgang wagner http://entelijan.net
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+
 package doctus.sound
 
 sealed trait Nineth
@@ -13,8 +21,8 @@ case object N_21 extends Nineth
 case object N_22 extends Nineth
 
 /**
-  * Experimental Sound API
-  */
+ * Experimental Sound API
+ */
 trait DoctusSound {
 
   def tinitusStart(): Unit
@@ -38,9 +46,9 @@ trait DoctusSound {
   def adsrStart(nineth: Nineth): Unit
 
   def adsrStop(): Unit
-  
+
   def metalStart(): Unit
-  
+
   def metalStop(): Unit
-  
+
 }
