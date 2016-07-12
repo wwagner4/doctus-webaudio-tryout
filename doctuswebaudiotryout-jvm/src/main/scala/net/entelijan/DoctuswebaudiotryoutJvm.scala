@@ -1,3 +1,5 @@
+// Copyright (C) 2016 wolfgang wagner http://entelijan.net
+
 package net.entelijan
 
 import javafx.application.Application
@@ -59,31 +61,31 @@ object DoctuswebaudiotryoutJvm extends App {
 
   case object DoctusSoundJvm extends DoctusSound {
 
-    override def tinitusStart(): Unit = println("JVM NOT IMPLEMENTED")
+    override def tinitusStart(): Unit = throw new IllegalStateException("JVM NOT IMPLEMENTED")
 
-    override def tinitusStop(): Unit = println("JVM NOT IMPLEMENTED")
+    override def tinitusStop(): Unit = throw new IllegalStateException("JVM NOT IMPLEMENTED")
 
-    override def noiseWhiteStart(nineth: Nineth): Unit = println("JVM NOT IMPLEMENTED")
+    override def noiseWhiteStart(nineth: Nineth): Unit = throw new IllegalStateException("JVM NOT IMPLEMENTED")
 
-    override def noiseWhiteStop(): Unit = println("JVM NOT IMPLEMENTED")
+    override def noiseWhiteStop(): Unit = throw new IllegalStateException("JVM NOT IMPLEMENTED")
 
-    override def noisePinkStart(nineth: Nineth): Unit = println("JVM NOT IMPLEMENTED")
+    override def noisePinkStart(nineth: Nineth): Unit = throw new IllegalStateException("JVM NOT IMPLEMENTED")
 
-    override def noisePinkStop(): Unit = println("JVM NOT IMPLEMENTED")
+    override def noisePinkStop(): Unit = throw new IllegalStateException("JVM NOT IMPLEMENTED")
 
-    override def noiseBrownRedStart(nineth: Nineth): Unit = println("JVM NOT IMPLEMENTED")
+    override def noiseBrownRedStart(nineth: Nineth): Unit = throw new IllegalStateException("JVM NOT IMPLEMENTED")
 
-    override def noiseBrownRedStop(): Unit = println("JVM NOT IMPLEMENTED")
+    override def noiseBrownRedStop(): Unit = throw new IllegalStateException("JVM NOT IMPLEMENTED")
 
-    override def melodyStart(): Unit = println("JVM NOT IMPLEMENTED")
+    override def melodyStart(): Unit = throw new IllegalStateException("JVM NOT IMPLEMENTED")
 
-    override def adsrStart(nineth: Nineth): Unit = println("JVM NOT IMPLEMENTED " + nineth)
+    override def adsrStart(nineth: Nineth): Unit = throw new IllegalStateException("JVM NOT IMPLEMENTED " + nineth)
 
-    override def adsrStop(): Unit = println("JVM NOT IMPLEMENTED")
+    override def adsrStop(): Unit = throw new IllegalStateException("JVM NOT IMPLEMENTED")
 
-    def metalStart(): Unit = println("JVM NOT IMPLEMENTED")
+    def metalStart(): Unit = throw new IllegalStateException("JVM NOT IMPLEMENTED")
   
-    def metalStop(): Unit = println("JVM NOT IMPLEMENTED")
+    def metalStop(): Unit = throw new IllegalStateException("JVM NOT IMPLEMENTED")
   
 
   }

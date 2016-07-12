@@ -1,3 +1,5 @@
+// Copyright (C) 2016 wolfgang wagner http://entelijan.net
+
 package net.entelijan
 
 import doctus.core._
@@ -16,7 +18,7 @@ case class DoctuswebaudiotryoutTemplate(canvas: DoctusCanvas, sound: DoctusSound
 
   val tilesCnt = nx * ny
 
-  override def frameRate = None
+  override def frameRate: Option[Int] = None
 
 
   def draw(g: DoctusGraphics): Unit = {
@@ -115,16 +117,10 @@ case class DoctuswebaudiotryoutTemplate(canvas: DoctusCanvas, sound: DoctusSound
       val v = pos - o
       val x1 = tile.dx / 3
       val x2 = 2 * tile.dx / 3
-      val i =
-        if (v.x < x1) 0
-        else if (v.x < x2) 1
-        else 2
+      val i = if (v.x < x1) 0 else if (v.x < x2) 1 else 2
       val y1 = tile.dy / 3
       val y2 = 2 * tile.dy / 3
-      val j =
-        if (v.y < y1) 0
-        else if (v.y < y2) 1
-        else 2
+      val j = if (v.y < y1) 0 else if (v.y < y2) 1 else 2
       (i, j)
     }
 

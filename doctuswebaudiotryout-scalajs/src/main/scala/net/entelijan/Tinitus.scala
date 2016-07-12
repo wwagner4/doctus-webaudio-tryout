@@ -1,3 +1,5 @@
+// Copyright (C) 2016 wolfgang wagner http://entelijan.net
+
 package net.entelijan
 
 import org.scalajs.dom.AudioContext
@@ -10,7 +12,7 @@ case class Tinitus(ctx: AudioContext) {
   val maxGain = 0.3
 
   val oscil = ctx.createOscillator()
-  oscil.frequency.value = 333
+  oscil.frequency.value = 333.0
 
   val gain = ctx.createGain()
   gain.gain.value = 0.0

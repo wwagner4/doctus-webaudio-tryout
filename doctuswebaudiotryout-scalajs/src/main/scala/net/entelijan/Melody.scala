@@ -1,3 +1,5 @@
+// Copyright (C) 2016 wolfgang wagner http://entelijan.net
+
 package net.entelijan
 
 import javafx.event.Event
@@ -5,14 +7,14 @@ import javafx.event.Event
 import org.scalajs.dom.{AudioContext, OscillatorNode}
 
 /**
-  * Plays a melody
-  *
-  * Introduces the concept of an 'instrument'
-  *
-  */
+ * Plays a melody
+ *
+ * Introduces the concept of an 'instrument'
+ *
+ */
 case class Melody(ctx: AudioContext, now: Double) {
 
-  val freqs = List(222, 333, 444, 555, 666)
+  val freqs = List(222.0, 333.0, 444.0, 555.0, 666.0)
   val ran = new java.util.Random()
 
   def start(): Unit = {

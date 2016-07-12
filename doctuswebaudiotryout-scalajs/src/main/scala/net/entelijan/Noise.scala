@@ -1,3 +1,5 @@
+// Copyright (C) 2016 wolfgang wagner http://entelijan.net
+
 package net.entelijan
 
 import doctus.sound._
@@ -25,7 +27,7 @@ case class Noise(ctx: AudioContext, noiseType: NoiseType) {
         tremolo.propFrequency.value = f
         tremolo.propAmplitude.value = a
     }
-    
+
     nineth match {
       case N_00 => setTremolo(5.0, 0.1)
       case N_01 => setTremolo(1.0, 0.1)
@@ -40,7 +42,7 @@ case class Noise(ctx: AudioContext, noiseType: NoiseType) {
       case N_22 => setTremolo(0.5, 0.4)
 
     }
-    
+
     val noiseNode = util.createNodeNoise(noiseType)
     noiseNode.connect(tremolo.nodeIn)
     noiseNode.start()

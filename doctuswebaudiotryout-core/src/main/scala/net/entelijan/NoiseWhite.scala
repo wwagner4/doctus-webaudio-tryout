@@ -1,10 +1,12 @@
+// Copyright (C) 2016 wolfgang wagner http://entelijan.net
+
 package net.entelijan
 
 import scala.util.Random
 
 /**
-  * Provides a sequence for white noise.
-  */
+ * Provides a sequence for white noise.
+ */
 case object NoiseWhite extends ValueSequence {
 
   println("Noise White")

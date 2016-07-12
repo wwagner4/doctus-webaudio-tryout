@@ -1,11 +1,13 @@
+// Copyright (C) 2016 wolfgang wagner http://entelijan.net
+
 package net.entelijan
 
 /**
-  * Pink noise
-  * Migrated from Minim
-  *
-  * https://github.com/ddf/Minim/blob/master/src/ddf/minim/signals/PinkNoise.java
-  */
+ * Pink noise
+ * Migrated from Minim
+ *
+ * https://github.com/ddf/Minim/blob/master/src/ddf/minim/signals/PinkNoise.java
+ */
 case class NoisePink() extends ValueSequence {
 
   println("Noise Pink")

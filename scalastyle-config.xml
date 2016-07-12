@@ -9,17 +9,11 @@
  <check level="warning" class="org.scalastyle.file.HeaderMatchesChecker" enabled="true">
   <parameters>
    <parameter name="header"><![CDATA[// Copyright (C) 2016 wolfgang wagner http://entelijan.net
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
 ]]></parameter>
   </parameters>
  </check>
  <check level="warning" class="org.scalastyle.scalariform.SpacesAfterPlusChecker" enabled="true"></check>
- <check level="warning" class="org.scalastyle.file.WhitespaceEndOfLineChecker" enabled="true"></check>
+ <check level="warning" class="org.scalastyle.file.WhitespaceEndOfLineChecker" enabled="false"></check>
  <check level="warning" class="org.scalastyle.scalariform.SpacesBeforePlusChecker" enabled="true"></check>
  <check level="warning" class="org.scalastyle.file.FileLineLengthChecker" enabled="true">
   <parameters>
@@ -53,7 +47,7 @@
    <parameter name="maxParameters"><![CDATA[8]]></parameter>
   </parameters>
  </check>
- <check level="warning" class="org.scalastyle.scalariform.MagicNumberChecker" enabled="true">
+ <check level="warning" class="org.scalastyle.scalariform.MagicNumberChecker" enabled="false">
   <parameters>
    <parameter name="ignore"><![CDATA[-1,0,1,2,3]]></parameter>
   </parameters>
@@ -66,7 +60,7 @@
  <check level="warning" class="org.scalastyle.scalariform.NoFinalizeChecker" enabled="true"></check>
  <check level="warning" class="org.scalastyle.scalariform.CovariantEqualsChecker" enabled="true"></check>
  <check level="warning" class="org.scalastyle.scalariform.StructuralTypeChecker" enabled="true"></check>
- <check level="warning" class="org.scalastyle.file.RegexChecker" enabled="true">
+ <check level="warning" class="org.scalastyle.file.RegexChecker" enabled="false">
   <parameters>
    <parameter name="regex"><![CDATA[println]]></parameter>
   </parameters>
