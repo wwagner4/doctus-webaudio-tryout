@@ -12,3 +12,13 @@ case class MetalTryout(ctx: AudioContext) {
   def stop(): Unit = println("metal stop")
 
 }
+
+case class NodeMetal(ctx: AudioContext) extends NodeOut with NodeStartStoppable {
+
+  def nodeOut: AudioNode = ???
+
+  def start(time: Double): Unit = ???
+
+  def stop(time: Double): Unit = ???
+
+}
