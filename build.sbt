@@ -12,7 +12,6 @@ lazy val commonSettings =
     organization := "net.entelijan",
     organizationHomepage := Some(url("http://entelijan.net/")),
     licenses += ("MIT", url("http://opensource.org/licenses/MIT")),
-    scalacOptions += "-Xplugin:/Users/wwagner4/.ivy2/cache/org.psywerx.hairyfotr/linter_2.11/jars/linter_2.11-0.1.14.jar",
     EclipseKeys.withSource := true)
 
 lazy val coreSettings =
