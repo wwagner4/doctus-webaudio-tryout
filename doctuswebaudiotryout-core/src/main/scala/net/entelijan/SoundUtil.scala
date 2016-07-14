@@ -18,6 +18,6 @@ object SoundUtil {
     metalHarmonics(baseFreq, List.empty[Double])
   }
 
-  def logDecay(x: Int)(base: Double): Double = math.pow(base, -x)
+  def logDecay(base: Double)(x: Int): Double = math.pow(base, -x)
 
 }
