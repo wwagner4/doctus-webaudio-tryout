@@ -32,7 +32,7 @@ class SoundUtilFunSuite extends FunSuite {
   }
   
   {
-    val realVals = (0 to 5).toList.map { x => logDecay(x)(1.2) }
+    val realVals = (0 to 5).toList.map { x => logDecay(1.2)(x) }
     val testVals = List(
       T1(0, 1.0), 
       T1(1, 0.83), 
@@ -51,7 +51,7 @@ class SoundUtilFunSuite extends FunSuite {
   }
   
   {
-    val realVals = (0 to 5).toList.map { x => logDecay(x)(2) }
+    val realVals = (0 to 5).toList.map { x => logDecay(2)(x) }
     val testVals = List(
       T1(0, 1.0), 
       T1(1, 0.5), 
@@ -70,7 +70,7 @@ class SoundUtilFunSuite extends FunSuite {
   }
   
   {
-    val realVals = (0 to 5).toList.map { x => logDecay(x)(4) }
+    val realVals = (0 to 5).toList.map { x => logDecay(4)(x) }
     val testVals = List(
       T1(0, 1.0), 
       T1(1, 0.25), 
