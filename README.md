@@ -15,10 +15,12 @@ Trying out the components of the webaudio api and how they work together
 * Make a metallic sound using inharmonic partials. 'metallic'
 * Designe a sound with a reusable ADSR envelope. 'ADSR'
 * Make a reusable noise AudioNode. 'noise'
-* Create some kind of 'TremoloNode'. 'noise'
+* Create some kind of 'TremoloNode'. 'noise's
 
 #### TODOs
 * Fix the 'mouse leave canvas' bug in doctus.
+* Fix the 'wrong point when scaled' bug in doctus. On mobile devices if the screen is zoomed in, the points 
+created during point events are not correct. To fix this make an automatic deployment of the doctus showcase.
 
 #### Implemented TODOs
 * Switch to latest version of scalaJS
