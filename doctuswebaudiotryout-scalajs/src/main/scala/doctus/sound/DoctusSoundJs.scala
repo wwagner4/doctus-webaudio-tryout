@@ -21,31 +21,35 @@ class DoctusSoundJs extends DoctusSound {
   val adsrTryout = AdsrTryout(ctx)
   val metalTryout = MetalTryout(ctx)
 
-  override def tinitusStart(): Unit = tinitus.start
+  def tinitusStart(): Unit = tinitus.start
 
-  override def tinitusStop(): Unit = tinitus.stop
+  def tinitusStop(): Unit = tinitus.stop
 
-  override def noiseWhiteStart(nineth: Nineth): Unit = noiseWhite.start(ctx.currentTime, nineth)
+  def noiseWhiteStart(nineth: Nineth): Unit = noiseWhite.start(ctx.currentTime, nineth)
 
-  override def noiseWhiteStop(): Unit = noiseWhite.stop(ctx.currentTime)
+  def noiseWhiteStop(): Unit = noiseWhite.stop(ctx.currentTime)
 
-  override def noisePinkStart(nineth: Nineth): Unit = noisePink.start(ctx.currentTime, nineth)
+  def noisePinkStart(nineth: Nineth): Unit = noisePink.start(ctx.currentTime, nineth)
 
-  override def noisePinkStop(): Unit = noisePink.stop(ctx.currentTime)
+  def noisePinkStop(): Unit = noisePink.stop(ctx.currentTime)
 
-  override def noiseBrownRedStart(nineth: Nineth): Unit = noiseBrownRed.start(ctx.currentTime, nineth)
+  def noiseBrownRedStart(nineth: Nineth): Unit = noiseBrownRed.start(ctx.currentTime, nineth)
 
-  override def noiseBrownRedStop(): Unit = noiseBrownRed.stop(ctx.currentTime)
+  def noiseBrownRedStop(): Unit = noiseBrownRed.stop(ctx.currentTime)
 
-  override def melodyStart(): Unit = Melody(ctx, ctx.currentTime).start()
+  def melodyStart(): Unit = Melody(ctx, ctx.currentTime).start()
 
-  override def adsrStart(nineth: Nineth): Unit = adsrTryout.start(nineth)
+  def adsrStart(nineth: Nineth): Unit = adsrTryout.start(nineth)
 
-  override def adsrStop(): Unit = adsrTryout.stop()
+  def adsrStop(): Unit = adsrTryout.stop()
 
   def metalStart(): Unit = metalTryout.start()
 
   def metalStop(): Unit = metalTryout.stop()
+  
+  def filterStart(): Unit = ???
+
+  def filterStop(): Unit = ???
 
 }
 

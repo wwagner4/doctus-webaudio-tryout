@@ -51,4 +51,8 @@ trait DoctusSound {
 
   def metalStop(): Unit
 
+  def filterStart(): Unit
+
+  def filterStop(): Unit
+
 }

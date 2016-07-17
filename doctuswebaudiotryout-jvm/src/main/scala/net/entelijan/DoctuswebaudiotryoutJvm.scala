@@ -87,6 +87,9 @@ object DoctuswebaudiotryoutJvm extends App {
   
     def metalStop(): Unit = throw new IllegalStateException("JVM NOT IMPLEMENTED")
   
+    def filterStart(): Unit = throw new IllegalStateException("JVM NOT IMPLEMENTED")
+
+    def filterStop(): Unit = throw new IllegalStateException("JVM NOT IMPLEMENTED")
 
   }
 
