@@ -44,8 +44,9 @@ case class NodeMetal(ctx: AudioContext) extends NodeOut with NodeStartStoppable 
   val logDecay = SoundUtil.logDecay(3)(_)
 
   def createGainableOscils(cnt: Int): List[GainableOscil] = {
-    if (cnt == 0) List.empty[GainableOscil]
-    else {
+    if (cnt == 0) {
+      List.empty[GainableOscil]
+    } else {
       val gain = logDecay(cnt)
       val go = GainableOscil(gain)
       go :: createGainableOscils(cnt - 1)
