@@ -6,6 +6,8 @@ import org.scalajs.dom._
 
 case class FilterTryout(ctx: AudioContext) {
 
-  
+  def start(): Unit = ???
+
+  def stop(): Unit = ???
 
 }
