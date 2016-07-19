@@ -15,7 +15,7 @@ case class Noise(ctx: AudioContext, noiseType: NoiseType) {
   val ran = Random
   val util = WebAudioUtil(ctx, ran)
 
-  val tremolo = Tremolo(ctx)
+  val tremolo = NodeTremolo(ctx)
   tremolo.nodeOut.connect(ctx.destination)
   tremolo.start(0)
 

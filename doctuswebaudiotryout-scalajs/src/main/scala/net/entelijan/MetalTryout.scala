@@ -57,7 +57,7 @@ case class NodeMetal(ctx: AudioContext) extends NodeOut with NodeStartStoppable 
   val oscils = createGainableOscils(cnt)
   val gain = ctx.createGain()
   oscils.foreach { x => x.nodeOut.connect(gain) }
-  val adsr = Adsr(ctx)
+  val adsr = NodeAdsr(ctx)
   adsr.valAttack = 0.001
   adsr.valSustain = 0.3
   adsr.valRelease = 2.0

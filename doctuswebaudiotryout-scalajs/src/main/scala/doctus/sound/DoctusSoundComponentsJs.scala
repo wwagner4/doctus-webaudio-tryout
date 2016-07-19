@@ -24,7 +24,7 @@ trait NodeStartStoppable {
 
 }
 
-case class Tremolo(ctx: AudioContext) extends NodeInOut with NodeStartStoppable {
+case class NodeTremolo(ctx: AudioContext) extends NodeInOut with NodeStartStoppable {
 
   private val oscil = ctx.createOscillator()
   private val amplGain = ctx.createGain()
@@ -52,7 +52,7 @@ case class Tremolo(ctx: AudioContext) extends NodeInOut with NodeStartStoppable 
   def nodeOut: AudioNode = inOutGain
 }
 
-case class Adsr(ctx: AudioContext) extends NodeInOut with NodeStartStoppable {
+case class NodeAdsr(ctx: AudioContext) extends NodeInOut with NodeStartStoppable {
 
   var valAttack = 0.01
   var valDecay = 0.1

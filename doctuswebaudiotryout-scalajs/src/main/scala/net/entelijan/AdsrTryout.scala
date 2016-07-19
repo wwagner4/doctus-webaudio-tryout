@@ -19,7 +19,7 @@ case class AdsrTryout(ctx: AudioContext) {
   oscil.`type` = "sawtooth"
   oscil.frequency.value = 0f
 
-  val adsr = Adsr(ctx)
+  val adsr = NodeAdsr(ctx)
   adsr.valRelease = 2.0
   adsr.valDecay = 0.1
 
