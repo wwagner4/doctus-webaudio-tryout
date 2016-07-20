@@ -5,6 +5,9 @@ package net.entelijan
 import doctus.sound._
 import org.scalajs.dom._
 
+/**
+  * A Filter that changes its cutoff frequency controlled by an ADSR envelope
+  */
 case class FilterTryout(ctx: AudioContext) {
 
 
@@ -14,13 +17,13 @@ case class FilterTryout(ctx: AudioContext) {
 
 
   val adsr = NodeAdsr(ctx)
-  adsr.valSustain = 1.0
+  adsr.valSustain = 0.8
   adsr.valAttack = 0.001
   adsr.valRelease = 2.0
 
   val filterAdsr = NodeAdsrSrc()
   filterAdsr.valAttack = 0.3
-  filterAdsr.valSustain = 0.1
+  filterAdsr.valSustain = 1.0
   filterAdsr.valDecay = 1.4
   filterAdsr.valRelease = 1.8
   filterAdsr.valGain = 10000
