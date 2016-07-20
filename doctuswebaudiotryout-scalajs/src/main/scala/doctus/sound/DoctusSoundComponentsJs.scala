@@ -4,6 +4,8 @@ package doctus.sound
 
 import org.scalajs.dom._
 
+import scala.scalajs.js.annotation.ScalaJSDefined
+
 trait NodeInOut extends NodeOut {
 
   def nodeIn: AudioNode
@@ -41,7 +43,9 @@ case class NodeTremolo(ctx: AudioContext) extends NodeInOut with NodeStartStoppa
   amplGain.connect(inOutGain.gain)
 
   def propFrequency: AudioParam = oscil.frequency
+
   def propAmplitude: AudioParam = amplGain.gain
+
   def propAmplitudeOffset: AudioParam = inOutGain.gain
 
   def start(time: Double): Unit = oscil.start(time)
@@ -49,7 +53,43 @@ case class NodeTremolo(ctx: AudioContext) extends NodeInOut with NodeStartStoppa
   def stop(time: Double): Unit = oscil.stop(time)
 
   def nodeIn: AudioNode = inOutGain
+
   def nodeOut: AudioNode = inOutGain
+}
+
+case class NodeAdsrSrc() extends NodeStartStoppable {
+
+  var valGain = 1.0
+  var valAttack = 0.01
+  var valDecay = 0.1
+  var valSustain = 0.01
+  var valRelease = 0.5
+
+  var _param = Option.empty[AudioParam]
+
+  def connect(param: AudioParam): Unit = {
+    _param = Some(param)
+  }
+
+  override def start(time: Double): Unit = {
+    _param.foreach { p =>
+      println("start " + p + " " + time + " " + p.value)
+      p.cancelScheduledValues(0)
+      p.setValueAtTime(0, time)
+      p.linearRampToValueAtTime(valGain, time + valAttack)
+      p.linearRampToValueAtTime(valSustain * valGain, time + valAttack + valDecay)
+    }
+  }
+
+  override def stop(time: Double): Unit = {
+    _param.foreach { p =>
+      println("start " + p + " " + time + " " + p.value)
+      p.cancelScheduledValues(0)
+      p.setValueAtTime(p.value, time)
+      p.linearRampToValueAtTime(0.0, time + valRelease)
+    }
+
+  }
 }
 
 case class NodeAdsr(ctx: AudioContext) extends NodeInOut with NodeStartStoppable {
@@ -76,6 +116,7 @@ case class NodeAdsr(ctx: AudioContext) extends NodeInOut with NodeStartStoppable
   }
 
   def nodeIn: AudioNode = gain
+
   def nodeOut: AudioNode = gain
 
 }

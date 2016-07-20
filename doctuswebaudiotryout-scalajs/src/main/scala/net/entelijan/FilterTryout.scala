@@ -14,29 +14,23 @@ case class FilterTryout(ctx: AudioContext) {
   oscil.start(0)
   val adsr = NodeAdsr(ctx)
   adsr.valSustain = 1.0
+  adsr.valAttack = 0.001
 
-  val filterAdsr = NodeAdsr(ctx)
-  filterAdsr.valAttack = 0.3
+  val filterAdsr = NodeAdsrSrc()
+  filterAdsr.valAttack = 0.5
   filterAdsr.valSustain = 1.0
-  filterAdsr.valRelease = 0.3
-
-  val filterLfo = ctx.createOscillator()
-  filterLfo.frequency.value = 5
-  filterLfo.start(0)
-
-  val filterGain = ctx.createGain()
-  filterGain.gain.value = 800.0
+  filterAdsr.valRelease = 0.5
+  filterAdsr.valGain = 1
 
   val filter = ctx.createBiquadFilter()
   filter.`type` = "lowpass"
   filter.frequency.value = freq * 1.5
 
+  filterAdsr.connect(filter.detune)
+
   oscil.connect(filter)
   filter.connect(adsr.nodeIn)
   adsr.nodeOut.connect(ctx.destination)
-
-  filterAdsr.nodeOut.connect(filterGain)
-  filterGain.connect(filter.detune)
 
   def start(): Unit = {
     val t = ctx.currentTime
