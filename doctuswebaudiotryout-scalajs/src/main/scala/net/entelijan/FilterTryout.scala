@@ -13,18 +13,23 @@ case class FilterTryout(ctx: AudioContext) {
   oscil.`type` = "sawtooth"
   oscil.start(0)
   val adsr = NodeAdsr(ctx)
+  adsr.valSustain = 1.0
 
   val filterAdsr = NodeAdsr(ctx)
-  filterAdsr.valAttack = 1.0
+  filterAdsr.valAttack = 0.3
   filterAdsr.valSustain = 1.0
-  filterAdsr.valDecay = 1.0
+  filterAdsr.valRelease = 0.3
+
+  val filterLfo = ctx.createOscillator()
+  filterLfo.frequency.value = 5
+  filterLfo.start(0)
 
   val filterGain = ctx.createGain()
-  filterGain.gain.value = 1.0
+  filterGain.gain.value = 800.0
 
   val filter = ctx.createBiquadFilter()
   filter.`type` = "lowpass"
-  filter.frequency.value = freq * 1.3
+  filter.frequency.value = freq * 1.5
 
   oscil.connect(filter)
   filter.connect(adsr.nodeIn)
