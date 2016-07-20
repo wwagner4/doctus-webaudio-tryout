@@ -7,7 +7,8 @@ import org.scalajs.dom._
 
 case class FilterTryout(ctx: AudioContext) {
 
-  val freq = 555.0
+  val freq = 300.0
+  val freqCutoff = 500.0
 
   val oscil = ctx.createOscillator()
   oscil.`type` = "sawtooth"
@@ -20,11 +21,11 @@ case class FilterTryout(ctx: AudioContext) {
   filterAdsr.valAttack = 0.5
   filterAdsr.valSustain = 1.0
   filterAdsr.valRelease = 0.5
-  filterAdsr.valGain = 1
+  filterAdsr.valGain = 100
 
   val filter = ctx.createBiquadFilter()
   filter.`type` = "lowpass"
-  filter.frequency.value = freq * 1.5
+  filter.frequency.value = freqCutoff
 
   filterAdsr.connect(filter.detune)
 
