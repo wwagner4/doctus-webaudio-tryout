@@ -73,7 +73,6 @@ case class NodeAdsrSrc() extends NodeStartStoppable {
 
   override def start(time: Double): Unit = {
     _param.foreach { p =>
-      println("start " + p + " " + time + " " + p.value)
       p.cancelScheduledValues(0)
       p.setValueAtTime(0, time)
       p.linearRampToValueAtTime(valGain, time + valAttack)
@@ -83,7 +82,6 @@ case class NodeAdsrSrc() extends NodeStartStoppable {
 
   override def stop(time: Double): Unit = {
     _param.foreach { p =>
-      println("start " + p + " " + time + " " + p.value)
       p.cancelScheduledValues(0)
       p.setValueAtTime(p.value, time)
       p.linearRampToValueAtTime(0.0, time + valRelease)

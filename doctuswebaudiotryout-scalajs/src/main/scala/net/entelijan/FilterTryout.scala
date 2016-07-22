@@ -5,10 +5,14 @@ package net.entelijan
 import doctus.sound._
 import org.scalajs.dom._
 
+import scala.util.Random
+
 /**
   * A Filter that changes its cutoff frequency controlled by an ADSR envelope
   */
 case class FilterTryout(ctx: AudioContext) {
+
+  val ran = Random
 
 
   val oscil = ctx.createOscillator()
@@ -17,15 +21,14 @@ case class FilterTryout(ctx: AudioContext) {
 
 
   val adsr = NodeAdsr(ctx)
-  adsr.valSustain = 0.8
   adsr.valAttack = 0.001
+  adsr.valSustain = 0.8
   adsr.valRelease = 2.0
 
   val filterAdsr = NodeAdsrSrc()
-  filterAdsr.valAttack = 0.3
+  filterAdsr.valAttack = 0.6
   filterAdsr.valSustain = 1.0
-  filterAdsr.valDecay = 1.4
-  filterAdsr.valRelease = 1.8
+  filterAdsr.valRelease = 1.5
   filterAdsr.valGain = 10000
 
   val filter = ctx.createBiquadFilter()
@@ -40,11 +43,9 @@ case class FilterTryout(ctx: AudioContext) {
   def start(): Unit = {
     val t = ctx.currentTime
 
-    val freq = 300.0
-    val freqCutoff = freq * 1.5
-    oscil.frequency.setValueAtTime(t, freq)
-    filter.frequency.setValueAtTime(t, freqCutoff)
-
+    val freq = 100 + ran.nextDouble() * 500
+    oscil.frequency.setValueAtTime(freq, t)
+    filter.frequency.setValueAtTime(freq * 1.5, t)
 
     adsr.start(t)
     filterAdsr.start(t)
