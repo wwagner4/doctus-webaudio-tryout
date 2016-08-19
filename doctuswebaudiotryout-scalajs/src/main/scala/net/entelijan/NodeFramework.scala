@@ -1,6 +1,6 @@
 package net.entelijan
 /*
- * Interfaces defining the base functionallity of sound nodes
+ * Interfaces defining the base functionality of sound nodes
  */
 
 /**
@@ -24,8 +24,8 @@ trait NodeSink {
 }
 
 /**
-  * Consumes a sound signal, transformes it and
-  * provides the transfored signal like a NodeSource
+  * Consumes a sound signal, transforms it and
+  * provides the transformed signal like a NodeSource
   * Examples: Gaincontrol, filters, ...
   */
 trait NodeFilter extends NodeSource {
@@ -33,7 +33,7 @@ trait NodeFilter extends NodeSource {
 }
 
 /**
-  * A node that creates a control signal that ight be plugged into a
+  * A node that creates a control signal that might be plugged into a
   * ControlParam.
   * Examples: LFO, ADSR, ...
   */
@@ -42,7 +42,7 @@ trait NodeControlParam {
 }
 
 /**
-  * Consumer of the otput of a NodeControlParam.
+  * Consumer of the output of a NodeControlParam.
   * Usually parts of Nodes.
   * Examples: Gain of a sine generator, cutoff frequency of a filter, ...
   */
