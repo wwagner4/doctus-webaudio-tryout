@@ -11,7 +11,7 @@ object NodeFrameworkTryout extends App {
     val src = ctx.createNodeSource
     val sink = ctx.createNodeSink
 
-    src.connect(sink)
+    src >- sink
   }
 
   def b: Unit = {
@@ -28,15 +28,15 @@ object NodeFrameworkTryout extends App {
     val filter = ctx.createNodeFilter
     val sink = ctx.createNodeSink
 
-    src1.connect(filter).connect(sink)
-    src2.connect(filter)
+    src1 >- filter >- sink
+    src2 >- filter
   }
 
   def d: Unit = {
     val src = ctx.createNodeSourceOscilSine
     val sink = ctx.createNodeSinkLineOut
 
-    src.connect(sink)
+    src >- sink
 
     val now = ctx.currentTime
     src.start(now)
@@ -52,11 +52,15 @@ object NodeFrameworkTryout extends App {
 
   class NodeSourceOscilSine extends NodeSource with StartStopable {
 
+    def `>-`(filter: NodeFilter): NodeSource = connect(filter)
+    
     def connect(filter: NodeFilter): NodeSource = {
       println("connected %s to %s" format (this, filter))
       this
     }
 
+    def `>-`(sink: NodeSink): Unit = connect(sink)
+    
     def connect(sink: NodeSink): Unit = {
       println("connected %s to %s" format (this, sink))
     }

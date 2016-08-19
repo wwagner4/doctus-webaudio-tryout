@@ -10,8 +10,10 @@ package net.entelijan
 trait NodeSource {
 
   def connect(sink: NodeSink): Unit
+  def `>-`(sink: NodeSink): Unit
 
   def connect(sink: NodeFilter): NodeSource
+  def `>-`(sink: NodeFilter): NodeSource
 
 }
 
