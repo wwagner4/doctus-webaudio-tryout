@@ -12,9 +12,24 @@ object NodeFrameworkTryout extends App {
     val sink = ctx.createNodeSink
 
     src.connect(sink)
+  }
 
+  def b: Unit = {
+    val src = ctx.createNodeSource
+    val filter = ctx.createNodeFilter
+    val sink = ctx.createNodeSink
 
+    src.connect(filter).connect(sink)
+  }
 
+  def c: Unit = {
+    val src1 = ctx.createNodeSource
+    val src2 = ctx.createNodeSource
+    val filter = ctx.createNodeFilter
+    val sink = ctx.createNodeSink
+
+    src1.connect(filter).connect(sink)
+    src2.connect(filter)
   }
 
   object NodeContext {
@@ -22,6 +37,10 @@ object NodeFrameworkTryout extends App {
     def createNodeSource: NodeSource = ???
 
     def createNodeSink: NodeSink = ???
+
+    def createNodeFilter: NodeFilter = ???
+
+    def currentTime: Double = ???
 
   }
 

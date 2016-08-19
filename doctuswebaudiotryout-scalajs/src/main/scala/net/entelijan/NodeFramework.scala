@@ -8,7 +8,11 @@ package net.entelijan
   * Examples: Sine generator, ...
   */
 trait NodeSource {
-  def connect(sink: NodeSink): Unit;
+
+  def connect(sink: NodeSink): Unit
+
+  def connect(sink: NodeFilter): NodeSource
+
 }
 
 /**
@@ -24,7 +28,7 @@ trait NodeSink {
   * provides the transfored signal like a NodeSource
   * Examples: Gaincontrol, filters, ...
   */
-trait NodeFilter {
+trait NodeFilter extends NodeSource {
 
 }
 
@@ -43,5 +47,23 @@ trait NodeControlParam {
   * Examples: Gain of a sine generator, cutoff frequency of a filter, ...
   */
 trait ContolParam {
+
+}
+
+/**
+  * Starts a task at a defined time
+  */
+trait Startable {
+
+  def start(time: Double): Unit
+
+}
+
+/**
+  * Starts and stops a task at a defined time
+  */
+trait StartStopabble extends Startable {
+
+  def stop(time: Double): Unit
 
 }
