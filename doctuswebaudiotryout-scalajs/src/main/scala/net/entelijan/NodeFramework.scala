@@ -62,7 +62,7 @@ trait Startable {
 /**
   * Starts and stops a task at a defined time
   */
-trait StartStopabble extends Startable {
+trait StartStopable extends Startable {
 
   def stop(time: Double): Unit
 
