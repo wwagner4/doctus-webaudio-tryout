@@ -5,7 +5,7 @@ package net.entelijan
  */
 object NodeFrameworkTryout extends App {
 
-  val ctx = NodeContext
+  val ctx = AudioContextScalajs
 
   def a: Unit = {
     val src = ctx.createNodeSource
@@ -19,7 +19,7 @@ object NodeFrameworkTryout extends App {
     val filter = ctx.createNodeFilter
     val sink = ctx.createNodeSink
 
-    src.connect(filter).connect(sink)
+    src >- filter >- sink 
   }
 
   def c: Unit = {
@@ -46,21 +46,17 @@ object NodeFrameworkTryout extends App {
   
   d
 
-  class NodeSinkLineOut extends NodeSink {
+  case object NodeSinkLineOutScalajs extends NodeSinkLineOut {
 
   }
 
-  class NodeSourceOscilSine extends NodeSource with StartStopable {
+  case object NodeSourceOscilSineScalajs extends NodeSourceOscilSine {
 
-    def `>-`(filter: NodeFilter): NodeSource = connect(filter)
-    
     def connect(filter: NodeFilter): NodeSource = {
       println("connected %s to %s" format (this, filter))
       this
     }
 
-    def `>-`(sink: NodeSink): Unit = connect(sink)
-    
     def connect(sink: NodeSink): Unit = {
       println("connected %s to %s" format (this, sink))
     }
@@ -68,13 +64,14 @@ object NodeFrameworkTryout extends App {
     def start(time: Double): Unit = {
       println("started %s at %3.2f" format (this, time))
     }
+    
     def stop(time: Double): Unit = {
       println("stopped %s at %3.2f" format (this, time))
     }
 
   }
 
-  object NodeContext {
+  object AudioContextScalajs extends AudioContext {
 
     def createNodeSource: NodeSource = ???
 
@@ -83,11 +80,11 @@ object NodeFrameworkTryout extends App {
     def createNodeFilter: NodeFilter = ???
 
     def createNodeSinkLineOut: NodeSinkLineOut = {
-      new NodeSinkLineOut()
+      NodeSinkLineOutScalajs
     }
 
     def createNodeSourceOscilSine: NodeSourceOscilSine = {
-      new NodeSourceOscilSine()
+      NodeSourceOscilSineScalajs
     }
 
     def currentTime: Double = System.currentTimeMillis().toDouble / 1000
