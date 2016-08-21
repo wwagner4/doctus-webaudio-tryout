@@ -82,6 +82,11 @@ object NodeFrameworkTryout extends App {
       println("stopped %s at %3.2f" format (this, time))
     }
 
+    def frequency: ControlParam = {
+      println("accessing param 'frequency' of %s" format this)
+      new ControlParam() {}
+    }
+
   }
 
   object AudioContextScalajs extends AudioContext {

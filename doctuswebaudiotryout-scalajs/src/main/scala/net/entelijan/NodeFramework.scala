@@ -37,11 +37,11 @@ trait NodeFilter extends NodeSource {
 }
 
 /**
- * A node that creates a control signal that might be plugged into a
+ * A node that creating a signal that might be plugged into a
  * ControlParam.
  * Examples: LFO, ADSR, ...
  */
-trait NodeControlParam {
+trait NodeControl {
 
 }
 
@@ -50,7 +50,7 @@ trait NodeControlParam {
  * Usually parts of Nodes.
  * Examples: Gain of a sine generator, cutoff frequency of a filter, ...
  */
-trait ContolParam {
+trait ControlParam {
 
 }
 
@@ -83,6 +83,8 @@ trait NodeSinkLineOut extends NodeSink {
  * A sine generator
  */
 trait NodeSourceOscilSine extends NodeSource with StartStoppable {
+  
+  def frequency: ControlParam 
 
 }
 
