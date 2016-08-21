@@ -21,7 +21,7 @@ trait NodeSource {
 
 /**
  * Consumes a sound signal.
- * Examples: Loudspeakes, Files, ...
+ * Examples: Loudspeakers, Files, ...
  */
 trait NodeSink {
 
@@ -87,6 +87,15 @@ trait NodeSourceOscilSine extends NodeSource with StartStoppable {
 }
 
 /**
+ * Component for gain control
+ */
+trait NodeFilterGain extends NodeFilter {
+
+}
+
+
+
+/**
  * Creates audio components and provides auxiliary functions
  */
 trait AudioContext {
@@ -94,6 +103,8 @@ trait AudioContext {
   def createNodeSinkLineOut: NodeSinkLineOut
 
   def createNodeSourceOscilSine: NodeSourceOscilSine
+
+  def createNodeFilterGain: NodeFilter
 
   /**
    * The current time in seconds
