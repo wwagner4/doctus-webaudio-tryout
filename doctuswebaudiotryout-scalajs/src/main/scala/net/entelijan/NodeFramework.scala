@@ -66,7 +66,7 @@ trait Startable {
 /**
  * Starts and stops a task at a defined time
  */
-trait StartStopable extends Startable {
+trait StartStoppable extends Startable {
 
   def stop(time: Double): Unit
 
@@ -82,7 +82,7 @@ trait NodeSinkLineOut extends NodeSink {
 /**
  * A sine generator
  */
-trait NodeSourceOscilSine extends NodeSource with StartStopable {
+trait NodeSourceOscilSine extends NodeSource with StartStoppable {
 
 }
 
@@ -95,6 +95,9 @@ trait AudioContext {
 
   def createNodeSourceOscilSine: NodeSourceOscilSine
 
+  /**
+   * The current time in seconds
+   */
   def currentTime: Double
 
 }
