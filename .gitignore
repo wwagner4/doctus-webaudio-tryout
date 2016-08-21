@@ -20,4 +20,4 @@ staging/
 
 bin/
 .settings/
-
+.DS_Store
