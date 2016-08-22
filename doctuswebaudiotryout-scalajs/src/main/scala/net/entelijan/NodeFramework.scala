@@ -43,6 +43,10 @@ trait NodeFilter extends NodeSource {
  */
 trait NodeControl {
 
+  def connect(param: ControlParam): Unit
+  
+  def `>-`(param: ControlParam): Unit = connect(param)
+
 }
 
 /**
@@ -88,6 +92,14 @@ trait NodeSourceOscilSine extends NodeSource with StartStoppable {
 
 }
 
+trait NodeControlConstant extends NodeControl {
+  
+  def value: Double
+  
+  def value_=(v: Double): Unit
+  
+}
+
 /**
  * Component for gain control
  */
@@ -106,7 +118,9 @@ trait AudioContext {
 
   def createNodeSourceOscilSine: NodeSourceOscilSine
 
-  def createNodeFilterGain: NodeFilter
+  def createNodeFilterGain: NodeFilterGain
+  
+  def createNodeControlConstant: NodeControlConstant
 
   /**
    * The current time in seconds

@@ -34,8 +34,11 @@ object NodeFrameworkTryout extends App {
 
   def d: Unit = {
     val src = ctx.createNodeSourceOscilSine
+    val freq = ctx.createNodeControlConstant
+    freq.value = 444
     val sink = ctx.createNodeSinkLineOut
 
+    freq.connect(src.frequency)
     src >- sink
 
     val now = ctx.currentTime
@@ -46,11 +49,11 @@ object NodeFrameworkTryout extends App {
 
   d
 
-  case object NodeSinkLineOutScalajs extends NodeSinkLineOut {
+  case class NodeSinkLineOutScalajs() extends NodeSinkLineOut {
 
   }
 
-  case object NodeFilterGainScalajs extends NodeFilterGain {
+  case class NodeFilterGainScalajs() extends NodeFilterGain {
 
     def connect(filter: NodeFilter): NodeSource = {
       println("connected %s to %s" format (this, filter))
@@ -63,7 +66,7 @@ object NodeFrameworkTryout extends App {
 
   }
 
-  case object NodeSourceOscilSineScalajs extends NodeSourceOscilSine {
+  case class NodeSourceOscilSineScalajs() extends NodeSourceOscilSine {
 
     def connect(filter: NodeFilter): NodeSource = {
       println("connected %s to %s" format (this, filter))
@@ -89,18 +92,42 @@ object NodeFrameworkTryout extends App {
 
   }
 
+  case class NodeControlConstantScalajs() extends NodeControlConstant {
+
+    var _value = Option.empty[Double] 
+    
+    def value: Double = {
+      println("get 'value' = %s on %s" format (_value, this))
+      _value.get
+    }
+
+    def value_=(v: Double): Unit = {
+      println("set 'value' = %.2f on %s" format (v, this))
+      _value = Some(v)
+    }
+
+    def connect(param: ControlParam): Unit = {
+      println("connected %s to ControlParam: %s" format (this, param))
+    }
+    
+  }
+
   object AudioContextScalajs extends AudioContext {
 
     def createNodeSinkLineOut: NodeSinkLineOut = {
-      NodeSinkLineOutScalajs
+      NodeSinkLineOutScalajs()
     }
 
     def createNodeSourceOscilSine: NodeSourceOscilSine = {
-      NodeSourceOscilSineScalajs
+      NodeSourceOscilSineScalajs()
     }
 
     def createNodeFilterGain: NodeFilterGain = {
-      NodeFilterGainScalajs
+      NodeFilterGainScalajs()
+    }
+
+    def createNodeControlConstant: NodeControlConstant = {
+      NodeControlConstantScalajs()
     }
 
     def currentTime: Double = System.currentTimeMillis().toDouble / 1000
