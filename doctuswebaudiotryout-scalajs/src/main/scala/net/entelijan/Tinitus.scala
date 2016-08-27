@@ -2,38 +2,43 @@
 
 package net.entelijan
 
-import org.scalajs.dom.AudioContext
+import doctus.sound.DoctusSoundAudioContext
 
 /**
   * Plays a slowly increasing and releasing sine wave
   */
-case class Tinitus(ctx: AudioContext) {
+case class Tinitus(ctx: DoctusSoundAudioContext) {
 
-  val maxGain = 0.3
+  // Init nodes
+  val freq = ctx.createNodeControlConstant
+  freq.value = 333.0
 
-  val oscil = ctx.createOscillator()
-  oscil.frequency.value = 333.0
+  val oscil = ctx.createNodeSourceOscilSine
+  freq >- oscil.frequency
 
-  val gain = ctx.createGain()
-  gain.gain.value = 0.0
+  val gainValue = ctx.createNodeControlAdsr
+  gainValue.attack = 2.0
+  gainValue.decay = 0.0
+  gainValue.sustain = 1.0
+  gainValue.release = 2.0
 
-  oscil.connect(gain)
-  gain.connect(ctx.destination)
-  oscil.start()
+  val gain = ctx.createNodeFilterGain
+  gainValue >- gain.gain
+
+  // Connect nodes
+  oscil >- gain >- ctx.createNodeSinkLineOut
+
+  // Start nodes
+  oscil.start(0.0)
 
   def start: Unit = {
     val t = ctx.currentTime
-    gain.gain.cancelScheduledValues(0)
-    gain.gain.setValueAtTime(gain.gain.value, t)
-    gain.gain.linearRampToValueAtTime(maxGain, t + 2)
+    gainValue.start(t)
   }
 
   def stop: Unit = {
-    val v = gain.gain.value
     val t = ctx.currentTime
-    gain.gain.cancelScheduledValues(0)
-    gain.gain.setValueAtTime(v, t)
-    gain.gain.linearRampToValueAtTime(0.0, t + 2)
+    gainValue.stop(t)
   }
 
 }

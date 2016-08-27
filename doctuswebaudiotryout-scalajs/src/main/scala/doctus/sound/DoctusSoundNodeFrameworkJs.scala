@@ -6,6 +6,11 @@ case class NodeSinkLineOutScalajs() extends NodeSinkLineOut {
 
 case class NodeFilterGainScalajs() extends NodeFilterGain {
 
+  val _gainParam = new ControlParam {
+
+
+  }
+
   def connect(filter: NodeFilter): NodeSource = {
     println("connected %s to %s" format (this, filter))
     this
@@ -15,6 +20,9 @@ case class NodeFilterGainScalajs() extends NodeFilterGain {
     println("connected %s to %s" format (this, sink))
   }
 
+  def gain: ControlParam = {
+    _gainParam
+  }
 }
 
 case class NodeSourceOscilSineScalajs() extends NodeSourceOscilSine {
@@ -72,30 +80,34 @@ case class NodeControlAdsrScalajs() extends NodeControlAdsr {
 
   def attack: Double = _attack
 
-  def attack_=:(v: Double): Unit = {
-    require(v >= 0.0)
+  def attack_=(v: Double): Unit = {
+    require(v >= 0.0, "attack value (%.2f) must be >= 0.0" format v)
     _attack = v
+    println("set attack to %.2f" format v)
   }
 
   def decay: Double = _decay
 
-  def decay_=:(v: Double): Unit = {
-    require(v >= 0.0)
+  def decay_=(v: Double): Unit = {
+    require(v >= 0.0, "decay value (%.2f) must be >= 0.0" format v)
     _decay = v
+    println("set decay to %.2f" format v)
   }
 
   def sustain: Double = _sustain
 
-  def sustain_=:(v: Double): Unit = {
-    require(v >= 0.0 && v <= 1.0)
+  def sustain_=(v: Double): Unit = {
+    require(v >= 0.0 && v <= 1.0, "sustain value (%.2f) must be >= 0.0 and <= 1.0" format v)
     _sustain = v
+    println("set sustain to %.2f" format v)
   }
 
   def release: Double = _release
 
-  def release_=:(v: Double): Unit = {
-    require(v >= 0.0 && v <= 1.0)
+  def release_=(v: Double): Unit = {
+    require(v >= 0.0, "decay value (%.2f) must be >= 0.0" format v)
     _release = v
+    println("set release to %.2f" format v)
   }
 
   def connect(param: ControlParam): Unit = {
@@ -132,7 +144,6 @@ object DoctusSoundAudioContextScalajs extends DoctusSoundAudioContext {
   def createNodeControlAdsr: NodeControlAdsr = {
     NodeControlAdsrScalajs()
   }
-
 
   def currentTime: Double = System.currentTimeMillis().toDouble / 1000
 

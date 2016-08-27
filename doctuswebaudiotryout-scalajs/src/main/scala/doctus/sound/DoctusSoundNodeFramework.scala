@@ -120,7 +120,7 @@ trait NodeControlAdsr extends NodeControl with StartStoppable {
     * Range: >= 0.0
     * Default: 1.0 second
     */
-  def attack_=:(v: Double)
+  def attack_=(v: Double): Unit
 
   def attack: Double
 
@@ -129,7 +129,7 @@ trait NodeControlAdsr extends NodeControl with StartStoppable {
     * Range: >= 0.0
     * Default: 1.0 second
     */
-  def decay_=:(v: Double)
+  def decay_=(v: Double): Unit
 
   def decay: Double
 
@@ -138,7 +138,7 @@ trait NodeControlAdsr extends NodeControl with StartStoppable {
     * Range: 0.0 <= sustain <= 1.0
     * Default: 0.5
     */
-  def sustain_=:(v: Double)
+  def sustain_=(v: Double): Unit
 
   def sustain: Double
 
@@ -147,7 +147,7 @@ trait NodeControlAdsr extends NodeControl with StartStoppable {
     * Range: >= 0.0
     * Default: 1.0
     */
-  def release_=:(v: Double)
+  def release_=(v: Double): Unit
 
   def release: Double
 
@@ -157,6 +157,8 @@ trait NodeControlAdsr extends NodeControl with StartStoppable {
   * Component for gain control
   */
 trait NodeFilterGain extends NodeFilter {
+
+  def gain: ControlParam
 
 }
 
@@ -176,6 +178,8 @@ trait DoctusSoundAudioContext {
   def createNodeControlConstant: NodeControlConstant
 
   def createNodeControlAdsr: NodeControlAdsr
+
+  def currentTime: Double
 
 }
 
