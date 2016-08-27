@@ -31,7 +31,7 @@ trait NodeSink {
 /**
   * Consumes a sound signal, transforms it and
   * provides the transformed signal like a NodeSource
-  * Examples: Gaincontrol, filters, ...
+  * Examples: Gain control, filters, ...
   */
 trait NodeFilter extends NodeSource {
 
@@ -110,7 +110,7 @@ trait NodeControlConstant extends NodeControl {
 
 
 /**
-  * Envelope generater controlled by four parameters.
+  * Envelope generator controlled by four parameters.
   * For details see: https://en.wikipedia.org/wiki/Synthesizer#Attack_Decay_Sustain_Release_.28ADSR.29_envelope
   */
 trait NodeControlAdsr extends NodeControl with StartStoppable {

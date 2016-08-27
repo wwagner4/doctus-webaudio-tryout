@@ -23,9 +23,9 @@ class DoctusSoundJs extends DoctusSound {
   val metalTryout = MetalTryout(ctx)
   val filterTryout = FilterTryout(ctx)
 
-  def tinitusStart(): Unit = tinitus.start
+  def tinitusStart(): Unit = tinitus.start()
 
-  def tinitusStop(): Unit = tinitus.stop
+  def tinitusStop(): Unit = tinitus.stop()
 
   def noiseWhiteStart(nineth: Nineth): Unit = noiseWhite.start(ctx.currentTime, nineth)
 

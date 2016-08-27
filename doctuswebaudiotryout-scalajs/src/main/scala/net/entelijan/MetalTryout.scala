@@ -65,8 +65,9 @@ case class NodeMetal(ctx: AudioContext) extends NodeOut with NodeStartStoppable 
 
   def nodeOut: AudioNode = adsr.nodeOut
 
-  def frequency(f: Double, time: Double): Unit = {
-    val hs = SoundUtil.metalHarmonics(f, cnt)
+  def frequency(freq: Double, time: Double): Unit = {
+    val hs = SoundUtil.metalHarmonics(freq, cnt)
+    //noinspection VariablePatternShadow
     oscils.zip(hs) foreach { case (o, f) => o.oscil.frequency.setValueAtTime(f, time)}
   }
 

@@ -31,12 +31,12 @@ case class Tinitus(ctx: DoctusSoundAudioContext) {
   // Start nodes
   oscil.start(0.0)
 
-  def start: Unit = {
+  def start(): Unit = {
     val t = ctx.currentTime
     gainValue.start(t)
   }
 
-  def stop: Unit = {
+  def stop(): Unit = {
     val t = ctx.currentTime
     gainValue.stop(t)
   }

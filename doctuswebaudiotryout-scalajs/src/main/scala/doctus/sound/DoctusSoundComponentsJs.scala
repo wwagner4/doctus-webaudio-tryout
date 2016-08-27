@@ -39,7 +39,7 @@ case class NodeTremolo(ctx: AudioContext) extends NodeInOut with NodeStartStoppa
   oscil.frequency.value = 0.5
 
   oscil.connect(amplGain)
-  // The output of the oscil is added to the value previously set by amplGain.gain.value
+  // The output of the oscillator is added to the value previously set by 'amplGain.gain.value'
   amplGain.connect(inOutGain.gain)
 
   def propFrequency: AudioParam = oscil.frequency
