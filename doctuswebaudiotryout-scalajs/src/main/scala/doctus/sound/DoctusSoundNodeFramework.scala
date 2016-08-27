@@ -93,11 +93,63 @@ trait NodeSourceOscilSine extends NodeSource with StartStoppable {
 
 }
 
+/**
+  * Provides always a constant value.
+  */
 trait NodeControlConstant extends NodeControl {
 
+  /**
+    * @return The constant value provided
+    *         Default: 1.0
+    */
   def value: Double
 
   def value_=(v: Double): Unit
+
+}
+
+
+/**
+  * Envelope generater controlled by four parameters.
+  * For details see: https://en.wikipedia.org/wiki/Synthesizer#Attack_Decay_Sustain_Release_.28ADSR.29_envelope
+  */
+trait NodeControlAdsr extends NodeControl with StartStoppable {
+
+  /**
+    * Attack time in seconds.
+    * Range: >= 0.0
+    * Default: 1.0 second
+    */
+  def attack_=:(v: Double)
+
+  def attack: Double
+
+  /**
+    * Decay time in seconds.
+    * Range: >= 0.0
+    * Default: 1.0 second
+    */
+  def decay_=:(v: Double)
+
+  def decay: Double
+
+  /**
+    * Sustain level relative to the 1.0.
+    * Range: 0.0 <= sustain <= 1.0
+    * Default: 0.5
+    */
+  def sustain_=:(v: Double)
+
+  def sustain: Double
+
+  /**
+    * Release time in seconds.
+    * Range: >= 0.0
+    * Default: 1.0
+    */
+  def release_=:(v: Double)
+
+  def release: Double
 
 }
 
@@ -122,6 +174,8 @@ trait DoctusSoundAudioContext {
   def createNodeFilterGain: NodeFilterGain
 
   def createNodeControlConstant: NodeControlConstant
+
+  def createNodeControlAdsr: NodeControlAdsr
 
 }
 
