@@ -1,10 +1,12 @@
 package doctus.sound
 
-case class NodeSinkLineOutScalajs() extends NodeSinkLineOut {
+import org.scalajs.dom.AudioContext
+
+case class NodeSinkLineOutScalajs(waCtx: AudioContext) extends NodeSinkLineOut {
 
 }
 
-case class NodeFilterGainScalajs() extends NodeFilterGain {
+case class NodeFilterGainScalajs(waCtx: AudioContext) extends NodeFilterGain {
 
   val _gainParam = new ControlParam {
 
@@ -25,7 +27,7 @@ case class NodeFilterGainScalajs() extends NodeFilterGain {
   }
 }
 
-case class NodeSourceOscilSineScalajs() extends NodeSourceOscilSine {
+case class NodeSourceOscilSineScalajs(waCtx: AudioContext) extends NodeSourceOscilSine {
 
   def connect(filter: NodeFilter): NodeSource = {
     println("connected %s to %s" format (this, filter))
@@ -51,7 +53,7 @@ case class NodeSourceOscilSineScalajs() extends NodeSourceOscilSine {
 
 }
 
-case class NodeControlConstantScalajs(value: Double) extends NodeControlConstant {
+case class NodeControlConstantScalajs(value: Double)(waCtx: AudioContext) extends NodeControlConstant {
 
   def connect(param: ControlParam): Unit = {
     println("connected %s to ControlParam: %s" format (this, param))
@@ -59,7 +61,7 @@ case class NodeControlConstantScalajs(value: Double) extends NodeControlConstant
 
 }
 
-case class NodeControlAdsrScalajs(attack: Double, decay: Double, sustain: Double, release: Double) extends NodeControlAdsr {
+case class NodeControlAdsrScalajs(attack: Double, decay: Double, sustain: Double, release: Double)(waCtx: AudioContext) extends NodeControlAdsr {
 
   def connect(param: ControlParam): Unit = {
     println("connected control node adsr %s to %s" format(this, param))
@@ -74,29 +76,29 @@ case class NodeControlAdsrScalajs(attack: Double, decay: Double, sustain: Double
   }
 }
 
-object DoctusSoundAudioContextScalajs extends DoctusSoundAudioContext {
+case class DoctusSoundAudioContextScalajs(waCtx: AudioContext) extends DoctusSoundAudioContext {
 
   def createNodeSinkLineOut: NodeSinkLineOut = {
-    NodeSinkLineOutScalajs()
+    NodeSinkLineOutScalajs(waCtx)
   }
 
   def createNodeSourceOscilSine: NodeSourceOscilSine = {
-    NodeSourceOscilSineScalajs()
+    NodeSourceOscilSineScalajs(waCtx)
   }
 
   def createNodeFilterGain: NodeFilterGain = {
-    NodeFilterGainScalajs()
+    NodeFilterGainScalajs(waCtx)
   }
 
   def createNodeControlConstant(value: Double): NodeControlConstant = {
-    NodeControlConstantScalajs(value)
+    NodeControlConstantScalajs(value)(waCtx)
   }
 
   def createNodeControlAdsr(attack: Double, decay: Double, sustain: Double, release: Double): NodeControlAdsr = {
-    NodeControlAdsrScalajs(attack, decay, sustain, release)
+    NodeControlAdsrScalajs(attack, decay, sustain, release)(waCtx)
   }
 
-  def currentTime: Double = System.currentTimeMillis().toDouble / 1000
+  def currentTime: Double = waCtx.currentTime
 
 }
 

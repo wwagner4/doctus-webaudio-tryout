@@ -12,7 +12,7 @@ class DoctusSoundJs extends DoctusSound {
   import org.scalajs.dom.AudioContext
 
   val ctx = new AudioContext
-  val ctx1 = DoctusSoundAudioContextScalajs
+  val ctx1 = DoctusSoundAudioContextScalajs(ctx)
 
   val tinitus = Tinitus(ctx1)
 
