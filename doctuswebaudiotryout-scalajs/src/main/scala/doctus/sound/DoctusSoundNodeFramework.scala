@@ -104,8 +104,6 @@ trait NodeControlConstant extends NodeControl {
     */
   def value: Double
 
-  def value_=(v: Double): Unit
-
 }
 
 
@@ -116,39 +114,31 @@ trait NodeControlConstant extends NodeControl {
 trait NodeControlAdsr extends NodeControl with StartStoppable {
 
   /**
-    * Attack time in seconds.
-    * Range: >= 0.0
-    * Default: 1.0 second
+    * @return Attack time in seconds.
+    *         Range: >= 0.0
+    *         Default: 1.0 second
     */
-  def attack_=(v: Double): Unit
-
   def attack: Double
 
   /**
-    * Decay time in seconds.
-    * Range: >= 0.0
-    * Default: 1.0 second
+    * @return Decay time in seconds.
+    *         Range: >= 0.0
+    *         Default: 1.0 second
     */
-  def decay_=(v: Double): Unit
-
   def decay: Double
 
   /**
-    * Sustain level relative to the 1.0.
-    * Range: 0.0 <= sustain <= 1.0
-    * Default: 0.5
+    * @return Sustain level relative to the 1.0.
+    *         Range: 0.0 <= sustain <= 1.0
+    *         Default: 0.5
     */
-  def sustain_=(v: Double): Unit
-
   def sustain: Double
 
   /**
-    * Release time in seconds.
-    * Range: >= 0.0
-    * Default: 1.0
+    * @return Release time in seconds.
+    *         Range: >= 0.0
+    *         Default: 1.0
     */
-  def release_=(v: Double): Unit
-
   def release: Double
 
 }
@@ -175,9 +165,9 @@ trait DoctusSoundAudioContext {
 
   def createNodeFilterGain: NodeFilterGain
 
-  def createNodeControlConstant: NodeControlConstant
+  def createNodeControlConstant(value: Double): NodeControlConstant
 
-  def createNodeControlAdsr: NodeControlAdsr
+  def createNodeControlAdsr(attack: Double, decay: Double, sustain: Double, release: Double): NodeControlAdsr
 
   def currentTime: Double
 

@@ -10,17 +10,12 @@ import doctus.sound.DoctusSoundAudioContext
 case class Tinitus(ctx: DoctusSoundAudioContext) {
 
   // Init nodes
-  val freq = ctx.createNodeControlConstant
-  freq.value = 333.0
+  val freq = ctx.createNodeControlConstant(333.0)
 
   val oscil = ctx.createNodeSourceOscilSine
   freq >- oscil.frequency
 
-  val gainValue = ctx.createNodeControlAdsr
-  gainValue.attack = 2.0
-  gainValue.decay = 0.0
-  gainValue.sustain = 1.0
-  gainValue.release = 2.0
+  val gainValue = ctx.createNodeControlAdsr(2.0, 0.0, 1.0, 2.0)
 
   val gain = ctx.createNodeFilterGain
   gainValue >- gain.gain
