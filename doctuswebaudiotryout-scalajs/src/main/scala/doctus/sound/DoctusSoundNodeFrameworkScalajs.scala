@@ -51,7 +51,6 @@ case class NodeFilterGainScalajs(waCtx: AudioContext, initialGain: Double) exten
       case node: AudioNodeAware => {
         val src = node.audioNode
         waGain.connect(src)
-        println("NodeFilterGainScalajs: connected waGain(%s) to waFilter(%s)" format (waGain, src))
       }
       case _ => throw new IllegalStateException("filter %s is not AudioNodeAware" format filter)
     }
@@ -63,7 +62,6 @@ case class NodeFilterGainScalajs(waCtx: AudioContext, initialGain: Double) exten
       case node: AudioNodeAware => {
         val src = node.audioNode
         waGain.connect(src)
-        println("NodeFilterGainScalajs: connected waGain(%s) to waSink(%s)" format (waGain, src))
       }
       case _ => throw new IllegalStateException("sink %s is not AudioNodeAware" format sink)
     }
@@ -87,6 +85,7 @@ case class NodeSourceOscilSineScalajs(waCtx: AudioContext) extends NodeSourceOsc
         case _ => throw new IllegalStateException("control node %s is not a WebAudioParamHolder" format nodeControl)
       }
     }
+
     override def toString: String = "NodeSourceOscilSineScalajs paramFrequency"
   }
 
@@ -95,7 +94,6 @@ case class NodeSourceOscilSineScalajs(waCtx: AudioContext) extends NodeSourceOsc
       case node: AudioNodeAware => {
         val waFilter = node.audioNode
         waOscil.connect(waFilter)
-        println("NodeSourceOscilSineScalajs: connected waOscil(%s) to waFilter(%s)" format (waOscil, waFilter))
       }
       case _ => throw new IllegalStateException("filter %s is not AudioNodeAware" format filter)
     }
@@ -107,7 +105,6 @@ case class NodeSourceOscilSineScalajs(waCtx: AudioContext) extends NodeSourceOsc
       case node: AudioNodeAware => {
         val waSink = node.audioNode
         waOscil.connect(waSink)
-        println("NodeSourceOscilSineScalajs: connected waOscil(%s) to waSink(%s)" format (waOscil, waSink))
       }
       case _ => throw new IllegalStateException("sink %s is not AudioNodeAware" format sink)
     }
@@ -115,12 +112,10 @@ case class NodeSourceOscilSineScalajs(waCtx: AudioContext) extends NodeSourceOsc
 
   def start(time: Double): Unit = {
     waOscil.start(time)
-    println("started %s at %3.2f" format(this, time))
   }
 
   def stop(time: Double): Unit = {
     waOscil.start(time)
-    println("stopped %s at %3.2f" format(this, time))
   }
 
   def frequency: ControlParam = paramFrequency
@@ -130,7 +125,7 @@ case class NodeSourceOscilSineScalajs(waCtx: AudioContext) extends NodeSourceOsc
 }
 
 case class NodeControlConstantScalajs(value: Double)(waCtx: AudioContext)
-  extends NodeControlConstant with WebAudioParamHolder{
+  extends NodeControlConstant with WebAudioParamHolder {
 
   def connect(param: ControlParam): Unit = {
     param match {
@@ -141,7 +136,6 @@ case class NodeControlConstantScalajs(value: Double)(waCtx: AudioContext)
 
   override def addAudioParam(waParam: AudioParam): Unit = {
     waParam.value = value
-    println("NodeControlConstantScalajs: set value %.2f to %s" format(value, waParam))
   }
 
 }
@@ -161,32 +155,20 @@ case class NodeControlAdsrScalajs(attack: Double, decay: Double, sustain: Double
   }
 
   def stop(time: Double): Unit = {
-    if (waParamList.isEmpty) {
-      println("stopped control node adsr NO PARAMS !!!")
-    } else {
-      println("stopped control node adsr at %.2f" format time)
-      waParamList.foreach { p =>
-        println("stopped control node adsr for %s" format p)
-        p.cancelScheduledValues(0)
-        p.setValueAtTime(p.value, time)
-        p.linearRampToValueAtTime(0.0, time + release)
-      }
+    waParamList.foreach { p =>
+      p.cancelScheduledValues(0)
+      p.setValueAtTime(p.value, time)
+      p.linearRampToValueAtTime(0.0, time + release)
     }
   }
 
   def start(time: Double): Unit = {
-    if (waParamList.isEmpty) {
-      println("started control node adsr NO PARAMS !!!")
-    } else {
-      println("started control node adsr at %.2f" format time)
-      waParamList.foreach { p =>
-        println("started control node adsr for %s" format p)
-        val currentValue = p.value
-        p.cancelScheduledValues(0)
-        p.setValueAtTime(currentValue, time)
-        p.linearRampToValueAtTime(valMax, time + attack)
-        p.linearRampToValueAtTime(sustain * valMax, time + attack + decay)
-      }
+    waParamList.foreach { p =>
+      val currentValue = p.value
+      p.cancelScheduledValues(0)
+      p.setValueAtTime(currentValue, time)
+      p.linearRampToValueAtTime(valMax, time + attack)
+      p.linearRampToValueAtTime(sustain * valMax, time + attack + decay)
     }
   }
 
