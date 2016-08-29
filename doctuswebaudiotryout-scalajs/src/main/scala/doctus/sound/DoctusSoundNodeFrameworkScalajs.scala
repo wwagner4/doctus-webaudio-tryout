@@ -80,7 +80,9 @@ case class NodeSourceOscilSineScalajs(waCtx: AudioContext) extends NodeSourceOsc
   val paramFrequency = new ControlParam with ConnectableParam {
     def onConnect: (NodeControl) => Unit = nodeControl => {
       nodeControl match {
-        case holder: WebAudioParamHolder => holder.addAudioParam(waOscil.frequency)
+        case holder: WebAudioParamHolder => {
+          holder.addAudioParam(waOscil.frequency)
+        }
         case _ => throw new IllegalStateException("control node %s is not a WebAudioParamHolder" format nodeControl)
       }
     }
@@ -134,7 +136,10 @@ case class NodeControlConstantScalajs(value: Double)(waCtx: AudioContext)
     }
   }
 
-  override def addAudioParam(waParam: AudioParam): Unit = waParam.value = value
+  override def addAudioParam(waParam: AudioParam): Unit = {
+    waParam.value = value
+    println("NodeControlConstantScalajs: set value %.2f to %s" format(value, waParam))
+  }
 
 }
 
