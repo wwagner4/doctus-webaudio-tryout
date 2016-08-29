@@ -181,8 +181,9 @@ case class NodeControlAdsrScalajs(attack: Double, decay: Double, sustain: Double
       println("started control node adsr at %.2f" format time)
       waParamList.foreach { p =>
         println("started control node adsr for %s" format p)
+        val currentValue = p.value
         p.cancelScheduledValues(0)
-        p.setValueAtTime(0, time)
+        p.setValueAtTime(currentValue, time)
         p.linearRampToValueAtTime(valMax, time + attack)
         p.linearRampToValueAtTime(sustain * valMax, time + attack + decay)
       }
