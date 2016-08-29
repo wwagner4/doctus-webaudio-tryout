@@ -46,18 +46,24 @@ case class NodeFilterGainScalajs(waCtx: AudioContext) extends NodeFilterGain wit
   }
 
   def connect(filter: NodeFilter): NodeSource = {
-    println("connecting %s to %s" format(this, filter))
     filter match {
-      case node: AudioNodeAware => waGain.connect(node.audioNode)
+      case node: AudioNodeAware => {
+        val src = node.audioNode
+        waGain.connect(src)
+        println("NodeFilterGainScalajs: connected waGain(%s) to waFilter(%s)" format (waGain, src))
+      }
       case _ => throw new IllegalStateException("filter %s is not AudioNodeAware" format filter)
     }
     this
   }
 
   def connect(sink: NodeSink): Unit = {
-    println("connecting %s to %s" format(this, sink))
     sink match {
-      case node: AudioNodeAware => waGain.connect(node.audioNode)
+      case node: AudioNodeAware => {
+        val src = node.audioNode
+        waGain.connect(src)
+        println("NodeFilterGainScalajs: connected waGain(%s) to waSink(%s)" format (waGain, src))
+      }
       case _ => throw new IllegalStateException("sink %s is not AudioNodeAware" format sink)
     }
   }
@@ -82,18 +88,24 @@ case class NodeSourceOscilSineScalajs(waCtx: AudioContext) extends NodeSourceOsc
   }
 
   def connect(filter: NodeFilter): NodeSource = {
-    println("connecting %s to %s" format(this, filter))
     filter match {
-      case node: AudioNodeAware => waOscil.connect(node.audioNode)
+      case node: AudioNodeAware => {
+        val waFilter = node.audioNode
+        waOscil.connect(waFilter)
+        println("NodeSourceOscilSineScalajs: connected waOscil(%s) to waFilter(%s)" format (waOscil, waFilter))
+      }
       case _ => throw new IllegalStateException("filter %s is not AudioNodeAware" format filter)
     }
     filter
   }
 
   def connect(sink: NodeSink): Unit = {
-    println("connecting %s to %s" format(this, sink))
     sink match {
-      case node: AudioNodeAware => waOscil.connect(node.audioNode)
+      case node: AudioNodeAware => {
+        val waSink = node.audioNode
+        waOscil.connect(waSink)
+        println("NodeSourceOscilSineScalajs: connected waOscil(%s) to waSink(%s)" format (waOscil, waSink))
+      }
       case _ => throw new IllegalStateException("sink %s is not AudioNodeAware" format sink)
     }
   }
@@ -116,7 +128,6 @@ case class NodeControlConstantScalajs(value: Double)(waCtx: AudioContext)
   extends NodeControlConstant with WebAudioParamHolder{
 
   def connect(param: ControlParam): Unit = {
-    println("connecting control node constant %s to ControlParam: %s" format(this, param))
     param match {
       case connectable: ConnectableParam => connectable.onConnect(this)
       case _ => throw new IllegalStateException("control pram %s is not connectable" format param)
@@ -135,7 +146,6 @@ case class NodeControlAdsrScalajs(attack: Double, decay: Double, sustain: Double
   var waParamList = List.empty[AudioParam]
 
   def connect(param: ControlParam): Unit = {
-    println("connecting control node adsr %s to %s" format(this, param))
     param match {
       case connectable: ConnectableParam => connectable.onConnect(this)
       case _ => throw new IllegalStateException("control pram %s is not connectable" format param)
