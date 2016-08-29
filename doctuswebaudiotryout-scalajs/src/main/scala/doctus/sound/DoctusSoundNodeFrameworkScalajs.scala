@@ -32,15 +32,16 @@ case class NodeFilterGainScalajs(waCtx: AudioContext) extends NodeFilterGain wit
 
   val waGain = waCtx.createGain()
 
-  val gainParam = new ConnectableParam with ControlParam {
+  val paramGain = new ConnectableParam with ControlParam {
 
     def onConnect = nodeControl => {
-      println("connected control node %s to gain param" format nodeControl)
       nodeControl match {
         case holder: WebAudioParamHolder => holder.addAudioParam(waGain.gain)
         case _ => throw new IllegalStateException("control node %s is not a WebAudioParamHolder" format nodeControl)
       }
     }
+
+    override def toString: String = "NodeFilterGainScalajs paramGain"
 
   }
 
@@ -61,8 +62,7 @@ case class NodeFilterGainScalajs(waCtx: AudioContext) extends NodeFilterGain wit
     }
   }
 
-  def gain: ControlParam = gainParam
-
+  def gain: ControlParam = paramGain
 
   def audioNode: AudioNode = waGain
 }
@@ -78,6 +78,7 @@ case class NodeSourceOscilSineScalajs(waCtx: AudioContext) extends NodeSourceOsc
         case _ => throw new IllegalStateException("control node %s is not a WebAudioParamHolder" format nodeControl)
       }
     }
+    override def toString: String = "NodeSourceOscilSineScalajs paramFrequency"
   }
 
   def connect(filter: NodeFilter): NodeSource = {
@@ -86,7 +87,7 @@ case class NodeSourceOscilSineScalajs(waCtx: AudioContext) extends NodeSourceOsc
       case node: AudioNodeAware => waOscil.connect(node.audioNode)
       case _ => throw new IllegalStateException("filter %s is not AudioNodeAware" format filter)
     }
-    this
+    filter
   }
 
   def connect(sink: NodeSink): Unit = {
@@ -105,10 +106,7 @@ case class NodeSourceOscilSineScalajs(waCtx: AudioContext) extends NodeSourceOsc
     println("stopped %s at %3.2f" format(this, time))
   }
 
-  def frequency: ControlParam = {
-    println("accessing param 'frequency' of %s" format this)
-    paramFrequency
-  }
+  def frequency: ControlParam = paramFrequency
 
   def audioNode: AudioNode = waOscil
 
@@ -118,7 +116,7 @@ case class NodeControlConstantScalajs(value: Double)(waCtx: AudioContext)
   extends NodeControlConstant with WebAudioParamHolder{
 
   def connect(param: ControlParam): Unit = {
-    println("connecting %s to ControlParam: %s" format(this, param))
+    println("connecting control node constant %s to ControlParam: %s" format(this, param))
     param match {
       case connectable: ConnectableParam => connectable.onConnect(this)
       case _ => throw new IllegalStateException("control pram %s is not connectable" format param)
@@ -145,21 +143,31 @@ case class NodeControlAdsrScalajs(attack: Double, decay: Double, sustain: Double
   }
 
   def stop(time: Double): Unit = {
-    println("stopped control node adsr at %.2f" format time)
-    waParamList.foreach { p =>
-      p.cancelScheduledValues(0)
-      p.setValueAtTime(p.value, time)
-      p.linearRampToValueAtTime(0.0, time + release)
+    if (waParamList.isEmpty) {
+      println("stopped control node adsr NO PARAMS !!!")
+    } else {
+      println("stopped control node adsr at %.2f" format time)
+      waParamList.foreach { p =>
+        println("stopped control node adsr for %s" format p)
+        p.cancelScheduledValues(0)
+        p.setValueAtTime(p.value, time)
+        p.linearRampToValueAtTime(0.0, time + release)
+      }
     }
   }
 
   def start(time: Double): Unit = {
-    println("started control node adsr at %.2f" format time)
-    waParamList.foreach { p =>
-      p.cancelScheduledValues(0)
-      p.setValueAtTime(0, time)
-      p.linearRampToValueAtTime(valMax, time + attack)
-      p.linearRampToValueAtTime(sustain * valMax, time + attack + decay)
+    if (waParamList.isEmpty) {
+      println("started control node adsr NO PARAMS !!!")
+    } else {
+      println("started control node adsr at %.2f" format time)
+      waParamList.foreach { p =>
+        println("started control node adsr for %s" format p)
+        p.cancelScheduledValues(0)
+        p.setValueAtTime(0, time)
+        p.linearRampToValueAtTime(valMax, time + attack)
+        p.linearRampToValueAtTime(sustain * valMax, time + attack + decay)
+      }
     }
   }
 
