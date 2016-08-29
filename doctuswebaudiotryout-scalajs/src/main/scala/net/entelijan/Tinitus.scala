@@ -17,7 +17,7 @@ case class Tinitus(ctx: DoctusSoundAudioContext) {
 
   val gainValue = ctx.createNodeControlAdsr(2.0, 0.0, 1.0, 2.0)
 
-  val gain = ctx.createNodeFilterGain
+  val gain = ctx.createNodeFilterGain(0.0)
   gainValue >- gain.gain
 
   // Connect nodes
