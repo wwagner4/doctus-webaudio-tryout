@@ -94,6 +94,15 @@ trait NodeSourceOscilSine extends NodeSource with StartStoppable {
 }
 
 /**
+  * A sine generator
+  */
+trait NodeSourceOscilSawtooth extends NodeSource with StartStoppable {
+
+  def frequency: ControlParam
+
+}
+
+/**
   * Provides always a constant value.
   */
 trait NodeControlConstant extends NodeControl {
@@ -162,6 +171,8 @@ trait DoctusSoundAudioContext {
   def createNodeSinkLineOut: NodeSinkLineOut
 
   def createNodeSourceOscilSine: NodeSourceOscilSine
+
+  def createNodeSourceOscilSawtooth: NodeSourceOscilSine
 
   def createNodeFilterGain: NodeFilterGain
 

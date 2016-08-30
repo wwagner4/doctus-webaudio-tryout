@@ -71,9 +71,26 @@ case class NodeFilterGainScalajs(waCtx: AudioContext) extends NodeFilterGain wit
   def audioNode: AudioNode = waGain
 }
 
-case class NodeSourceOscilSineScalajs(waCtx: AudioContext) extends NodeSourceOscilSine with AudioNodeAware {
+case class NodeSourceOscilSineScalajs(waCtx: AudioContext) extends NodeSourceOscilScalajs {
+
+  def waveType = "sine"
+
+}
+
+case class NodeSourceOscilSawtoothScalajs(waCtx: AudioContext) extends NodeSourceOscilScalajs {
+
+  def waveType = "sawtooth"
+
+}
+
+trait NodeSourceOscilScalajs extends NodeSourceOscilSine with AudioNodeAware {
+
+  def waCtx: AudioContext
+
+  def waveType: String
 
   val waOscil = waCtx.createOscillator()
+  waOscil.`type` = waveType
 
   val paramFrequency = new ControlParam with ConnectableParam {
     def onConnect: (NodeControl) => Unit = nodeControl => {
@@ -185,6 +202,10 @@ case class DoctusSoundAudioContextScalajs(waCtx: AudioContext) extends DoctusSou
 
   def createNodeSourceOscilSine: NodeSourceOscilSine = {
     NodeSourceOscilSineScalajs(waCtx)
+  }
+
+  def createNodeSourceOscilSawtooth: NodeSourceOscilSine = {
+    NodeSourceOscilSawtoothScalajs(waCtx)
   }
 
   def createNodeFilterGain: NodeFilterGain = {
