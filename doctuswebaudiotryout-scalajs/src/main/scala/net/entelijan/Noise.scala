@@ -65,7 +65,7 @@ case class WebAudioUtil(ctx: AudioContext, ran: Random) {
   private lazy val bufferNoiseRed = createBufferNoise(NoiseBrown(ctx.sampleRate))
   private lazy val bufferNoiseBrown = createBufferNoise(NoiseBrown(ctx.sampleRate))
 
-  def createNodeNoise(noiseType: NoiseType): AudioBufferSourceNode = noiseType match {
+  def createNodeNoise: NoiseType => AudioBufferSourceNode = {
     case NT_White => createBufferSourceLooping(bufferNoiseWhite)
     case NT_Pink => createBufferSourceLooping(bufferNoisePink)
     case NT_Red => createBufferSourceLooping(bufferNoiseRed)
