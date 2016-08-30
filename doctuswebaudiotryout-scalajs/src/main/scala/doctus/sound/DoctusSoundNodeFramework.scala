@@ -163,7 +163,7 @@ trait DoctusSoundAudioContext {
 
   def createNodeSourceOscilSine: NodeSourceOscilSine
 
-  def createNodeFilterGain(initialGain: Double): NodeFilterGain
+  def createNodeFilterGain: NodeFilterGain
 
   def createNodeControlConstant(value: Double): NodeControlConstant
 

@@ -28,10 +28,9 @@ case class NodeSinkLineOutScalajs(waCtx: AudioContext) extends NodeSinkLineOut w
 
 }
 
-case class NodeFilterGainScalajs(waCtx: AudioContext, initialGain: Double) extends NodeFilterGain with AudioNodeAware {
+case class NodeFilterGainScalajs(waCtx: AudioContext) extends NodeFilterGain with AudioNodeAware {
 
   val waGain = waCtx.createGain()
-  waGain.gain.value = initialGain
 
   val paramGain = new ConnectableParam with ControlParam {
 
@@ -172,7 +171,10 @@ case class NodeControlAdsrScalajs(attack: Double, decay: Double, sustain: Double
     }
   }
 
-  def addAudioParam(waParam: AudioParam): Unit = waParamList ::= waParam
+  def addAudioParam(waParam: AudioParam): Unit = {
+    waParam.value = 0.0
+    waParamList ::= waParam
+  }
 }
 
 case class DoctusSoundAudioContextScalajs(waCtx: AudioContext) extends DoctusSoundAudioContext {
@@ -185,8 +187,8 @@ case class DoctusSoundAudioContextScalajs(waCtx: AudioContext) extends DoctusSou
     NodeSourceOscilSineScalajs(waCtx)
   }
 
-  def createNodeFilterGain(initialGain: Double): NodeFilterGain = {
-    NodeFilterGainScalajs(waCtx, initialGain)
+  def createNodeFilterGain: NodeFilterGain = {
+    NodeFilterGainScalajs(waCtx)
   }
 
   def createNodeControlConstant(value: Double): NodeControlConstant = {
