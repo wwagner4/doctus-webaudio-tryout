@@ -8,7 +8,9 @@ import doctus.sound.DoctusSoundAudioContext
  * Plays a melody
  * Introduces the concept of an 'instrument'
  */
-case class Melody(ctx: DoctusSoundAudioContext, now: Double) {
+case class Melody(ctx: DoctusSoundAudioContext) {
+  
+  val now = ctx.currentTime
 
   val freqs = List(222.0, 333.0, 444.0, 555.0, 666.0)
   val ran = new java.util.Random()
