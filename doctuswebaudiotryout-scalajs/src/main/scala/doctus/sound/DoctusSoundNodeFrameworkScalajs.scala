@@ -170,21 +170,19 @@ case class NodeControlAdsrScalajs(attack: Double, decay: Double, sustain: Double
     }
   }
 
-  def stop(time: Double): Unit = {
-    waParamList.foreach { p =>
-      p.cancelScheduledValues(0)
-      p.setValueAtTime(p.value, time)
-      p.linearRampToValueAtTime(0.0, time + release)
-    }
-  }
-
   def start(time: Double): Unit = {
     waParamList.foreach { p =>
       val currentValue = p.value
-      p.cancelScheduledValues(0)
+      p.cancelScheduledValues(0.0)
       p.setValueAtTime(currentValue, time)
       p.linearRampToValueAtTime(valMax, time + attack)
       p.linearRampToValueAtTime(sustain * valMax, time + attack + decay)
+    }
+  }
+
+  def stop(time: Double): Unit = {
+    waParamList.foreach { p =>
+      p.linearRampToValueAtTime(0.0, time + release)
     }
   }
 
