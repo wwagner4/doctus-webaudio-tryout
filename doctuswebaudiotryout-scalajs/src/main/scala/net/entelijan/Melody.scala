@@ -11,14 +11,14 @@ import doctus.sound.DoctusSoundAudioContext
 case class Melody(ctx: DoctusSoundAudioContext) {
   
 
-  val freqs = List(222.0, 333.0, 444.0, 555.0, 666.0)
+  val freqs = List(222.0, 333.0, 444.0, 550.0)
   val ran = new java.util.Random()
 
   def start(): Unit = {
     val now = ctx.currentTime
-    for (t <- 0.0 to(2, 0.2)) {
+    for (t <- 0.0 to(7, 0.3)) {
       val i = ran.nextInt(freqs.size)
-      if (ranBoolean(0.6)) {
+      if (ranBoolean(0.8)) {
         playNote(now, t, 0.2, MyInstrument(ctx, freqs(i)))
       }
     }
@@ -46,7 +46,7 @@ trait Instrument {
 case class MyInstrument(ctx: DoctusSoundAudioContext, freq: Double) extends Instrument {
 
   val freqCtrl = ctx.createNodeControlConstant(freq)
-  val adsrCtrl = ctx.createNodeControlAdsr(0.1, 0.0, 1.0, 1.0)
+  val adsrCtrl = ctx.createNodeControlAdsr(0.001, 0.0, 1.0, 3.0)
 
   val oscil = ctx.createNodeSourceOscilSawtooth
   val gain = ctx.createNodeFilterGain
@@ -65,7 +65,7 @@ case class MyInstrument(ctx: DoctusSoundAudioContext, freq: Double) extends Inst
 
   def stop(time: Double): Unit = {
     adsrCtrl.stop(time)
-    val t1 = time + 1.5
+    val t1 = time + 5.0
     oscil.stop(t1)
   }
 
