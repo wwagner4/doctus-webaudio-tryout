@@ -9,17 +9,24 @@ import doctus.sound.DoctusSoundAudioContext
  * Introduces the concept of an 'instrument'
  */
 case class Melody(ctx: DoctusSoundAudioContext) {
-  
 
-  val freqs = List(222.0, 333.0, 444.0, 550.0)
   val ran = new java.util.Random()
+  val freqs0 = List(222.0 * 0.995, 333.0, 444.0, 555.0 * 0.995)
 
   def start(): Unit = {
-    val now = ctx.currentTime
-    for (t <- 0.0 to(7, 0.3)) {
+    val off = 0.3 + ran.nextDouble()
+    val freqs = freqs0.map( _ * off)
+    val startTime = ctx.currentTime
+    for (time <- 0.0 to(5, 0.25)) {
       val i = ran.nextInt(freqs.size)
       if (ranBoolean(0.8)) {
-        playNote(now, t, 0.2, MyInstrument(ctx, freqs(i)))
+        playNote(startTime, time, 0.2, MyInstrument(ctx, freqs(i)))
+      }
+    }
+    for (time <- 2.0 to(8, 0.25)) {
+      val i = ran.nextInt(freqs.size)
+      if (ranBoolean(0.3)) {
+        playNote(startTime + 0.01, time, 0.5, MyInstrument(ctx, freqs(i)))
       }
     }
   }
@@ -28,9 +35,9 @@ case class Melody(ctx: DoctusSoundAudioContext) {
     ran.nextDouble() < p
   }
 
-  private def playNote(now: Double, time: Double, duration: Double, inst: Instrument): Unit = {
-    inst.start(now + time)
-    inst.stop(now + time + duration)
+  private def playNote(startTime: Double, time: Double, duration: Double, inst: Instrument): Unit = {
+    inst.start(startTime + time)
+    inst.stop(startTime + time + duration)
   }
 
 }
@@ -46,7 +53,7 @@ trait Instrument {
 case class MyInstrument(ctx: DoctusSoundAudioContext, freq: Double) extends Instrument {
 
   val freqCtrl = ctx.createNodeControlConstant(freq)
-  val adsrCtrl = ctx.createNodeControlAdsr(0.001, 0.0, 1.0, 3.0)
+  val adsrCtrl = ctx.createNodeControlAdsr(0.001, 0.2, 0.3, 3.0)
 
   val oscil = ctx.createNodeSourceOscilSawtooth
   val gain = ctx.createNodeFilterGain
@@ -65,8 +72,7 @@ case class MyInstrument(ctx: DoctusSoundAudioContext, freq: Double) extends Inst
 
   def stop(time: Double): Unit = {
     adsrCtrl.stop(time)
-    val t1 = time + 5.0
-    oscil.stop(t1)
+    oscil.stop(time + 5.0)
   }
 
 }
