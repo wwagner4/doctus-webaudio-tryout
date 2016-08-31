@@ -39,7 +39,7 @@ class DoctusSoundJs extends DoctusSound {
 
   def noiseBrownRedStop(): Unit = noiseBrownRed.stop(ctx.currentTime)
 
-  def melodyStart(): Unit = Melody(ctx, ctx.currentTime).start()
+  def melodyStart(): Unit = Melody(ctx1, ctx.currentTime).start()
 
   def adsrStart(nineth: Nineth): Unit = adsrTryout.start(nineth)
 

@@ -131,7 +131,7 @@ trait NodeSourceOscilScalajs extends NodeSourceOscilSine with AudioNodeAware {
   }
 
   def stop(time: Double): Unit = {
-    waOscil.start(time)
+    waOscil.stop(time)
   }
 
   def frequency: ControlParam = paramFrequency
