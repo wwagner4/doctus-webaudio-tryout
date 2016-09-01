@@ -10,8 +10,6 @@ package net.entelijan
  */
 case class NoisePink() extends ValueSequence {
 
-  println("Noise Pink")
-
   val maxKey = 0x1f
   val range = 128
   val poles = 6

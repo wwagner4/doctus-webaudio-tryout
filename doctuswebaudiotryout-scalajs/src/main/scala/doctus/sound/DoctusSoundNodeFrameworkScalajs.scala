@@ -1,6 +1,7 @@
 package doctus.sound
 
-import org.scalajs.dom.{AudioContext, AudioNode, AudioParam}
+import net.entelijan.{NoiseBrown, NoisePink, NoiseWhite, ValueSequence}
+import org.scalajs.dom._
 
 trait ConnectableParam {
 
@@ -131,15 +132,56 @@ trait NodeSourceOscilScalajs extends NodeSourceOscil with AudioNodeAware {
 
 }
 
-case class NodeSourceNoiseWhiteScalajs(waCtx: AudioContext) extends NodeSourceNoise {
+case class NodeSourceNoiseWhiteScalajs(waCtx: AudioContext, valueSeq: ValueSequence) extends NodeSourceNoise {
 
-  def connect(filter: NodeFilter): NodeSource = ???
 
-  def connect(sink: NodeSink): Unit = ???
+  private lazy val bufferNoiseWhite = createBufferNoise(valueSeq)
 
-  def start(time: Double): Unit = ???
+  private def createBufferNoise(valSeq: ValueSequence): AudioBuffer = {
+    val bufferSize = waCtx.sampleRate.toInt * 2
+    val buffer = waCtx.createBuffer(1, bufferSize, waCtx.sampleRate.toInt)
+    val channel = buffer.getChannelData(0)
+    for (i <- 0 until bufferSize) {
+      channel.set(i, valSeq.nextValue.toFloat)
+    }
+    buffer
+  }
 
-  def stop(time: Double): Unit = ???
+  private def createBufferSourceLooping(buffer: AudioBuffer): AudioBufferSourceNode = {
+    val bufferSrc = waCtx.createBufferSource()
+    bufferSrc.buffer = buffer
+    bufferSrc.loop = true
+    bufferSrc
+  }
+
+  val waSrc = createBufferSourceLooping(bufferNoiseWhite)
+
+  def connect(filter: NodeFilter): NodeSource = {
+    filter match {
+      case node: AudioNodeAware =>
+        val waFilter = node.audioNode
+        waSrc.connect(waFilter)
+        filter
+      case _ => throw new IllegalStateException("filter %s is not AudioNodeAware" format filter)
+    }
+  }
+
+  def connect(sink: NodeSink): Unit = {
+    sink match {
+      case node: AudioNodeAware =>
+        val waSink = node.audioNode
+        waSrc.connect(waSink)
+      case _ => throw new IllegalStateException("sink %s is not AudioNodeAware" format sink)
+    }
+  }
+
+  def start(time: Double): Unit = {
+    waSrc.start(time)
+  }
+
+  def stop(time: Double): Unit = {
+    waSrc.stop(time)
+  }
 
 }
 
@@ -169,7 +211,7 @@ case class NodeControlAdsrScalajs(attack: Double, decay: Double, sustain: Double
   def connect(param: ControlParam): Unit = {
     param match {
       case connectable: ConnectableParam => connectable.onConnect(this)
-      case p => throw new IllegalStateException ("control pram %s is not connectable" format p)
+      case p => throw new IllegalStateException("control pram %s is not connectable" format p)
     }
   }
 
@@ -210,22 +252,22 @@ case class DoctusSoundAudioContextScalajs(waCtx: AudioContext) extends DoctusSou
   }
 
   def createNodeSourceNoiseWhite: NodeSourceNoise = {
-    NodeSourceNoiseWhiteScalajs(waCtx)
+    NodeSourceNoiseWhiteScalajs(waCtx, NoiseWhite)
   }
 
   def createNodeSourceNoisePink: NodeSourceNoise = {
-    ???
+    NodeSourceNoiseWhiteScalajs(waCtx, NoisePink())
   }
 
   def createNodeSourceNoiseBrown: NodeSourceNoise = {
-    ???
+    NodeSourceNoiseWhiteScalajs(waCtx, NoiseBrown(waCtx.sampleRate))
   }
 
   def createNodeFilterGain: NodeFilterGain = {
     NodeFilterGainScalajs(waCtx)
   }
 
-  def createNodeControlConstant(value: Double): NodeControl= {
+  def createNodeControlConstant(value: Double): NodeControl = {
     NodeControlConstantScalajs(value)(waCtx)
   }
 
