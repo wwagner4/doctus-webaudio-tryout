@@ -13,9 +13,9 @@ case class Tinitus(ctx: DoctusSoundAudioContext) {
   val freqCtrl = ctx createNodeControlConstant(400.0)
   val gainCtrl = ctx createNodeControlAdsr(1.0, 0.0, 1.0, 4.0)
 
-  val oscil = ctx createNodeSourceOscilSine
-  val gain = ctx createNodeFilterGain
-  val lineOut = ctx createNodeSinkLineOut
+  val oscil = ctx.createNodeSourceOscilSine
+  val gain = ctx.createNodeFilterGain
+  val lineOut = ctx.createNodeSinkLineOut
 
   // Connect nodes
   freqCtrl >- oscil.frequency
