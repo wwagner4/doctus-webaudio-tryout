@@ -78,13 +78,6 @@ trait StartStoppable extends Startable {
 }
 
 /**
-  * The speakers (headphones) of your device
-  */
-trait NodeSinkLineOut extends NodeSink {
-
-}
-
-/**
   * An oscillator
   */
 trait NodeSourceOscil extends NodeSource with StartStoppable {
@@ -96,21 +89,12 @@ trait NodeSourceOscil extends NodeSource with StartStoppable {
 /**
   * A nose generator
   */
-trait NodeSourceNoise extends NodeSource with StartStoppable {
-
-}
+trait NodeSourceNoise extends NodeSource with StartStoppable {}
 
 /**
-  * Provides always a constant value.
+  * An envelope node
   */
-trait NodeControlConstant extends NodeControl {}
-
-
-/**
-  * Envelope generator controlled by four parameters.
-  * For details see: https://en.wikipedia.org/wiki/Synthesizer#Attack_Decay_Sustain_Release_.28ADSR.29_envelope
-  */
-trait NodeControlAdsr extends NodeControl with StartStoppable {}
+trait NodeControlEnvelope extends NodeControl with StartStoppable {}
 
 /**
   * Component for gain control
@@ -126,7 +110,10 @@ trait NodeFilterGain extends NodeFilter {
   */
 trait DoctusSoundAudioContext {
 
-  def createNodeSinkLineOut: NodeSinkLineOut
+  /**
+    * The speakers (headphones) of your device
+    */
+  def createNodeSinkLineOut: NodeSink
 
   def createNodeSourceOscilSine: NodeSourceOscil
 
@@ -145,9 +132,11 @@ trait DoctusSoundAudioContext {
     * @param value the constant value provided by the node
     * @return a new constant value parameter control
     */
-  def createNodeControlConstant(value: Double): NodeControlConstant
+  def createNodeControlConstant(value: Double): NodeControl
 
   /**
+    * Envelope generator controlled by four parameters.
+    * For details see: https://en.wikipedia.org/wiki/Synthesizer#Attack_Decay_Sustain_Release_.28ADSR.29_envelope
     *
     * @param attack time in seconds
     * @param decay time in seconds
@@ -155,7 +144,7 @@ trait DoctusSoundAudioContext {
     * @param release time in seconds
     * @return an new ADSR controller
     */
-  def createNodeControlAdsr(attack: Double, decay: Double, sustain: Double, release: Double): NodeControlAdsr
+  def createNodeControlAdsr(attack: Double, decay: Double, sustain: Double, release: Double): NodeControlEnvelope
 
   def currentTime: Double
 
