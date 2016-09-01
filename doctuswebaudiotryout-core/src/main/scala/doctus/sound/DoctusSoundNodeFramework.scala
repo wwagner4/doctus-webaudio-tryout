@@ -14,9 +14,9 @@ trait NodeSource {
 
   def `>-`(sink: NodeSink): Unit = connect(sink)
 
-  def connect(sink: NodeFilter): NodeSource
+  def connect(filter: NodeFilter): NodeSource
 
-  def `>-`(sink: NodeFilter): NodeSource = connect(sink)
+  def `>-`(filter: NodeFilter): NodeSource = connect(filter)
 
 }
 
@@ -94,6 +94,13 @@ trait NodeSourceOscil extends NodeSource with StartStoppable {
 }
 
 /**
+  * A nose generator
+  */
+trait NodeSourceNoise extends NodeSource with StartStoppable {
+
+}
+
+/**
   * Provides always a constant value.
   */
 trait NodeControlConstant extends NodeControl {
@@ -164,6 +171,12 @@ trait DoctusSoundAudioContext {
   def createNodeSourceOscilSine: NodeSourceOscil
 
   def createNodeSourceOscilSawtooth: NodeSourceOscil
+
+  def createNodeSourceNoiseWhite: NodeSourceNoise
+
+  def createNodeSourceNoisePink: NodeSourceNoise
+
+  def createNodeSourceNoiseBrown: NodeSourceNoise
 
   def createNodeFilterGain: NodeFilterGain
 

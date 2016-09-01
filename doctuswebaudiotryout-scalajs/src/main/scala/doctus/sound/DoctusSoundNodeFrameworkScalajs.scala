@@ -140,6 +140,18 @@ trait NodeSourceOscilScalajs extends NodeSourceOscil with AudioNodeAware {
 
 }
 
+case class NodeSourceNoiseWhiteScalajs(waCtx: AudioContext) extends NodeSourceNoise {
+
+  def connect(filter: NodeFilter): NodeSource = ???
+
+  def connect(sink: NodeSink): Unit = ???
+
+  def start(time: Double): Unit = ???
+
+  def stop(time: Double): Unit = ???
+
+}
+
 case class NodeControlConstantScalajs(value: Double)(waCtx: AudioContext)
   extends NodeControlConstant with WebAudioParamHolder {
 
@@ -204,6 +216,18 @@ case class DoctusSoundAudioContextScalajs(waCtx: AudioContext) extends DoctusSou
 
   def createNodeSourceOscilSawtooth: NodeSourceOscil = {
     NodeSourceOscilSawtoothScalajs(waCtx)
+  }
+
+  def createNodeSourceNoiseWhite: NodeSourceNoise = {
+    NodeSourceNoiseWhiteScalajs(waCtx)
+  }
+
+  def createNodeSourceNoisePink: NodeSourceNoise = {
+    ???
+  }
+
+  def createNodeSourceNoiseBrown: NodeSourceNoise = {
+    ???
   }
 
   def createNodeFilterGain: NodeFilterGain = {
