@@ -233,6 +233,8 @@ case class DoctusSoundAudioContextScalajs(waCtx: AudioContext) extends DoctusSou
     NodeControlAdsrScalajs(attack, decay, sustain, release)(waCtx)
   }
 
+  def createNodeControlLfo(frequency: Double, amplitude: Double, offset: Double): NodeControlLfo = ???
+
   def currentTime: Double = waCtx.currentTime
 
 }

@@ -97,6 +97,11 @@ trait NodeSourceNoise extends NodeSource with StartStoppable {}
 trait NodeControlEnvelope extends NodeControl with StartStoppable {}
 
 /**
+  * A LFO node
+  */
+trait NodeControlLfo extends NodeControl with StartStoppable {}
+
+/**
   * Component for gain control
   */
 trait NodeFilterGain extends NodeFilter {
@@ -135,7 +140,7 @@ trait DoctusSoundAudioContext {
   def createNodeControlConstant(value: Double): NodeControl
 
   /**
-    * Envelope generator controlled by four parameters.
+    * Envelope controlled by four parameters.
     * For details see: https://en.wikipedia.org/wiki/Synthesizer#Attack_Decay_Sustain_Release_.28ADSR.29_envelope
     *
     * @param attack time in seconds
@@ -145,6 +150,16 @@ trait DoctusSoundAudioContext {
     * @return an new ADSR controller
     */
   def createNodeControlAdsr(attack: Double, decay: Double, sustain: Double, release: Double): NodeControlEnvelope
+
+  /**
+    * Low frequency oscillator
+    *
+    * @param frequency of the LFO in Herz
+    * @param amplitude of the LFO
+    * @param offset of the LFO
+    * @return a new LFO
+    */
+  def createNodeControlLfo(frequency: Double, amplitude: Double, offset: Double): NodeControlLfo
 
   def currentTime: Double
 
