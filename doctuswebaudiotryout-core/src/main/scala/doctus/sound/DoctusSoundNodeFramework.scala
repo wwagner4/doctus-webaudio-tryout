@@ -103,52 +103,14 @@ trait NodeSourceNoise extends NodeSource with StartStoppable {
 /**
   * Provides always a constant value.
   */
-trait NodeControlConstant extends NodeControl {
-
-  /**
-    * @return The constant value provided
-    *         Default: 1.0
-    */
-  def value: Double
-
-}
+trait NodeControlConstant extends NodeControl {}
 
 
 /**
   * Envelope generator controlled by four parameters.
   * For details see: https://en.wikipedia.org/wiki/Synthesizer#Attack_Decay_Sustain_Release_.28ADSR.29_envelope
   */
-trait NodeControlAdsr extends NodeControl with StartStoppable {
-
-  /**
-    * @return Attack time in seconds.
-    *         Range: >= 0.0
-    *         Default: 1.0 second
-    */
-  def attack: Double
-
-  /**
-    * @return Decay time in seconds.
-    *         Range: >= 0.0
-    *         Default: 1.0 second
-    */
-  def decay: Double
-
-  /**
-    * @return Sustain level relative to the 1.0.
-    *         Range: 0.0 <= sustain <= 1.0
-    *         Default: 0.5
-    */
-  def sustain: Double
-
-  /**
-    * @return Release time in seconds.
-    *         Range: >= 0.0
-    *         Default: 1.0
-    */
-  def release: Double
-
-}
+trait NodeControlAdsr extends NodeControl with StartStoppable {}
 
 /**
   * Component for gain control
@@ -158,8 +120,6 @@ trait NodeFilterGain extends NodeFilter {
   def gain: ControlParam
 
 }
-
-
 
 /**
   * Creates audio components and provides auxiliary functions
@@ -180,8 +140,21 @@ trait DoctusSoundAudioContext {
 
   def createNodeFilterGain: NodeFilterGain
 
+  /**
+    *
+    * @param value the constant value provided by the node
+    * @return a new constant value parameter control
+    */
   def createNodeControlConstant(value: Double): NodeControlConstant
 
+  /**
+    *
+    * @param attack time in seconds
+    * @param decay time in seconds
+    * @param sustain relative value between 0.0 and 1.0
+    * @param release time in seconds
+    * @return an new ADSR controller
+    */
   def createNodeControlAdsr(attack: Double, decay: Double, sustain: Double, release: Double): NodeControlAdsr
 
   def currentTime: Double
