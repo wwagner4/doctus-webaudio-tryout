@@ -16,9 +16,9 @@ class DoctusSoundJs extends DoctusSound {
 
   val tinitus = Tinitus(ctx1)
   val melody = Melody(ctx1)
-  val noiseWhite = Noise(ctx, NT_White)
-  val noisePink = Noise(ctx, NT_Pink)
-  val noiseBrownRed = Noise(ctx, NT_Brown)
+  val noiseWhite = Noise(ctx1, NT_White)
+  val noisePink = Noise(ctx1, NT_Pink)
+  val noiseBrownRed = Noise(ctx1, NT_Brown)
   val adsrTryout = AdsrTryout(ctx)
   val metalTryout = MetalTryout(ctx)
   val filterTryout = FilterTryout(ctx)
