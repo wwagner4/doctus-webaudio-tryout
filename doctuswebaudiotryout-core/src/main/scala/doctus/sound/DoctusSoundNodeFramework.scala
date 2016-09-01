@@ -85,18 +85,9 @@ trait NodeSinkLineOut extends NodeSink {
 }
 
 /**
-  * A sine generator
+  * An oscillator
   */
-trait NodeSourceOscilSine extends NodeSource with StartStoppable {
-
-  def frequency: ControlParam
-
-}
-
-/**
-  * A sine generator
-  */
-trait NodeSourceOscilSawtooth extends NodeSource with StartStoppable {
+trait NodeSourceOscil extends NodeSource with StartStoppable {
 
   def frequency: ControlParam
 
@@ -170,9 +161,9 @@ trait DoctusSoundAudioContext {
 
   def createNodeSinkLineOut: NodeSinkLineOut
 
-  def createNodeSourceOscilSine: NodeSourceOscilSine
+  def createNodeSourceOscilSine: NodeSourceOscil
 
-  def createNodeSourceOscilSawtooth: NodeSourceOscilSine
+  def createNodeSourceOscilSawtooth: NodeSourceOscil
 
   def createNodeFilterGain: NodeFilterGain
 

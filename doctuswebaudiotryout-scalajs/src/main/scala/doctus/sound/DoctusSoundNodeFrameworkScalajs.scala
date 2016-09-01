@@ -83,7 +83,7 @@ case class NodeSourceOscilSawtoothScalajs(waCtx: AudioContext) extends NodeSourc
 
 }
 
-trait NodeSourceOscilScalajs extends NodeSourceOscilSine with AudioNodeAware {
+trait NodeSourceOscilScalajs extends NodeSourceOscil with AudioNodeAware {
 
   def waCtx: AudioContext
 
@@ -198,11 +198,11 @@ case class DoctusSoundAudioContextScalajs(waCtx: AudioContext) extends DoctusSou
     NodeSinkLineOutScalajs(waCtx)
   }
 
-  def createNodeSourceOscilSine: NodeSourceOscilSine = {
+  def createNodeSourceOscilSine: NodeSourceOscil = {
     NodeSourceOscilSineScalajs(waCtx)
   }
 
-  def createNodeSourceOscilSawtooth: NodeSourceOscilSine = {
+  def createNodeSourceOscilSawtooth: NodeSourceOscil = {
     NodeSourceOscilSawtoothScalajs(waCtx)
   }
 
