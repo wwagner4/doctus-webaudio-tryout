@@ -74,26 +74,13 @@ case class NodeFilterGainScalajs(waCtx: AudioContext) extends NodeFilterGain wit
   def audioNode: AudioNode = waGain
 }
 
-case class NodeSourceOscilSineScalajs(waCtx: AudioContext) extends NodeSourceOscilScalajs {
+case class NodeSourceOscilScalajs(waCtx: AudioContext, waveType: WaveType)
+  extends NodeSourceOscil with AudioNodeAware with OscilUtil{
 
-  def waveType = "sine"
-
-}
-
-case class NodeSourceOscilSawtoothScalajs(waCtx: AudioContext) extends NodeSourceOscilScalajs {
-
-  def waveType = "sawtooth"
-
-}
-
-trait NodeSourceOscilScalajs extends NodeSourceOscil with AudioNodeAware {
-
-  def waCtx: AudioContext
-
-  def waveType: String
+  def waveTypeStr = waWaveType(waveType)
 
   val waOscil = waCtx.createOscillator()
-  waOscil.`type` = waveType
+  waOscil.`type` = waveTypeStr
 
   val paramFrequency = new ControlParam with ConnectableParam {
     def onConnect: (NodeControl) => Unit = {
@@ -144,8 +131,14 @@ trait NodeSourceOscilScalajs extends NodeSourceOscil with AudioNodeAware {
 
 }
 
-case class NodeSourceNoiseWhiteScalajs(waCtx: AudioContext, valueSeq: ValueSequence) extends NodeSourceNoise {
+case class NodeSourceNoiseWhiteScalajs(waCtx: AudioContext, noiseType: NoiseType) extends NodeSourceNoise {
 
+  val valueSeq: ValueSequence = noiseType match {
+    case NoiseType_White => NoiseWhite
+    case NoiseType_Pink => NoisePink()
+    case NoiseType_Red => NoiseBrown(waCtx.sampleRate)
+    case NoiseType_Brown => NoiseBrown(waCtx.sampleRate)
+  }
 
   private lazy val bufferNoiseWhite = createBufferNoise(valueSeq)
 
@@ -257,10 +250,21 @@ case class NodeControlAdsrScalajs(attack: Double, decay: Double, sustain: Double
   }
 }
 
-case class NodeControlLfoSineScalajs(frequency: Double, amplitude: Double)(waCtx: AudioContext)
-  extends NodeControlLfo with WebAudioParamHolder {
+trait OscilUtil {
+
+  def waWaveType(waveType: WaveType) = waveType match {
+    case WaveType_Sine => "sine"
+    case WaveType_Triangle => "triangle"
+    case WaveType_Sawtooth => "sawtooth"
+  }
+
+}
+
+case class NodeControlLfoScalajs(waveType: WaveType, frequency: Double, amplitude: Double)(waCtx: AudioContext)
+  extends NodeControlLfo with WebAudioParamHolder with OscilUtil {
 
   val waOscil = waCtx.createOscillator()
+  waOscil.`type` = waWaveType(waveType)
   waOscil.frequency.value = frequency
 
   val waGain = waCtx.createGain()
@@ -298,24 +302,12 @@ case class DoctusSoundAudioContextScalajs(waCtx: AudioContext) extends DoctusSou
     NodeSinkLineOutScalajs(waCtx)
   }
 
-  def createNodeSourceOscilSine: NodeSourceOscil = {
-    NodeSourceOscilSineScalajs(waCtx)
+  def createNodeSourceOscil(waveType: WaveType): NodeSourceOscil = {
+    NodeSourceOscilScalajs(waCtx, waveType)
   }
 
-  def createNodeSourceOscilSawtooth: NodeSourceOscil = {
-    NodeSourceOscilSawtoothScalajs(waCtx)
-  }
-
-  def createNodeSourceNoiseWhite: NodeSourceNoise = {
-    NodeSourceNoiseWhiteScalajs(waCtx, NoiseWhite)
-  }
-
-  def createNodeSourceNoisePink: NodeSourceNoise = {
-    NodeSourceNoiseWhiteScalajs(waCtx, NoisePink())
-  }
-
-  def createNodeSourceNoiseBrown: NodeSourceNoise = {
-    NodeSourceNoiseWhiteScalajs(waCtx, NoiseBrown(waCtx.sampleRate))
+  def createNodeSourceNoise(noiseType: NoiseType): NodeSourceNoise = {
+    NodeSourceNoiseWhiteScalajs(waCtx, noiseType)
   }
 
   def createNodeFilterGain: NodeFilterGain = {
@@ -330,8 +322,8 @@ case class DoctusSoundAudioContextScalajs(waCtx: AudioContext) extends DoctusSou
     NodeControlAdsrScalajs(attack, decay, sustain, release)(waCtx)
   }
 
-  def createNodeControlLfo(frequency: Double, amplitude: Double): NodeControlLfo = {
-    NodeControlLfoSineScalajs(frequency, amplitude)(waCtx)
+  def createNodeControlLfo(waveType: WaveType, frequency: Double, amplitude: Double): NodeControlLfo = {
+    NodeControlLfoScalajs(waveType, frequency, amplitude)(waCtx)
   }
 
   def currentTime: Double = waCtx.currentTime

@@ -4,6 +4,19 @@ package doctus.sound
  * Interfaces defining the base functionality of sound nodes
  */
 
+sealed trait WaveType
+
+case object WaveType_Sine extends WaveType
+case object WaveType_Triangle extends WaveType
+case object WaveType_Sawtooth extends WaveType
+
+sealed trait NoiseType
+
+case object NoiseType_White extends NoiseType
+case object NoiseType_Pink extends NoiseType
+case object NoiseType_Red extends NoiseType
+case object NoiseType_Brown extends NoiseType
+
 /**
   * Creates a sound signal
   * Examples: Sine generator, ...
@@ -120,15 +133,9 @@ trait DoctusSoundAudioContext {
     */
   def createNodeSinkLineOut: NodeSink
 
-  def createNodeSourceOscilSine: NodeSourceOscil
+  def createNodeSourceOscil(waveType: WaveType): NodeSourceOscil
 
-  def createNodeSourceOscilSawtooth: NodeSourceOscil
-
-  def createNodeSourceNoiseWhite: NodeSourceNoise
-
-  def createNodeSourceNoisePink: NodeSourceNoise
-
-  def createNodeSourceNoiseBrown: NodeSourceNoise
+  def createNodeSourceNoise(noiseType: NoiseType): NodeSourceNoise
 
   def createNodeFilterGain: NodeFilterGain
 
@@ -154,11 +161,12 @@ trait DoctusSoundAudioContext {
   /**
     * Low frequency oscillator
     *
+    * @param waveType Type of the LFOs wave (sine, triangle, ...)
     * @param frequency of the LFO in Herz
     * @param amplitude of the LFO
     * @return a new LFO
     */
-  def createNodeControlLfo(frequency: Double, amplitude: Double): NodeControlLfo
+  def createNodeControlLfo(waveType: WaveType, frequency: Double, amplitude: Double): NodeControlLfo
 
   def currentTime: Double
 

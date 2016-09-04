@@ -16,9 +16,9 @@ class DoctusSoundJs extends DoctusSound {
 
   val tinitus = Tinitus(ctx1)
   val melody = Melody(ctx1)
-  val noiseWhite = Noise(ctx1, NT_White)
-  val noisePink = Noise(ctx1, NT_Pink)
-  val noiseBrownRed = Noise(ctx1, NT_Brown)
+  val noiseWhite = Noise(ctx1,NoiseType_White)
+  val noisePink = Noise(ctx1, NoiseType_Pink)
+  val noiseBrownRed = Noise(ctx1, NoiseType_Red)
   val adsrTryout = AdsrTryout(ctx)
   val metalTryout = MetalTryout(ctx)
   val filterTryout = FilterTryout(ctx)
@@ -54,14 +54,4 @@ class DoctusSoundJs extends DoctusSound {
   def filterStop(): Unit = filterTryout.stop()
 
 }
-
-sealed trait NoiseType
-
-case object NT_White extends NoiseType
-
-case object NT_Pink extends NoiseType
-
-case object NT_Red extends NoiseType
-
-case object NT_Brown extends NoiseType
 

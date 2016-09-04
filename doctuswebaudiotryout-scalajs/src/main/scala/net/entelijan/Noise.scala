@@ -17,7 +17,7 @@ case class Noise(ctx: DoctusSoundAudioContext, noiseType: NoiseType) {
   def start(time: Double, nineth: Nineth): Unit = {
 
     def createLfo(f: Double, a: Double): NodeControlLfo = {
-      ctx.createNodeControlLfo(f, a)
+      ctx.createNodeControlLfo(WaveType_Sine, f, a)
     }
 
     val lfoCtrl = nineth match {
@@ -34,12 +34,7 @@ case class Noise(ctx: DoctusSoundAudioContext, noiseType: NoiseType) {
       case N_22 => createLfo(0.5, 0.4)
     }
 
-    val noise = noiseType match {
-      case NT_White => ctx.createNodeSourceNoiseWhite
-      case NT_Pink => ctx.createNodeSourceNoisePink
-      case NT_Red => ctx.createNodeSourceNoiseBrown
-      case NT_Brown => ctx.createNodeSourceNoiseBrown
-    }
+    val noise = ctx.createNodeSourceNoise(noiseType)
 
     val gain = ctx.createNodeFilterGain
 

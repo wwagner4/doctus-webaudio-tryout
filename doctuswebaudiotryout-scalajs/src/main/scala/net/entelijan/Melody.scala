@@ -2,7 +2,7 @@
 
 package net.entelijan
 
-import doctus.sound.DoctusSoundAudioContext
+import doctus.sound.{DoctusSoundAudioContext, WaveType_Sawtooth}
 
 /**
  * Plays a melody
@@ -55,7 +55,7 @@ case class MyInstrument(ctx: DoctusSoundAudioContext, freq: Double) extends Inst
   val freqCtrl = ctx.createNodeControlConstant(freq)
   val adsrCtrl = ctx.createNodeControlAdsr(0.001, 0.2, 0.3, 3.0)
 
-  val oscil = ctx.createNodeSourceOscilSawtooth
+  val oscil = ctx.createNodeSourceOscil(WaveType_Sawtooth)
   val gain = ctx.createNodeFilterGain
   val sink = ctx.createNodeSinkLineOut
 
