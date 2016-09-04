@@ -156,10 +156,9 @@ trait DoctusSoundAudioContext {
     *
     * @param frequency of the LFO in Herz
     * @param amplitude of the LFO
-    * @param offset of the LFO
     * @return a new LFO
     */
-  def createNodeControlLfo(frequency: Double, amplitude: Double, offset: Double): NodeControlLfo
+  def createNodeControlLfo(frequency: Double, amplitude: Double): NodeControlLfo
 
   def currentTime: Double
 

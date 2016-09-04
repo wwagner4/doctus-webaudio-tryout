@@ -237,6 +237,39 @@ case class NodeControlAdsrScalajs(attack: Double, decay: Double, sustain: Double
   }
 }
 
+case class NodeControlLfoSineScalajs(frequency: Double, amplitude: Double)(waCtx: AudioContext)
+  extends NodeControlLfo with WebAudioParamHolder {
+
+  val waOscil = waCtx.createOscillator()
+  waOscil.frequency.value = frequency
+
+  val waGain = waCtx.createGain()
+  waGain.gain.value = amplitude
+
+  waOscil.connect(waOscil)
+
+
+  def stop(time: Double): Unit = {
+    waOscil.start(time)
+  }
+
+  def start(time: Double): Unit = {
+    waOscil.stop(time)
+  }
+
+  def connect(param: ControlParam): Unit = {
+    param match {
+      case connectable: ConnectableParam => connectable.onConnect(this)
+      case _ => throw new IllegalStateException("control pram %s is not connectable" format param)
+    }
+  }
+
+  def addAudioParam(waParam: AudioParam): Unit = {
+    waGain.connect(waParam)
+  }
+
+}
+
 case class DoctusSoundAudioContextScalajs(waCtx: AudioContext) extends DoctusSoundAudioContext {
 
   def createNodeSinkLineOut: NodeSink = {
@@ -275,7 +308,9 @@ case class DoctusSoundAudioContextScalajs(waCtx: AudioContext) extends DoctusSou
     NodeControlAdsrScalajs(attack, decay, sustain, release)(waCtx)
   }
 
-  def createNodeControlLfo(frequency: Double, amplitude: Double, offset: Double): NodeControlLfo = ???
+  def createNodeControlLfo(frequency: Double, amplitude: Double): NodeControlLfo = {
+    NodeControlLfoSineScalajs(frequency, amplitude)(waCtx)
+  }
 
   def currentTime: Double = waCtx.currentTime
 
