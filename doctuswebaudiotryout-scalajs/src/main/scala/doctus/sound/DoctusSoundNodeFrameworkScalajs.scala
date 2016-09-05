@@ -273,11 +273,13 @@ case class NodeControlLfoScalajs(waveType: WaveType, frequency: Double, amplitud
   waOscil.connect(waGain)
 
 
-  def stop(time: Double): Unit = {
+  def start(time: Double): Unit = {
+    println("started LFO oscil")
     waOscil.start(time)
   }
 
-  def start(time: Double): Unit = {
+  def stop(time: Double): Unit = {
+    println("stopped LFO oscil")
     waOscil.stop(time)
   }
 
@@ -291,6 +293,7 @@ case class NodeControlLfoScalajs(waveType: WaveType, frequency: Double, amplitud
   }
 
   def addAudioParam(waParam: AudioParam): Unit = {
+    println("connecting LFO to param %s->%s" format (waGain, waParam))
     waGain.connect(waParam)
   }
 

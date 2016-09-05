@@ -42,6 +42,7 @@ case class Noise(ctx: DoctusSoundAudioContext, noiseType: NoiseType) {
     noise >- gain >- ctx.createNodeSinkLineOut
 
     noise.start(0.0)
+    lfoCtrl.start(0.0)
 
     noiseOpt = Some(noise)
   }
