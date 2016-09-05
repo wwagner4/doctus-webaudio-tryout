@@ -21,28 +21,32 @@ case class Noise(ctx: DoctusSoundAudioContext, noiseType: NoiseType) {
     }
 
     val lfoCtrl = nineth match {
-      case N_00 => createLfo(5.0, 0.1)
-      case N_01 => createLfo(1.0, 0.1)
-      case N_02 => createLfo(0.5, 0.1)
+      case N_00 => createLfo(5.0, 0.2)
+      case N_01 => createLfo(1.0, 0.2)
+      case N_02 => createLfo(0.5, 0.2)
 
-      case N_10 => createLfo(5.0, 0.2)
-      case N_11 => createLfo(1.0, 0.2)
-      case N_12 => createLfo(0.5, 0.2)
+      case N_10 => createLfo(5.0, 0.9)
+      case N_11 => createLfo(1.0, 0.9)
+      case N_12 => createLfo(0.5, 0.9)
 
-      case N_20 => createLfo(5.0, 0.4)
-      case N_21 => createLfo(1.0, 0.4)
-      case N_22 => createLfo(0.5, 0.4)
+      case N_20 => createLfo(5.0, 1.4)
+      case N_21 => createLfo(1.0, 1.4)
+      case N_22 => createLfo(0.5, 1.4)
     }
 
-    val noise = ctx.createNodeSourceNoise(noiseType)
+    val constCtrl = ctx.createNodeControlConstant(1.5)
 
+    val noise = ctx.createNodeSourceNoise(noiseType)
     val gain = ctx.createNodeFilterGain
+    val out = ctx.createNodeSinkLineOut
 
     lfoCtrl >- gain.gain
-    noise >- gain >- ctx.createNodeSinkLineOut
+    constCtrl >- gain.gain
 
-    noise.start(0.0)
+    noise >- gain >- out
+
     lfoCtrl.start(0.0)
+    noise.start(0.0)
 
     noiseOpt = Some(noise)
   }
