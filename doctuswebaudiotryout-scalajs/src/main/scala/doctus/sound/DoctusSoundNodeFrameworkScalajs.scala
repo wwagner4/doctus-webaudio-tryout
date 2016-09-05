@@ -270,7 +270,7 @@ case class NodeControlLfoScalajs(waveType: WaveType, frequency: Double, amplitud
   val waGain = waCtx.createGain()
   waGain.gain.value = amplitude
 
-  waOscil.connect(waOscil)
+  waOscil.connect(waGain)
 
 
   def stop(time: Double): Unit = {
