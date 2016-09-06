@@ -76,7 +76,7 @@ case class DoctuswebaudiotryoutTemplate(canvas: DoctusCanvas, sound: DoctusSound
 
   def pointablePressed(pos: DoctusPoint): Unit = {
     tile(pos) match {
-      case Tile(0, 0, _, _) => sound.tinitusStart()
+      case Tile(0, 0, _, _) => sound.tinnitusStart()
       case Tile(0, 1, _, _) => sound.melodyStart()
       case tile @ Tile(0, 2, _, _) => sound.noiseWhiteStart(nineth(pos, tile))
       case tile @ Tile(0, 3, _, _) => sound.noisePinkStart(nineth(pos, tile))
@@ -90,7 +90,7 @@ case class DoctuswebaudiotryoutTemplate(canvas: DoctusCanvas, sound: DoctusSound
 
   def pointableReleased(pos: DoctusPoint): Unit = {
     tile(pos) match {
-      case Tile(0, 0, _, _) => sound.tinitusStop()
+      case Tile(0, 0, _, _) => sound.tinnitusStop()
       case Tile(0, 2, _, _) => sound.noiseWhiteStop()
       case Tile(0, 3, _, _) => sound.noisePinkStop()
       case Tile(1, 0, _, _) => sound.noiseBrownRedStop()

@@ -25,9 +25,9 @@ case object N_22 extends Nineth
  */
 trait DoctusSound {
 
-  def tinitusStart(): Unit
+  def tinnitusStart(): Unit
 
-  def tinitusStop(): Unit
+  def tinnitusStop(): Unit
 
   def noiseWhiteStart(nineth: Nineth): Unit
 

@@ -61,9 +61,9 @@ object DoctuswebaudiotryoutJvm extends App {
 
   case object DoctusSoundJvm extends DoctusSound {
 
-    override def tinitusStart(): Unit = throw new IllegalStateException("JVM NOT IMPLEMENTED")
+    override def tinnitusStart(): Unit = throw new IllegalStateException("JVM NOT IMPLEMENTED")
 
-    override def tinitusStop(): Unit = throw new IllegalStateException("JVM NOT IMPLEMENTED")
+    override def tinnitusStop(): Unit = throw new IllegalStateException("JVM NOT IMPLEMENTED")
 
     override def noiseWhiteStart(nineth: Nineth): Unit = throw new IllegalStateException("JVM NOT IMPLEMENTED")
 
