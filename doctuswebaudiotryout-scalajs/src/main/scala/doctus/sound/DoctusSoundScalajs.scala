@@ -19,7 +19,7 @@ class DoctusSoundJs extends DoctusSound {
   val noiseWhite = Noise(ctx1,NoiseType_White)
   val noisePink = Noise(ctx1, NoiseType_Pink)
   val noiseBrownRed = Noise(ctx1, NoiseType_Red)
-  val adsrTryout = AdsrTryout(ctx)
+  val adsrTryout = AdsrTryout(ctx1)
   val metalTryout = MetalTryout(ctx)
   val filterTryout = FilterTryout(ctx)
 
