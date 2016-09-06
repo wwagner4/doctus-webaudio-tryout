@@ -14,7 +14,7 @@ class DoctusSoundJs extends DoctusSound {
   val ctx = new AudioContext
   val ctx1 = DoctusSoundAudioContextScalajs(ctx)
 
-  val tinitus = Tinitus(ctx1)
+  val tinnitus = Tinnitus(ctx1)
   val melody = Melody(ctx1)
   val noiseWhite = Noise(ctx1,NoiseType_White)
   val noisePink = Noise(ctx1, NoiseType_Pink)
@@ -23,9 +23,9 @@ class DoctusSoundJs extends DoctusSound {
   val metalTryout = MetalTryout(ctx)
   val filterTryout = FilterTryout(ctx)
 
-  def tinitusStart(): Unit = tinitus.start()
+  def tinitusStart(): Unit = tinnitus.start()
 
-  def tinitusStop(): Unit = tinitus.stop()
+  def tinitusStop(): Unit = tinnitus.stop()
 
   def noiseWhiteStart(nineth: Nineth): Unit = noiseWhite.start(ctx.currentTime, nineth)
 
