@@ -40,7 +40,7 @@ case class DoctuswebaudiotryoutTemplate(canvas: DoctusCanvas, sound: DoctusSound
 
   def writeText(g: DoctusGraphics, tile: Tile): Unit = {
     tile match {
-      case Tile(0, 0, _, _) => writeText(g, tile, "tinitus")
+      case Tile(0, 0, _, _) => writeText(g, tile, "tinnitus")
       case Tile(0, 1, _, _) => writeText(g, tile, "melody")
       case Tile(0, 2, _, _) => writeText(g, tile, "white noise")
       case Tile(0, 3, _, _) => writeText(g, tile, "pink noise")
