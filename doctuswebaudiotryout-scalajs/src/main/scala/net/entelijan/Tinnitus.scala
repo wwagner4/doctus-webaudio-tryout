@@ -10,8 +10,8 @@ import doctus.sound.{DoctusSoundAudioContext, WaveType_Sine}
 case class Tinnitus(ctx: DoctusSoundAudioContext) {
 
   // Create nodes
-  val freqCtrl = ctx createNodeControlConstant(400.0)
-  val gainCtrl = ctx createNodeControlAdsr(1.0, 0.0, 1.0, 4.0)
+  val freqCtrl = ctx.createNodeControlConstant(400.0)
+  val gainCtrl = ctx.createNodeControlAdsr(3.0, 0.0, 1.0, 3.0)
 
   val oscil = ctx.createNodeSourceOscil(WaveType_Sine)
   val gain = ctx.createNodeFilterGain
@@ -27,11 +27,11 @@ case class Tinnitus(ctx: DoctusSoundAudioContext) {
   oscil start 0.0 
 
   def start(): Unit = {
-    gainCtrl start ctx.currentTime 
+    gainCtrl.start(ctx.currentTime)
   }
 
   def stop(): Unit = {
-    gainCtrl stop ctx.currentTime
+    gainCtrl.stop(ctx.currentTime)
   }
 
 }
