@@ -240,6 +240,7 @@ case class NodeControlAdsrScalajs(attack: Double, decay: Double, sustain: Double
 
   def stop(time: Double): Unit = {
     waParamList.foreach { p =>
+      p.cancelScheduledValues(0.0)
       p.linearRampToValueAtTime(0.0, time + release)
     }
   }
