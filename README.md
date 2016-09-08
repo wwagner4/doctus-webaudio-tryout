@@ -20,6 +20,8 @@ Trying out the components of the webaudio api and how they work together
 * Create some kind of 'Tremolo Controler'. 'noise's
 
 #### TODOs
+* Check why melody does not work any longer
+* Check why ADSR sunds unstable during sustain
 * Check why noise has delay on portable devices
 * Fix the 'mouse leave canvas' bug in doctus.
 
