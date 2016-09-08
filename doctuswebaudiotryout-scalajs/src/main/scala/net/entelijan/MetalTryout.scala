@@ -3,80 +3,60 @@
 package net.entelijan
 
 import doctus.sound._
-import org.scalajs.dom._
 import scala.util.Random
 
-case class MetalTryout(ctx: AudioContext) {
+case class MetalTryout(ctx: DoctusSoundAudioContext) {
 
-  val freqs = List(111, 222, 333, 444, 555)
   val ran = Random
+  val baseFreqs = List(111, 222, 333, 444, 555)
 
-  val metal = NodeMetal(ctx)
-  metal.frequency(ranFreq, 0)
-  
-  def ranFreq: Double = freqs(ran.nextInt(freqs.size))
-
-  metal.nodeOut.connect(ctx.destination)
+  var gainableOscilsOpt = Option.empty[Seq[NodeSourceOscil]]
+  var adsrOpt = Option.empty[NodeControlEnvelope]
 
   def start(): Unit = {
-    val time = ctx.currentTime
-    metal.frequency(ranFreq, time)
-    metal.start(time)
+
+    def ranFreq: Double = baseFreqs(ran.nextInt(baseFreqs.size))
+    val harmonics = SoundUtil.metalHarmonics(ranFreq, 6)
+    val gains = Stream.from(0).map(SoundUtil.logarithmicDecay(3)(_))
+
+    val params = harmonics.zip(gains)
+
+    val gainableOscils = params.map { case (freq, gain) => gainableOscil(freq, gain) }
+
+    val adsr = ctx.createNodeControlAdsr(0.001, 1.5, 0.1, 1.0)
+    val gain = ctx.createNodeFilterGain
+    val out = ctx.createNodeSinkLineOut
+    val now = ctx.currentTime
+
+    adsr >- gain.gain
+    gainableOscils.foreach(_ >- gain)
+    gain >- out
+
+    gainableOscils.foreach(_.start(now))
+    adsr.start(now)
+
+    gainableOscilsOpt = Some(gainableOscils)
+    adsrOpt = Some(adsr)
   }
 
-  def stop(): Unit = metal.stop(ctx.currentTime)
-
-}
-
-case class NodeMetal(ctx: AudioContext) extends NodeOut with NodeStartStoppable {
-
-  case class GainableOscil(gainVal: Double) extends NodeOut {
-
-    val oscil = ctx.createOscillator()
-    val gain = ctx.createGain()
-    gain.gain.value = gainVal
-    oscil.connect(gain)
-    oscil.start(0)
-
-    def nodeOut: AudioNode = gain
+  def stop(): Unit = {
+    val now = ctx.currentTime
+    gainableOscilsOpt.foreach(_.foreach(_.stop(now + 10)))
+    adsrOpt.foreach(_.stop(now))
   }
 
-  val logDecay = SoundUtil.logDecay(3)(_)
+  def gainableOscil(freqVal: Double, gainVal: Double): NodeSourceOscil = {
+    val oscil = ctx.createNodeSourceOscil(WaveType_Sine)
+    val gain = ctx.createNodeFilterGain
 
-  def createGainableOscils(cnt: Int): List[GainableOscil] = {
-    if (cnt == 0) {
-      List.empty[GainableOscil]
-    } else {
-      val gain = logDecay(cnt)
-      val go = GainableOscil(gain)
-      go :: createGainableOscils(cnt - 1)
-    }
-  }
+    val freqCtrl = ctx.createNodeControlConstant(freqVal)
+    val gainCtrl = ctx.createNodeControlConstant(gainVal)
 
-  val cnt = 6
-  val oscils = createGainableOscils(cnt)
-  val gain = ctx.createGain()
-  oscils.foreach { x => x.nodeOut.connect(gain) }
-  val adsr = NodeAdsr(ctx)
-  adsr.valAttack = 0.001
-  adsr.valSustain = 0.3
-  adsr.valRelease = 2.0
-  gain.connect(adsr.nodeIn)
+    freqCtrl >- oscil.frequency
+    gainCtrl >- gain.gain
+    oscil >- gain
 
-  def nodeOut: AudioNode = adsr.nodeOut
-
-  def frequency(freq: Double, time: Double): Unit = {
-    val hs = SoundUtil.metalHarmonics(freq, cnt)
-    //noinspection VariablePatternShadow
-    oscils.zip(hs) foreach { case (o, f) => o.oscil.frequency.setValueAtTime(f, time)}
-  }
-
-  def start(time: Double): Unit = {
-    adsr.start(time)
-  }
-
-  def stop(time: Double): Unit = {
-    adsr.stop(time)
+    oscil
   }
 
 }
