@@ -20,7 +20,7 @@ case class Melody(ctx: DoctusSoundAudioContext) {
     for (time <- 0.0 to(5, 0.25)) {
       val i = ran.nextInt(freqs.size)
       if (ranBoolean(0.8)) {
-        playNote(startTime, time, 0.2, MyInstrument(ctx, freqs(i)))
+        playNote(startTime, time, 0.5, MyInstrument(ctx, freqs(i)))
       }
     }
     for (time <- 2.0 to(8, 0.25)) {
@@ -53,7 +53,7 @@ trait Instrument {
 case class MyInstrument(ctx: DoctusSoundAudioContext, freq: Double) extends Instrument {
 
   val freqCtrl = ctx.createNodeControlConstant(freq)
-  val adsrCtrl = ctx.createNodeControlAdsr(0.001, 0.2, 0.3, 3.0)
+  val adsrCtrl = ctx.createNodeControlAdsr(0.1, 0.2, 0.3, 3.0)
 
   val oscil = ctx.createNodeSourceOscil(WaveType_Sawtooth)
   val gain = ctx.createNodeFilterGain
