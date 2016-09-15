@@ -17,6 +17,18 @@ case class Melody(ctx: DoctusSoundAudioContext) {
     val off = 0.3 + ran.nextDouble()
     val freqs = freqs0.map( _ * off)
     val startTime = ctx.currentTime
+
+    simple(startTime)
+
+  }
+
+  private def simple(startTime: Double): Unit = {
+    println("simple")
+    playNote(startTime, 0.0, 0.5, MyInstrument(ctx, 400))
+    playNote(startTime, 0.5, 0.5, MyInstrument(ctx, 300))
+  }
+
+  private def complex(startTime: Double, freqs: List[Double]): Unit = {
     for (time <- 0.0 to(5, 0.25)) {
       val i = ran.nextInt(freqs.size)
       if (ranBoolean(0.8)) {
@@ -30,6 +42,8 @@ case class Melody(ctx: DoctusSoundAudioContext) {
       }
     }
   }
+
+
 
   private def ranBoolean(p: Double): Boolean = {
     ran.nextDouble() < p
