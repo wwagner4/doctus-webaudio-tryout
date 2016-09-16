@@ -238,9 +238,11 @@ case class NodeControlAdsrScalajs(attack: Double, decay: Double, sustain: Double
   }
 
   def stop(time: Double): Unit = {
+    val now = waCtx.currentTime
     waParamList.foreach { p =>
-      p.cancelScheduledValues(time)
-      p.setValueAtTime(sustain * valMax, time)
+      val  diff = time - now
+      if (diff <= 0.0) p.cancelScheduledValues(0.0)
+      else p.cancelScheduledValues(time)
       p.linearRampToValueAtTime(0.0, time + release)
     }
   }
