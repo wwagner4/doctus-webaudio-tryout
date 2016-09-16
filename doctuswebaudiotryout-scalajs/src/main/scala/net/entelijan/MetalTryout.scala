@@ -21,7 +21,7 @@ case class MetalTryout(ctx: DoctusSoundAudioContext) {
 
     def connect(sink: NodeSink): Unit = nodeSource.connect(sink)
 
-    def connect(filter: NodeFilter): NodeSource = nodeSource.connect(filter)
+    def connect(filter: NodeThrough): NodeSource = nodeSource.connect(filter)
 
   }
 
@@ -36,7 +36,7 @@ case class MetalTryout(ctx: DoctusSoundAudioContext) {
     val gainableOscils = params.map { case (freq, gain) => gainableOscil(freq, gain) }
 
     val adsr = ctx.createNodeControlAdsr(0.001, 1.5, 0.1, 1.0)
-    val gain = ctx.createNodeFilterGain
+    val gain = ctx.createNodeThroughGain
     val out = ctx.createNodeSinkLineOut
     val now = ctx.currentTime
 
@@ -60,7 +60,7 @@ case class MetalTryout(ctx: DoctusSoundAudioContext) {
   def gainableOscil(freqVal: Double, gainVal: Double): StartStoppableSource = {
 
     val oscil = ctx.createNodeSourceOscil(WaveType_Sine)
-    val gain = ctx.createNodeFilterGain
+    val gain = ctx.createNodeThroughGain
 
     val freqCtrl = ctx.createNodeControlConstant(freqVal)
     val gainCtrl = ctx.createNodeControlConstant(gainVal)

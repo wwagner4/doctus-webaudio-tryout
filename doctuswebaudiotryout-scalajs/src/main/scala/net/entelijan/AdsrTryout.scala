@@ -24,7 +24,7 @@ case class AdsrTryout(ctx: DoctusSoundAudioContext) {
     val freqCtrl = ctx.createNodeControlConstant(freq)
     val adsrCtrl = createAdsrCtrl(nineth)
 
-    val gain = ctx.createNodeFilterGain
+    val gain = ctx.createNodeThroughGain
     val oscil = ctx.createNodeSourceOscil(WaveType_Sawtooth)
 
     adsrCtrl >- gain.gain

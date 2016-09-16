@@ -37,7 +37,7 @@ case class Noise(ctx: DoctusSoundAudioContext, noiseType: NoiseType) {
     val constCtrl = ctx.createNodeControlConstant(1.5)
 
     val noise = ctx.createNodeSourceNoise(noiseType)
-    val gain = ctx.createNodeFilterGain
+    val gain = ctx.createNodeThroughGain
     val out = ctx.createNodeSinkLineOut
 
     lfoCtrl >- gain.gain

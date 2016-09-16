@@ -17,6 +17,11 @@ case object NoiseType_Pink extends NoiseType
 case object NoiseType_Red extends NoiseType
 case object NoiseType_Brown extends NoiseType
 
+sealed trait FilterType
+case object FilterType_Lowpass extends FilterType
+case object FilterType_Highpass extends FilterType
+case object FilterType_Bandpass extends FilterType
+
 /**
   * Creates a sound signal
   * Examples: Sine generator, ...
@@ -27,9 +32,9 @@ trait NodeSource {
 
   def `>-`(sink: NodeSink): Unit = connect(sink)
 
-  def connect(filter: NodeFilter): NodeSource
+  def connect(through: NodeThrough): NodeSource
 
-  def `>-`(filter: NodeFilter): NodeSource = connect(filter)
+  def `>-`(through: NodeThrough): NodeSource = connect(through)
 
 }
 
@@ -46,7 +51,18 @@ trait NodeSink {
   * provides the transformed signal like a NodeSource
   * Examples: Gain control, filters, ...
   */
-trait NodeFilter extends NodeSource {
+trait NodeThrough extends NodeSource {
+
+}
+
+/**
+  * Frequency filter 
+  */
+trait NodeThroughFilter extends NodeThrough {
+
+  def frequency: ControlParam
+
+  def quality: ControlParam
 
 }
 
@@ -117,7 +133,7 @@ trait NodeControlLfo extends NodeControl with StartStoppable {}
 /**
   * Component for gain control
   */
-trait NodeFilterGain extends NodeFilter {
+trait NodeThroughGain extends NodeThrough {
 
   def gain: ControlParam
 
@@ -137,7 +153,9 @@ trait DoctusSoundAudioContext {
 
   def createNodeSourceNoise(noiseType: NoiseType): NodeSourceNoise
 
-  def createNodeFilterGain: NodeFilterGain
+  def createNodeThroughGain: NodeThroughGain
+
+  def createNodeThroughFilter(filterType: FilterType): NodeThroughFilter
 
   /**
     *

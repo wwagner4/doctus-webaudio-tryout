@@ -64,7 +64,7 @@ case class MyInstrument(ctx: DoctusSoundAudioContext, freq: Double) extends Inst
   val adsrCtrl = ctx.createNodeControlAdsr(0.001, 0.1, 0.1, 3.0)
 
   val oscil = ctx.createNodeSourceOscil(WaveType_Sawtooth)
-  val gain = ctx.createNodeFilterGain
+  val gain = ctx.createNodeThroughGain
   val sink = ctx.createNodeSinkLineOut
 
   freqCtrl >- oscil.frequency

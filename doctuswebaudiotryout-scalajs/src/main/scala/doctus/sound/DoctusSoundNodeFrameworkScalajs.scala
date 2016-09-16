@@ -29,7 +29,7 @@ case class NodeSinkLineOutScalajs(waCtx: AudioContext) extends NodeSink with Aud
 
 }
 
-case class NodeFilterGainScalajs(waCtx: AudioContext) extends NodeFilterGain with AudioNodeAware {
+case class NodeThroughGainScalajs(waCtx: AudioContext) extends NodeThroughGain with AudioNodeAware {
 
   val waGain = waCtx.createGain()
 
@@ -42,17 +42,17 @@ case class NodeFilterGainScalajs(waCtx: AudioContext) extends NodeFilterGain wit
         throw new IllegalStateException()
     }
 
-    override def toString: String = "NodeFilterGainScalajs paramGain"
+    override def toString: String = "NodeThroughGainScalajs paramGain"
 
   }
 
-  def connect(filter: NodeFilter): NodeSource = {
-    filter match {
+  def connect(through: NodeThrough): NodeSource = {
+    through match {
       case node: AudioNodeAware =>
         val src = node.audioNode
         waGain.connect(src)
       case _ =>
-        println("filter %s is not AudioNodeAware" format filter)
+        println("through %s is not AudioNodeAware" format through)
         throw new IllegalStateException()
     }
     this
@@ -94,14 +94,14 @@ case class NodeSourceOscilScalajs(waCtx: AudioContext, waveType: WaveType)
     override def toString: String = "NodeSourceOscilSineScalajs paramFrequency"
   }
 
-  def connect(filter: NodeFilter): NodeSource = {
-    filter match {
+  def connect(through: NodeThrough): NodeSource = {
+    through match {
       case node: AudioNodeAware =>
-        val waFilter = node.audioNode
-        waOscil.connect(waFilter)
-        filter
+        val waThrough = node.audioNode
+        waOscil.connect(waThrough)
+        through
       case _ =>
-        println("filter %s is not AudioNodeAware" format filter)
+        println("through %s is not AudioNodeAware" format through)
         throw new IllegalStateException()
     }
   }
@@ -161,14 +161,14 @@ case class NodeSourceNoiseWhiteScalajs(waCtx: AudioContext, noiseType: NoiseType
 
   val waSrc = createBufferSourceLooping(bufferNoiseWhite)
 
-  def connect(filter: NodeFilter): NodeSource = {
-    filter match {
+  def connect(through: NodeThrough): NodeSource = {
+    through match {
       case node: AudioNodeAware =>
-        val waFilter = node.audioNode
-        waSrc.connect(waFilter)
-        filter
+        val waThrough = node.audioNode
+        waSrc.connect(waThrough)
+        through
       case _ =>
-        println("filter %s is not AudioNodeAware" format filter)
+        println("through %s is not AudioNodeAware" format through)
         throw new IllegalStateException()
     }
   }
@@ -313,8 +313,8 @@ case class DoctusSoundAudioContextScalajs(waCtx: AudioContext) extends DoctusSou
     NodeSourceNoiseWhiteScalajs(waCtx, noiseType)
   }
 
-  def createNodeFilterGain: NodeFilterGain = {
-    NodeFilterGainScalajs(waCtx)
+  def createNodeThroughGain: NodeThroughGain = {
+    NodeThroughGainScalajs(waCtx)
   }
 
   def createNodeControlConstant(value: Double): NodeControl = {
@@ -328,6 +328,8 @@ case class DoctusSoundAudioContextScalajs(waCtx: AudioContext) extends DoctusSou
   def createNodeControlLfo(waveType: WaveType, frequency: Double, amplitude: Double): NodeControlLfo = {
     NodeControlLfoScalajs(waveType, frequency, amplitude)(waCtx)
   }
+  
+  def createNodeThroughFilter(filterType: FilterType): NodeThroughFilter = ???
 
   def currentTime: Double = waCtx.currentTime
 

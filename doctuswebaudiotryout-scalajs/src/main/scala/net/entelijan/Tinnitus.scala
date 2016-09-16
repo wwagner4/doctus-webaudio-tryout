@@ -19,7 +19,7 @@ case class Tinnitus(ctx: DoctusSoundAudioContext) {
     val gainCtrl = ctx.createNodeControlAdsr(5.0, 0.0, 1.0, 3.0)
 
     val oscil = ctx.createNodeSourceOscil(WaveType_Sine)
-    val gain = ctx.createNodeFilterGain
+    val gain = ctx.createNodeThroughGain
     val lineOut = ctx.createNodeSinkLineOut
 
     // Connect nodes
