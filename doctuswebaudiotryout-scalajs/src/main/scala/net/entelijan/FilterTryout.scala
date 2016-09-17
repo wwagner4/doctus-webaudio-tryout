@@ -18,7 +18,6 @@ case class FilterTryout(ctx: DoctusSoundAudioContext) {
 
   def start(): Unit = {
     val now = ctx.currentTime
-    println("start %.2f" format now)
     val i = Inst(freq)
     i.start(now)
     inst = Some(i)
@@ -26,33 +25,32 @@ case class FilterTryout(ctx: DoctusSoundAudioContext) {
 
   def stop(): Unit = {
     val now = ctx.currentTime
-    println("stop %.2f" format now)
     inst.foreach(_.stop(now))
   }
 
   case class Inst(freq: Double) extends StartStoppable {
 
-    val freqCtrl = ctx.createNodeControlConstant(400)
+    val oscilFreqCtrl = ctx.createNodeControlConstant(freq)
     val oscil = ctx.createNodeSourceOscil(WaveType_Sawtooth)
     val sink = ctx.createNodeSinkLineOut
-    val gain = ctx.createNodeThroughGain
-    val gainCtrl = ctx.createNodeControlAdsr(0.5, 0.1, 0.5, 1.5)
-    val gain1 = ctx.createNodeThroughGain
-    val gainCtrl1 = ctx.createNodeControlConstant(0.1)
+    val gainAdsr = ctx.createNodeThroughGain
+    val gainAdsrCtrl = ctx.createNodeControlAdsr(0.0005, 0.1, 0.5, 1.5)
+    val gainMain = ctx.createNodeThroughGain
+    val gainMainCtrl = ctx.createNodeControlConstant(0.1)
 
 
-    freqCtrl >- oscil.frequency
-    gainCtrl >- gain.gain
-    gainCtrl1 >- gain1.gain
-    oscil >- gain >- gain1 >- sink
+    oscilFreqCtrl >- oscil.frequency
+    gainAdsrCtrl >- gainAdsr.gain
+    gainMainCtrl >- gainMain.gain
+    oscil >- gainAdsr >- gainMain >- sink
 
     def start(time: Double): Unit = {
       oscil.start(time)
-      gainCtrl.start(time)
+      gainAdsrCtrl.start(time)
     }
 
     def stop(time: Double): Unit = {
-      gainCtrl.stop(time)
+      gainAdsrCtrl.stop(time)
       oscil.stop(time + 5)
     }
 
