@@ -49,7 +49,7 @@ case class AdsrTryout(ctx: DoctusSoundAudioContext) {
   def createAdsrCtrl(nineth: Nineth): NodeControlEnvelope = {
 
     def createAdsr(attack: Double, decay: Double, sustain: Double): NodeControlEnvelope = {
-      ctx.createNodeControlAdsr(attack, decay, sustain, 2.0)
+      ctx.createNodeControlAdsr(attack, decay, sustain, 2.0, 0.2)
     }
 
     nineth match {

@@ -61,7 +61,7 @@ trait Instrument {
 case class MyInstrument(ctx: DoctusSoundAudioContext, freq: Double) extends Instrument {
 
   val freqCtrl = ctx.createNodeControlConstant(freq)
-  val adsrCtrl = ctx.createNodeControlAdsr(0.001, 0.1, 0.1, 3.0)
+  val adsrCtrl = ctx.createNodeControlAdsr(0.001, 0.1, 0.1, 3.0, 0.1)
 
   val oscil = ctx.createNodeSourceOscil(WaveType_Sawtooth)
   val gain = ctx.createNodeThroughGain

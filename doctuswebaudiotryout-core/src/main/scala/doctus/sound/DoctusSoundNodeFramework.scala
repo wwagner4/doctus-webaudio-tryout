@@ -174,7 +174,7 @@ trait DoctusSoundAudioContext {
     * @param release time in seconds
     * @return an new ADSR controller
     */
-  def createNodeControlAdsr(attack: Double, decay: Double, sustain: Double, release: Double): NodeControlEnvelope
+  def createNodeControlAdsr(attack: Double, decay: Double, sustain: Double, release: Double, gain: Double = 1.0): NodeControlEnvelope
 
   /**
     * Low frequency oscillator

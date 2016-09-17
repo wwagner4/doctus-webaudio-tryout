@@ -12,12 +12,11 @@ import scala.util.Random
   */
 case class FilterTryout(ctx: DoctusSoundAudioContext) {
 
-  val freq = 200 + Random.nextDouble() * 300
-
   var inst = Option.empty[Inst]
 
   def start(): Unit = {
     val now = ctx.currentTime
+    val freq = 300 + Random.nextDouble() * 200
     val i = Inst(freq)
     i.start(now)
     inst = Some(i)
@@ -34,23 +33,32 @@ case class FilterTryout(ctx: DoctusSoundAudioContext) {
     val oscil = ctx.createNodeSourceOscil(WaveType_Sawtooth)
     val sink = ctx.createNodeSinkLineOut
     val gainAdsr = ctx.createNodeThroughGain
-    val gainAdsrCtrl = ctx.createNodeControlAdsr(0.001, 0.1, 0.9, 1.5)
+    val gainAdsrCtrl = ctx.createNodeControlAdsr(0.1, 0.1, 0.9, 1.5)
     val gainMain = ctx.createNodeThroughGain
-    val gainMainCtrl = ctx.createNodeControlConstant(0.1)
+    val gainMainCtrl = ctx.createNodeControlConstant(0.7)
 
+    val filter = ctx.createNodeThroughFilter(FilterType_Lowpass)
+    val filterFreqAdsrCtrl = ctx.createNodeControlAdsr(0.0001, 0, 1.0, 1.5, freq * 0.6)
+    val filterFreqConstCtrl = ctx.createNodeControlConstant(freq * 0.8)
 
     oscilFreqCtrl >- oscil.frequency
     gainAdsrCtrl >- gainAdsr.gain
     gainMainCtrl >- gainMain.gain
-    oscil >- gainAdsr >- gainMain >- sink
+
+    filterFreqAdsrCtrl >- filter.frequency
+    filterFreqConstCtrl >- filter.frequency
+
+    oscil >- filter >- gainAdsr >- gainMain >- sink
 
     def start(time: Double): Unit = {
       oscil.start(time)
       gainAdsrCtrl.start(time)
+      filterFreqAdsrCtrl.start(time)
     }
 
     def stop(time: Double): Unit = {
       gainAdsrCtrl.stop(time)
+      filterFreqAdsrCtrl.stop(time)
       oscil.stop(time + 5)
     }
 
