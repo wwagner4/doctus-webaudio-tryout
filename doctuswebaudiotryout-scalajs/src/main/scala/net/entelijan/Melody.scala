@@ -10,53 +10,47 @@ import doctus.sound.{DoctusSoundAudioContext, WaveType_Sawtooth}
   */
 case class Melody(ctx: DoctusSoundAudioContext) {
 
-  val ran = new java.util.Random()
-  val freqsBase = List(222.0, 333.0, 444.0, 555.0)
-  val offsets = List(1.0, 3.0 / 4.0, 1.0 / 2.0, 3.0 / 4.0)
+  private val ran = new java.util.Random()
+  private val freqsBase = List(222.0, 333.0, 444.0, 555.0)
+  private val offsets = List(1.0, 3.0 / 4.0, 1.0 / 2.0, 3.0 / 4.0)
 
-  val sizei = freqsBase.size
-  var i = ran.nextInt(sizei)
+  private val freqsSize = freqsBase.size
+  private var freqIndex = ran.nextInt(freqsSize)
 
   def start(): Unit = {
-    val off = offsets(ran.nextInt(offsets.size))
-    val freqs = freqsBase.map(_ * off)
+
+    val offset = offsets(ran.nextInt(offsets.size))
+    val freqs = freqsBase.map(_ * offset)
     val startTime = ctx.currentTime
 
-    complex(startTime, freqs)
-
-  }
-
-  private def complex(startTime: Double, freqs: List[Double]): Unit = {
     for (time <- 0.0 to(5, 0.25)) {
-      i = if (ran.nextBoolean()) {
-        if (i == sizei - 1) i - 1
-        else if (i == 0) i + 1
-        else if (ran.nextBoolean()) i + 1
-        else i - 1
-      } else {
-        i
-      }
-      if (ranBoolean(0.8)) {
-        playNote(startTime + time, 0.5, MyInstrument(ctx, freqs(i)))
+      freqIndex = nextIndex(freqIndex, freqsSize)
+      if (ranBoolean(0.6)) {
+        playNote(startTime + time, 0.5, MyInstrument(freqs(freqIndex))(ctx))
       }
     }
     for (time <- 2.0 to(8, 0.25)) {
-      val i = ran.nextInt(freqs.size)
-      if (ranBoolean(0.3)) {
-        playNote(startTime + 0.01 + time, 0.5, MyInstrument(ctx, freqs(i)))
+      freqIndex = nextIndex(freqIndex, freqsSize)
+      if (ranBoolean(0.4)) {
+        playNote(startTime + 0.01 + time, 0.5, MyInstrument(freqs(freqIndex + 1 % freqsSize))(ctx))
       }
     }
-  }
-
-
-  private def ranBoolean(p: Double): Boolean = {
-    ran.nextDouble() < p
   }
 
   private def playNote(time: Double, duration: Double, inst: Instrument): Unit = {
     inst.start(time)
     inst.stop(time + duration)
   }
+
+  private def nextIndex(i: Int, size: Int): Int =
+    if (ranBoolean(0.8)) i
+    else if (i == size - 1) i - 1
+    else if (i == 0) i + 1
+    else if (ranBoolean(0.7)) i + 1
+    else i - 1
+
+  private def ranBoolean(p: Double): Boolean =
+    ran.nextDouble() < p
 
 }
 
@@ -68,7 +62,7 @@ trait Instrument {
 
 }
 
-case class MyInstrument(ctx: DoctusSoundAudioContext, freq: Double) extends Instrument {
+case class MyInstrument(freq: Double)(implicit ctx: DoctusSoundAudioContext) extends Instrument {
 
   val freqCtrl = ctx.createNodeControlConstant(freq)
   val adsrCtrl = ctx.createNodeControlAdsr(0.001, 0.1, 0.1, 3.0, 0.1)
