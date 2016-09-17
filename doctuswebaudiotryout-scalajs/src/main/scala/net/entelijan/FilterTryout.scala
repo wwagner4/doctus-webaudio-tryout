@@ -34,7 +34,7 @@ case class FilterTryout(ctx: DoctusSoundAudioContext) {
     val oscil = ctx.createNodeSourceOscil(WaveType_Sawtooth)
     val sink = ctx.createNodeSinkLineOut
     val gainAdsr = ctx.createNodeThroughGain
-    val gainAdsrCtrl = ctx.createNodeControlAdsr(0.0005, 0.1, 0.5, 1.5)
+    val gainAdsrCtrl = ctx.createNodeControlAdsr(0.001, 0.1, 0.9, 1.5)
     val gainMain = ctx.createNodeThroughGain
     val gainMainCtrl = ctx.createNodeControlConstant(0.1)
 
