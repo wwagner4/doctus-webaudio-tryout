@@ -10,51 +10,52 @@ import scala.util.Random
 /**
   * A Filter that changes its cutoff frequency controlled by an ADSR envelope
   */
-case class FilterTryout(ctx: AudioContext) {
+case class FilterTryout(ctx: DoctusSoundAudioContext) {
 
-  val ran = Random
+  val freq = 200 + Random.nextDouble() * 300
 
-
-  val oscil = ctx.createOscillator()
-  oscil.`type` = "sawtooth"
-  oscil.start(0)
-
-
-  val adsr = NodeAdsr(ctx)
-  adsr.valAttack = 0.001
-  adsr.valSustain = 0.8
-  adsr.valRelease = 2.0
-
-  val filterAdsr = NodeAdsrSrc()
-  filterAdsr.valAttack = 0.6
-  filterAdsr.valSustain = 1.0
-  filterAdsr.valRelease = 1.5
-  filterAdsr.valGain = 10000
-
-  val filter = ctx.createBiquadFilter()
-  filter.`type` = "lowpass"
-
-  filterAdsr.connect(filter.detune)
-
-  oscil.connect(filter)
-  filter.connect(adsr.nodeIn)
-  adsr.nodeOut.connect(ctx.destination)
+  var inst = Option.empty[Inst]
 
   def start(): Unit = {
-    val t = ctx.currentTime
-
-    val freq = 100 + ran.nextDouble() * 500
-    oscil.frequency.setValueAtTime(freq, t)
-    filter.frequency.setValueAtTime(freq * 1.5, t)
-
-    adsr.start(t)
-    filterAdsr.start(t)
+    val now = ctx.currentTime
+    println("start %.2f" format now)
+    val i = Inst(freq)
+    i.start(now)
+    inst = Some(i)
   }
 
   def stop(): Unit = {
-    val t = ctx.currentTime
-    adsr.stop(t)
-    filterAdsr.stop(t)
+    val now = ctx.currentTime
+    println("stop %.2f" format now)
+    inst.foreach(_.stop(now))
+  }
+
+  case class Inst(freq: Double) extends StartStoppable {
+
+    val freqCtrl = ctx.createNodeControlConstant(400)
+    val oscil = ctx.createNodeSourceOscil(WaveType_Sawtooth)
+    val sink = ctx.createNodeSinkLineOut
+    val gain = ctx.createNodeThroughGain
+    val gainCtrl = ctx.createNodeControlAdsr(0.5, 0.1, 0.5, 1.5)
+    val gain1 = ctx.createNodeThroughGain
+    val gainCtrl1 = ctx.createNodeControlConstant(0.1)
+
+
+    freqCtrl >- oscil.frequency
+    gainCtrl >- gain.gain
+    gainCtrl1 >- gain1.gain
+    oscil >- gain >- gain1 >- sink
+
+    def start(time: Double): Unit = {
+      oscil.start(time)
+      gainCtrl.start(time)
+    }
+
+    def stop(time: Double): Unit = {
+      gainCtrl.stop(time)
+      oscil.stop(time + 5)
+    }
+
   }
 
 }

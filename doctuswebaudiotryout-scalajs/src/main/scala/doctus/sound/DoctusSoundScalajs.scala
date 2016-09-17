@@ -21,7 +21,7 @@ class DoctusSoundJs extends DoctusSound {
   val noiseBrownRed = Noise(ctx1, NoiseType_Red)
   val adsrTryout = AdsrTryout(ctx1)
   val metalTryout = MetalTryout(ctx1)
-  val filterTryout = FilterTryout(ctx)
+  val filterTryout = FilterTryout(ctx1)
 
   def tinnitusStart(): Unit = tinnitus.start()
 

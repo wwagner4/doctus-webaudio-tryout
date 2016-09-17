@@ -55,7 +55,7 @@ case class NodeThroughGainScalajs(waCtx: AudioContext) extends NodeThroughGain w
         println("through %s is not AudioNodeAware" format through)
         throw new IllegalStateException()
     }
-    this
+    through
   }
 
   def connect(sink: NodeSink): Unit = {
