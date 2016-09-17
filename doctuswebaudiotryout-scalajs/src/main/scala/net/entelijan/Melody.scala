@@ -5,17 +5,21 @@ package net.entelijan
 import doctus.sound.{DoctusSoundAudioContext, WaveType_Sawtooth}
 
 /**
- * Plays a random melody melody
- * Introduces the concept of an 'instrument'
- */
+  * Plays a random melody melody
+  * Introduces the concept of an 'instrument'
+  */
 case class Melody(ctx: DoctusSoundAudioContext) {
 
   val ran = new java.util.Random()
-  val freqsBase = List(222.0 * 0.995, 333.0, 444.0, 555.0 * 0.995)
+  val freqsBase = List(222.0, 333.0, 444.0, 555.0)
+  val offsets = List(1.0, 3.0 / 4.0, 1.0 / 2.0, 3.0 / 4.0)
+
+  val sizei = freqsBase.size
+  var i = ran.nextInt(sizei)
 
   def start(): Unit = {
-    val off = 0.3 + ran.nextDouble()
-    val freqs = freqsBase.map( _ * off)
+    val off = offsets(ran.nextInt(offsets.size))
+    val freqs = freqsBase.map(_ * off)
     val startTime = ctx.currentTime
 
     complex(startTime, freqs)
@@ -24,7 +28,14 @@ case class Melody(ctx: DoctusSoundAudioContext) {
 
   private def complex(startTime: Double, freqs: List[Double]): Unit = {
     for (time <- 0.0 to(5, 0.25)) {
-      val i = ran.nextInt(freqs.size)
+      i = if (ran.nextBoolean()) {
+        if (i == sizei - 1) i - 1
+        else if (i == 0) i + 1
+        else if (ran.nextBoolean()) i + 1
+        else i - 1
+      } else {
+        i
+      }
       if (ranBoolean(0.8)) {
         playNote(startTime + time, 0.5, MyInstrument(ctx, freqs(i)))
       }
@@ -36,7 +47,6 @@ case class Melody(ctx: DoctusSoundAudioContext) {
       }
     }
   }
-
 
 
   private def ranBoolean(p: Double): Boolean = {
