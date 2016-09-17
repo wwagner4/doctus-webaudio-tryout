@@ -3,6 +3,7 @@
 package net.entelijan
 
 import doctus.sound._
+
 import scala.util.Random
 
 case class MetalTryout(ctx: DoctusSoundAudioContext) {

@@ -1,17 +1,11 @@
-// Copyright (C) 2016 wolfgang wagner http://entelijan.net
+package net.entelijan
 
-package doctus.sound
-
-import net.entelijan._
+import doctus.sound._
 
 /**
- * ScalaJS implementation of the (experimental sound interface)
- */
-class DoctusSoundJs extends DoctusSound {
-
-  import org.scalajs.dom.AudioContext
-
-  val ctx = DoctusSoundAudioContextScalajs(new AudioContext)
+  * Created by wwagner4 on 17/09/16.
+  */
+case class SoundTryout(ctx: DoctusSoundAudioContext) {
 
   val tinnitus = Tinnitus(ctx)
   val melody = Melody(ctx)
@@ -47,10 +41,9 @@ class DoctusSoundJs extends DoctusSound {
   def metalStart(): Unit = metalTryout.start()
 
   def metalStop(): Unit = metalTryout.stop()
-  
+
   def filterStart(): Unit = filterTryout.start()
 
   def filterStop(): Unit = filterTryout.stop()
 
 }
-

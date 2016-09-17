@@ -17,6 +17,7 @@ object DoctusUtil {
     require(start2 <= stop2)
 
     (stop2 - start2) * (value - start1) / (stop1 - start1) + start2
+    
   }
 
 }

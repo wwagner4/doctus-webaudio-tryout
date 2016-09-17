@@ -3,7 +3,6 @@
 package net.entelijan
 
 import doctus.sound._
-import org.scalajs.dom._
 
 import scala.util.Random
 

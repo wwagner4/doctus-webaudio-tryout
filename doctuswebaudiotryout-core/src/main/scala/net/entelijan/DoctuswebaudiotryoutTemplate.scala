@@ -9,9 +9,23 @@ import doctus.core.text.DoctusFontNamed
 import doctus.core.util.DoctusPoint
 import doctus.sound._
 
-case class DoctuswebaudiotryoutTemplate(canvas: DoctusCanvas, sound: DoctusSound) extends DoctusTemplate {
+sealed trait Nineth
+
+case object N_00 extends Nineth
+case object N_01 extends Nineth
+case object N_02 extends Nineth
+case object N_10 extends Nineth
+case object N_11 extends Nineth
+case object N_12 extends Nineth
+case object N_20 extends Nineth
+case object N_21 extends Nineth
+case object N_22 extends Nineth
+
+case class DoctuswebaudiotryoutTemplate(canvas: DoctusCanvas, soundContext: DoctusSoundAudioContext) extends DoctusTemplate {
 
   case class Tile(i: Int, j: Int, dx: Double, dy: Double)
+
+  val sound = SoundTryout(soundContext)
 
   val nx = 4
   val ny = 4

@@ -39,8 +39,10 @@ object DoctuswebaudiotryoutJvm extends App {
       canvasFx.widthProperty().bind(scene.widthProperty())
       canvasFx.heightProperty().bind(scene.heightProperty())
 
+      val ctx = new DoctusSoundAudioContextJvm {}
+
       // Common to all platforms
-      val templ = DoctuswebaudiotryoutTemplate(canvas, DoctusSoundJvm)
+      val templ = DoctuswebaudiotryoutTemplate(canvas, ctx)
       DoctusTemplateController(templ, sched, canvas)
 
       stage.setScene(scene)
@@ -54,43 +56,7 @@ object DoctuswebaudiotryoutJvm extends App {
       // Find a better solution to exit
       stage.setOnCloseRequest(handler(e => System.exit(0)))
 
-
-
     }
-  }
-
-  case object DoctusSoundJvm extends DoctusSound {
-
-    override def tinnitusStart(): Unit = throw new IllegalStateException("JVM NOT IMPLEMENTED")
-
-    override def tinnitusStop(): Unit = throw new IllegalStateException("JVM NOT IMPLEMENTED")
-
-    override def noiseWhiteStart(nineth: Nineth): Unit = throw new IllegalStateException("JVM NOT IMPLEMENTED")
-
-    override def noiseWhiteStop(): Unit = throw new IllegalStateException("JVM NOT IMPLEMENTED")
-
-    override def noisePinkStart(nineth: Nineth): Unit = throw new IllegalStateException("JVM NOT IMPLEMENTED")
-
-    override def noisePinkStop(): Unit = throw new IllegalStateException("JVM NOT IMPLEMENTED")
-
-    override def noiseBrownRedStart(nineth: Nineth): Unit = throw new IllegalStateException("JVM NOT IMPLEMENTED")
-
-    override def noiseBrownRedStop(): Unit = throw new IllegalStateException("JVM NOT IMPLEMENTED")
-
-    override def melodyStart(): Unit = throw new IllegalStateException("JVM NOT IMPLEMENTED")
-
-    override def adsrStart(nineth: Nineth): Unit = throw new IllegalStateException("JVM NOT IMPLEMENTED " + nineth)
-
-    override def adsrStop(): Unit = throw new IllegalStateException("JVM NOT IMPLEMENTED")
-
-    def metalStart(): Unit = throw new IllegalStateException("JVM NOT IMPLEMENTED")
-  
-    def metalStop(): Unit = throw new IllegalStateException("JVM NOT IMPLEMENTED")
-  
-    def filterStart(): Unit = throw new IllegalStateException("JVM NOT IMPLEMENTED")
-
-    def filterStop(): Unit = throw new IllegalStateException("JVM NOT IMPLEMENTED")
-
   }
 
 }
