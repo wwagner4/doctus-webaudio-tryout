@@ -25,7 +25,6 @@ object DoctuswebaudiotryoutScalaJs {
     val templ = net.entelijan.DoctuswebaudiotryoutTemplate(canvas, sound)
     DoctusTemplateController(templ, sched, canvas)
 
-
   }
 
 }
