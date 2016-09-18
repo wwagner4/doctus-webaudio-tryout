@@ -7,12 +7,16 @@ import doctus.sound._
 /**
   * Plays a slowly increasing and releasing sine wave
   */
-case class Tinnitus(ctx: DoctusSoundAudioContext) {
+case class Tinnitus(ctx: DoctusSoundAudioContext) extends SoundExperiment {
 
   var oscilOpt = Option.empty[NodeSourceOscil]
   var gainCtrlOpt = Option.empty[NodeControlEnvelope]
 
-  def start(): Unit = {
+  def title = "Tinnitus"
+
+  def start(nineth: Nineth): Unit = {
+    println("tinnitus start %s" format nineth)
+
 
     // Create nodes
     val freqCtrl = ctx.createNodeControlConstant(400.0)
@@ -38,6 +42,8 @@ case class Tinnitus(ctx: DoctusSoundAudioContext) {
   }
 
   def stop(): Unit = {
+    println("tinnitus stop")
+
     val now = ctx.currentTime
     gainCtrlOpt.foreach(_.stop(now))
     oscilOpt.foreach(_.stop(now + 10))

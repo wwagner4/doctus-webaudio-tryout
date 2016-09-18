@@ -21,11 +21,21 @@ case object N_20 extends Nineth
 case object N_21 extends Nineth
 case object N_22 extends Nineth
 
+trait SoundExperiment {
+
+  def title: String
+
+  def start(nienth: Nineth)
+
+  def stop()
+
+}
+
+case class Tile(i: Int, j: Int, dx: Double, dy: Double)
+
 case class DoctuswebaudiotryoutTemplate(canvas: DoctusCanvas, soundContext: DoctusSoundAudioContext) extends DoctusTemplate {
 
-  case class Tile(i: Int, j: Int, dx: Double, dy: Double)
-
-  val sound = SoundTryout(soundContext)
+  val experimentManager = SoundExperimentManager(soundContext)
 
   val nx = 4
   val ny = 4
@@ -53,17 +63,8 @@ case class DoctuswebaudiotryoutTemplate(canvas: DoctusCanvas, soundContext: Doct
   }
 
   def writeText(g: DoctusGraphics, tile: Tile): Unit = {
-    tile match {
-      case Tile(0, 0, _, _) => writeText(g, tile, "tinnitus")
-      case Tile(0, 1, _, _) => writeText(g, tile, "melody")
-      case Tile(0, 2, _, _) => writeText(g, tile, "white noise")
-      case Tile(0, 3, _, _) => writeText(g, tile, "pink noise")
-      case Tile(1, 0, _, _) => writeText(g, tile, "brown/red noise")
-      case Tile(1, 1, _, _) => writeText(g, tile, "ADSR")
-      case Tile(1, 2, _, _) => writeText(g, tile, "metal")
-      case Tile(1, 3, _, _) => writeText(g, tile, "filter")
-      case _ => // nothing to do here
-    }
+    val exp = experimentManager.experiment(tile)
+    writeText(g, tile, exp.title)
   }
 
   def writeText(g: DoctusGraphics, tile: Tile, text: String): Unit = {
@@ -89,30 +90,15 @@ case class DoctuswebaudiotryoutTemplate(canvas: DoctusCanvas, soundContext: Doct
   def pointableDragged(pos: DoctusPoint): Unit = () // Nothing to do here
 
   def pointablePressed(pos: DoctusPoint): Unit = {
-    tile(pos) match {
-      case Tile(0, 0, _, _) => sound.tinnitusStart()
-      case Tile(0, 1, _, _) => sound.melodyStart()
-      case tile @ Tile(0, 2, _, _) => sound.noiseWhiteStart(nineth(pos, tile))
-      case tile @ Tile(0, 3, _, _) => sound.noisePinkStart(nineth(pos, tile))
-      case tile @ Tile(1, 0, _, _) => sound.noiseBrownRedStart(nineth(pos, tile))
-      case tile @ Tile(1, 1, _, _) => sound.adsrStart(nineth(pos, tile))
-      case tile @ Tile(1, 2, _, _) => sound.metalStart()
-      case tile @ Tile(1, 3, _, _) => sound.filterStart()
-      case _ => // Nothing to do
-    }
+    val t = tile(pos)
+    val exp = experimentManager.experiment(t)
+    exp.start(nineth(pos, t))
   }
 
   def pointableReleased(pos: DoctusPoint): Unit = {
-    tile(pos) match {
-      case Tile(0, 0, _, _) => sound.tinnitusStop()
-      case Tile(0, 2, _, _) => sound.noiseWhiteStop()
-      case Tile(0, 3, _, _) => sound.noisePinkStop()
-      case Tile(1, 0, _, _) => sound.noiseBrownRedStop()
-      case Tile(1, 1, _, _) => sound.adsrStop()
-      case Tile(1, 2, _, _) => sound.metalStop()
-      case Tile(1, 3, _, _) => sound.filterStop()
-      case _ => // Nothing to do
-    }
+    val t = tile(pos)
+    val exp = experimentManager.experiment(t)
+    exp.stop()
   }
 
   def keyPressed(code: DoctusKeyCode): Unit = () // Nothing to do here
