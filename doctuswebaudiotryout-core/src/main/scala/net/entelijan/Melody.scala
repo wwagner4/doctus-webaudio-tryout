@@ -66,39 +66,39 @@ case class Melody(ctx: DoctusSoundAudioContext) extends SoundExperiment {
     inst.stop(time + duration)
   }
 
-}
+  trait Instrument {
 
-trait Instrument {
+    def start(time: Double)
 
-  def start(time: Double)
+    def stop(time: Double)
 
-  def stop(time: Double)
-
-}
-
-case class MyInstrument(freq: Double)(implicit ctx: DoctusSoundAudioContext) extends Instrument {
-
-  val freqCtrl = ctx.createNodeControlConstant(freq)
-  val adsrCtrl = ctx.createNodeControlAdsr(0.001, 0.4, 0.4, 2.0, 0.1)
-
-  val oscil = ctx.createNodeSourceOscil(WaveType_Sawtooth)
-  val gain = ctx.createNodeThroughGain
-  val sink = ctx.createNodeSinkLineOut
-
-  freqCtrl >- oscil.frequency
-  adsrCtrl >- gain.gain
-
-  oscil >- gain >- sink
-
-  oscil.start(0.0)
-
-  def start(time: Double): Unit = {
-    adsrCtrl.start(time)
   }
 
-  def stop(time: Double): Unit = {
-    adsrCtrl.stop(time)
-    oscil.stop(time + 5.0)
+  case class MyInstrument(freq: Double)(implicit ctx: DoctusSoundAudioContext) extends Instrument {
+
+    val freqCtrl = ctx.createNodeControlConstant(freq)
+    val adsrCtrl = ctx.createNodeControlAdsr(0.001, 0.4, 0.4, 2.0, 0.1)
+
+    val oscil = ctx.createNodeSourceOscil(WaveType_Sawtooth)
+    val gain = ctx.createNodeThroughGain
+    val sink = ctx.createNodeSinkLineOut
+
+    freqCtrl >- oscil.frequency
+    adsrCtrl >- gain.gain
+
+    oscil >- gain >- sink
+
+    oscil.start(0.0)
+
+    def start(time: Double): Unit = {
+      adsrCtrl.start(time)
+    }
+
+    def stop(time: Double): Unit = {
+      adsrCtrl.stop(time)
+      oscil.stop(time + 5.0)
+    }
+
   }
 
 }
