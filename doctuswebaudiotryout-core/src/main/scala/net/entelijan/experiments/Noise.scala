@@ -1,10 +1,7 @@
-// Copyright (C) 2016 wolfgang wagner http://entelijan.net
-
-package net.entelijan
+package net.entelijan.experiments
 
 import doctus.sound._
-
-import scala.util.Random
+import net.entelijan.{Nineth, SoundExperiment, SoundUtil}
 
 /**
   * Creating some noise.

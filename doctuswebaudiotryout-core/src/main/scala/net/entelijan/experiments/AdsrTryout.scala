@@ -1,8 +1,9 @@
 // Copyright (C) 2016 wolfgang wagner http://entelijan.net
 
-package net.entelijan
+package net.entelijan.experiments
 
 import doctus.sound._
+import net.entelijan._
 
 import scala.util.Random
 

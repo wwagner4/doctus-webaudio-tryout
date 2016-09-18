@@ -1,8 +1,9 @@
 // Copyright (C) 2016 wolfgang wagner http://entelijan.net
 
-package net.entelijan
+package net.entelijan.experiments
 
 import doctus.sound.{DoctusSoundAudioContext, WaveType_Sawtooth}
+import net.entelijan.{Nineth, SoundExperiment, SoundUtil}
 
 /**
   * Plays one of three melodies

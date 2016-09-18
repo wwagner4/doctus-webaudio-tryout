@@ -1,11 +1,13 @@
-// Copyright (C) 2016 wolfgang wagner http://entelijan.net
-
-package net.entelijan
+package net.entelijan.experiments
 
 import doctus.sound._
+import net.entelijan.{Nineth, SoundExperiment, SoundUtil}
 
 import scala.util.Random
 
+/**
+  * Created by wwagner4 on 18/09/16.
+  */
 case class MetalTryout(ctx: DoctusSoundAudioContext) extends SoundExperiment {
 
   def title = "metal"
