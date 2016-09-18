@@ -20,4 +20,22 @@ object SoundUtil {
 
   def logarithmicDecay(base: Double)(x: Int): Double = math.pow(base, -x)
 
+  def xyParams(x: Seq[Double], y: Seq[Double]): Nineth => (Double, Double) = {
+
+    case N_00 => (x(0), y(0))
+    case N_01 => (x(0), y(1))
+    case N_02 => (x(0), y(2))
+
+    case N_10 => (x(1), y(0))
+    case N_11 => (x(1), y(1))
+    case N_12 => (x(1), y(2))
+
+    case N_20 => (x(2), y(0))
+    case N_21 => (x(2), y(1))
+    case N_22 => (x(2), y(2))
+
+  }
+
+
+
 }
