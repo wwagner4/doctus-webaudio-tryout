@@ -9,7 +9,9 @@ import scala.util.Random
 /**
  * Sound using a reusable ADSR Curve
  */
-case class AdsrTryout(ctx: DoctusSoundAudioContext) {
+case class AdsrTryout(ctx: DoctusSoundAudioContext) extends SoundExperiment {
+
+  def title = "ADSR"
 
   val freqs = List(111, 222, 333, 444, 555)
   val ran = Random

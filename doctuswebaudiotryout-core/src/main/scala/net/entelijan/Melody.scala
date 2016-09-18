@@ -8,7 +8,9 @@ import doctus.sound.{DoctusSoundAudioContext, WaveType_Sawtooth}
   * Plays a random melody melody
   * Introduces the concept of an 'instrument'
   */
-case class Melody(ctx: DoctusSoundAudioContext) {
+case class Melody(ctx: DoctusSoundAudioContext) extends SoundExperiment {
+
+  def title: String = "melody"
 
   private val ran = new java.util.Random()
   private val freqsBase = List(222.0, 333.0, 444.0, 555.0)
@@ -17,7 +19,9 @@ case class Melody(ctx: DoctusSoundAudioContext) {
   private val freqsSize = freqsBase.size
   private var freqIndex = ran.nextInt(freqsSize)
 
-  def start(): Unit = {
+  def start(nienth: Nineth): Unit = {
+
+    println("melody start")
 
     val offset = offsets(ran.nextInt(offsets.size))
     val freqs = freqsBase.map(_ * offset)
@@ -29,12 +33,10 @@ case class Melody(ctx: DoctusSoundAudioContext) {
         playNote(startTime + time, 0.5, MyInstrument(freqs(freqIndex))(ctx))
       }
     }
-    for (time <- 2.0 to(8, 0.25)) {
-      freqIndex = nextIndex(freqIndex, freqsSize)
-      if (ranBoolean(0.4)) {
-        playNote(startTime + 0.01 + time, 0.5, MyInstrument(freqs(freqIndex + 1 % freqsSize))(ctx))
-      }
-    }
+  }
+
+  def stop(): Unit = {
+    println("melody stop")
   }
 
   private def playNote(time: Double, duration: Double, inst: Instrument): Unit = {

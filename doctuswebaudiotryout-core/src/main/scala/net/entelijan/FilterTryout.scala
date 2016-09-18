@@ -9,11 +9,13 @@ import scala.util.Random
 /**
   * A Filter that changes its cutoff frequency controlled by an ADSR envelope
   */
-case class FilterTryout(ctx: DoctusSoundAudioContext) {
+case class FilterTryout(ctx: DoctusSoundAudioContext) extends SoundExperiment {
 
   var inst = Option.empty[Inst]
 
-  def start(): Unit = {
+  def title: String = "filter"
+
+  def start(nineth: Nineth): Unit = {
     val now = ctx.currentTime
     val freq = 300 + Random.nextDouble() * 200
     val i = Inst(freq)

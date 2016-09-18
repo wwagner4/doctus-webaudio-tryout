@@ -9,13 +9,17 @@ import scala.util.Random
 /**
   * Creating some noise.
   */
-case class Noise(ctx: DoctusSoundAudioContext, noiseType: NoiseType) {
+case class Noise(ctx: DoctusSoundAudioContext) extends SoundExperiment {
+
+  def title: String = "noise"
+
+  val noiseType = NoiseType_Brown
 
   val ran = Random
 
   var noiseOpt = Option.empty[StartStoppable]
 
-  def start(time: Double, nineth: Nineth): Unit = {
+  def start(nineth: Nineth): Unit = {
 
     def createLfo(f: Double, a: Double): NodeControlLfo = {
       ctx.createNodeControlLfo(WaveType_Sine, f, a)
@@ -52,7 +56,7 @@ case class Noise(ctx: DoctusSoundAudioContext, noiseType: NoiseType) {
     noiseOpt = Some(noise)
   }
 
-  def stop(time: Double): Unit = {
+  def stop(): Unit = {
     val t = ctx.currentTime
     noiseOpt.foreach { bufferSrc =>
       bufferSrc.stop(t)

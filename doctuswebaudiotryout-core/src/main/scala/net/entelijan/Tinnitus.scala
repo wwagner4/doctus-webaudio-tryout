@@ -12,11 +12,9 @@ case class Tinnitus(ctx: DoctusSoundAudioContext) extends SoundExperiment {
   var oscilOpt = Option.empty[NodeSourceOscil]
   var gainCtrlOpt = Option.empty[NodeControlEnvelope]
 
-  def title = "Tinnitus"
+  def title = "tinnitus"
 
   def start(nineth: Nineth): Unit = {
-    println("tinnitus start %s" format nineth)
-
 
     // Create nodes
     val freqCtrl = ctx.createNodeControlConstant(400.0)
@@ -42,8 +40,6 @@ case class Tinnitus(ctx: DoctusSoundAudioContext) extends SoundExperiment {
   }
 
   def stop(): Unit = {
-    println("tinnitus stop")
-
     val now = ctx.currentTime
     gainCtrlOpt.foreach(_.stop(now))
     oscilOpt.foreach(_.stop(now + 10))

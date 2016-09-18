@@ -6,7 +6,9 @@ import doctus.sound._
 
 import scala.util.Random
 
-case class MetalTryout(ctx: DoctusSoundAudioContext) {
+case class MetalTryout(ctx: DoctusSoundAudioContext) extends SoundExperiment {
+
+  def title = "metal"
 
   val ran = Random
   val baseFreqs = List(111, 222, 333, 444, 555)
@@ -26,7 +28,7 @@ case class MetalTryout(ctx: DoctusSoundAudioContext) {
 
   }
 
-  def start(): Unit = {
+  def start(nineth: Nineth): Unit = {
 
     def ranFreq: Double = baseFreqs(ran.nextInt(baseFreqs.size))
     val harmonics = SoundUtil.metalHarmonics(ranFreq, 6)
