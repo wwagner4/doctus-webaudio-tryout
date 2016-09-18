@@ -4,8 +4,6 @@ package net.entelijan
 
 import doctus.sound._
 
-import scala.util.Random
-
 /**
   * A Filter that changes its cutoff frequency controlled by an ADSR envelope
   */
@@ -15,10 +13,16 @@ case class FilterTryout(ctx: DoctusSoundAudioContext) extends SoundExperiment {
 
   def title: String = "filter"
 
+  private val baseFreq = 300.0
+  private val freqMulti = 1.5
+  private val freqList = List(baseFreq, baseFreq * freqMulti, baseFreq * freqMulti * freqMulti)
+  private val filterFreqMultipleList = List(1.5, 3.0, 6.0)
+
   def start(nineth: Nineth): Unit = {
+    val (freq, filterFreqMultiple) = SoundUtil.xyParams(freqList, filterFreqMultipleList)(nineth)
+
     val now = ctx.currentTime
-    val freq = 300 + Random.nextDouble() * 200
-    val i = Inst(freq)
+    val i = Inst(freq, filterFreqMultiple)
     i.start(now)
     inst = Some(i)
   }
@@ -28,7 +32,7 @@ case class FilterTryout(ctx: DoctusSoundAudioContext) extends SoundExperiment {
     inst.foreach(_.stop(now))
   }
 
-  case class Inst(freq: Double) extends StartStoppable {
+  case class Inst(freq: Double, filterFreqMultiple: Double) extends StartStoppable {
 
     // Create nodes
     val oscilFreqCtrl = ctx.createNodeControlConstant(freq)
@@ -38,11 +42,11 @@ case class FilterTryout(ctx: DoctusSoundAudioContext) extends SoundExperiment {
     val gainAdsrCtrl = ctx.createNodeControlAdsr(0.1, 0.1, 0.9, 2.0)
 
     val gainMain = ctx.createNodeThroughGain
-    val gainMainCtrl = ctx.createNodeControlConstant(1.2)
+    val gainMainCtrl = ctx.createNodeControlConstant(0.8)
 
     val filter = ctx.createNodeThroughFilter(FilterType_Lowpass)
-    val filterFreqAdsrCtrl = ctx.createNodeControlAdsr(0.001, 0, 1.0, 2.0, freq * 0.6)
-    val filterFreqConstCtrl = ctx.createNodeControlConstant(freq * 0.8)
+    val filterFreqAdsrCtrl = ctx.createNodeControlAdsr(0.001, 0, 1.0, 2.0, freq * filterFreqMultiple)
+    val filterFreqConstCtrl = ctx.createNodeControlConstant(freq * 0.6)
 
     val sink = ctx.createNodeSinkLineOut
 
