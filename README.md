@@ -5,10 +5,10 @@ Trying out the components of the webaudio api and how they work together
 [click here to see how it works. http://entelijan.net/webaudio/](http://entelijan.net/webaudio/)
 
 ### Prerequisites to build and run doctus-webaudio-tryout
-* Have (SBT)[http://www.scala-sbt.org/] 0.13.x installed on your computer
+* Have [SBT](http://www.scala-sbt.org/) 0.13.x installed on your computer
 * Clone doctus on your computer and publish it locally on your computer
-** Call 'git clone https://github.com/wwagner4/doctus1.git'
-** Run 'sbt publish-local'
+... Call 'git clone https://github.com/wwagner4/doctus1.git'
+... Run 'sbt publish-local'
 
 #### Ideas
 * Make a panning Example
