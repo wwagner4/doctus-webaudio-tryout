@@ -13,32 +13,16 @@ case class Noise(ctx: DoctusSoundAudioContext) extends SoundExperiment {
 
   def title: String = "noise"
 
-  val noiseType = NoiseType_Brown
-
-  val ran = Random
+  private val noiseTypes = List(NoiseType_White, NoiseType_Pink, NoiseType_Brown)
+  private val lfoFreqs = List(3.0, 0.5, 0.2)
 
   var noiseOpt = Option.empty[StartStoppable]
 
   def start(nineth: Nineth): Unit = {
 
-    def createLfo(f: Double, a: Double): NodeControlLfo = {
-      ctx.createNodeControlLfo(WaveType_Sine, f, a)
-    }
+    val (noiseType, lfoFreq) = SoundUtil.xyParams(noiseTypes, lfoFreqs)(nineth)
 
-    val lfoCtrl = nineth match {
-      case N_00 => createLfo(5.0, 0.05)
-      case N_01 => createLfo(1.0, 0.05)
-      case N_02 => createLfo(0.5, 0.05)
-
-      case N_10 => createLfo(5.0, 0.07)
-      case N_11 => createLfo(1.0, 0.07)
-      case N_12 => createLfo(0.5, 0.07)
-
-      case N_20 => createLfo(5.0, 0.1)
-      case N_21 => createLfo(1.0, 0.1)
-      case N_22 => createLfo(0.5, 0.1)
-    }
-
+    val lfoCtrl = ctx.createNodeControlLfo(WaveType_Sine, lfoFreq, 0.05)
     val constCtrl = ctx.createNodeControlConstant(0.1)
 
     val noise = ctx.createNodeSourceNoise(noiseType)
@@ -57,10 +41,9 @@ case class Noise(ctx: DoctusSoundAudioContext) extends SoundExperiment {
   }
 
   def stop(): Unit = {
+
     val t = ctx.currentTime
-    noiseOpt.foreach { bufferSrc =>
-      bufferSrc.stop(t)
-    }
+    noiseOpt.foreach(_.stop(t))
   }
 
 }
