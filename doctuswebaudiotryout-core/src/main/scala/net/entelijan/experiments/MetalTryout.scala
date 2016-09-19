@@ -13,28 +13,19 @@ case class MetalTryout(ctx: DoctusSoundAudioContext) extends SoundExperiment {
   def title = "metal"
 
   val ran = Random
-  val baseFreqs = List(111, 222, 333, 444, 555)
+
+  val baseFreqList = List(222.0, 333.0, 444.0)
+  val logarthmicDecayList = List(1.1, 2, 4.0)
 
   var gainableOscilsOpt = Option.empty[Seq[StartStoppableSource]]
   var adsrOpt = Option.empty[NodeControlEnvelope]
 
-  case class StartStoppableSource(startStoppable: StartStoppable, nodeSource: NodeSource) extends NodeSource with StartStoppable {
-
-    def start(time: Double): Unit = startStoppable.start(time)
-
-    def stop(time: Double): Unit = startStoppable.stop(time)
-
-    def connect(sink: NodeSink): Unit = nodeSource.connect(sink)
-
-    def connect(filter: NodeThrough): NodeSource = nodeSource.connect(filter)
-
-  }
-
   def start(nineth: Nineth): Unit = {
+    
+    val (freq, ld) = SoundUtil.xyParams(baseFreqList, logarthmicDecayList)(nineth) 
 
-    def ranFreq: Double = baseFreqs(ran.nextInt(baseFreqs.size))
-    val harmonics = SoundUtil.metalHarmonics(ranFreq, 6)
-    val gains = Stream.from(0).map(SoundUtil.logarithmicDecay(1.4)(_)).map(_ * 0.5)
+    val harmonics = SoundUtil.metalHarmonics(freq, 6)
+    val gains = Stream.from(0).map(SoundUtil.logarithmicDecay(ld)(_)).map(_ * ld * -0.06 + 0.2)
 
     val params = harmonics.zip(gains)
 
@@ -75,6 +66,18 @@ case class MetalTryout(ctx: DoctusSoundAudioContext) extends SoundExperiment {
     oscil >- gain
 
     StartStoppableSource(oscil, gain)
+  }
+
+  case class StartStoppableSource(startStoppable: StartStoppable, nodeSource: NodeSource) extends NodeSource with StartStoppable {
+
+    def start(time: Double): Unit = startStoppable.start(time)
+
+    def stop(time: Double): Unit = startStoppable.stop(time)
+
+    def connect(sink: NodeSink): Unit = nodeSource.connect(sink)
+
+    def connect(filter: NodeThrough): NodeSource = nodeSource.connect(filter)
+
   }
 
 }
