@@ -26,25 +26,25 @@ Trying out the components of the webaudio api and how they work together
 #### Ideas
 * Make a panning Example
 * Make an example using delay
-* Implemet some sound filters where the cutoff frequency is controlled by the pitch, an envelope and/or a modulator
 * Synchronize a new sequence of of notes with another already plying sequence
 * Tryout some modulated delay. Do this differently on the left and right output to widen the sound.
 * Make some waveforms using AudioBuffers.
 * FM-Synth
 
 #### Implemented Ideas
+* Implemet some sound filters where the cutoff frequency is controlled by the pitch, an envelope and/or a modulator
 * Make a metallic sound using inharmonic partials. 'metallic'
 * Designe a sound with a reusable ADSR envelope. 'ADSR'
 * Make a reusable noise AudioNode. 'noise'
 * Create some kind of 'Tremolo Controler'. 'noise's
 
 #### TODOs
-* Check why melody does not work any longer
-* Check why ADSR sunds unstable during sustain
 * Check why noise has delay on portable devices
 * Fix the 'mouse leave canvas' bug in doctus.
 
 #### Implemented TODOs
+* Check why ADSR sounds unstable during sustain
+* Check why melody does not work any longer
 * Switch to latest version of scalaJS
 * Fix the 'wrong point when scaled' bug in doctus. On mobile devices if the screen is zoomed in, the points
 created during point events are not correct. To fix this make an automatic deployment of the doctus showcase.
