@@ -25,7 +25,7 @@ trait SoundExperiment {
 
   def title: String
 
-  def start(nienth: Nineth)
+  def start(nineth: Nineth)
 
   def stop()
 
