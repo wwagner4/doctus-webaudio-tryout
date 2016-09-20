@@ -14,6 +14,7 @@ case class SoundExperimentManager(soundContext: DoctusSoundAudioContext) {
   lazy val adsr = AdsrTryout(soundContext)
   lazy val metal  = MetalTryout(soundContext)
   lazy val filter = FilterTryout(soundContext)
+  lazy val panning = PanningExperiment(soundContext)
 
   def experiment: Tile => SoundExperiment = {
     case Tile(0, 0, _, _) => tinnitus
@@ -23,6 +24,7 @@ case class SoundExperimentManager(soundContext: DoctusSoundAudioContext) {
 
     case Tile(1, 0, _, _) => metal
     case Tile(1, 1, _, _) => filter
+    case Tile(1, 2, _, _) => panning
 
     case _ => EmptySoundExperiment
   }
