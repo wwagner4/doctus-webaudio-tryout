@@ -433,6 +433,11 @@ case class DoctusSoundAudioContextScalajs(waCtx: AudioContext) extends DoctusSou
   def createNodeThroughPan: NodeThroughPan = {
     NodeThroughPanScalajs(waCtx)
   }
+  
+  def createNodeThroughDelay: NodeThroughDelay = {
+    ???
+  }
+
 
   def createNodeControlConstant(value: Double): NodeControl = {
     NodeControlConstantScalajs(value)(waCtx)

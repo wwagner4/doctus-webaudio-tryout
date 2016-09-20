@@ -1,8 +1,8 @@
 package doctus.sound
 
 /**
-  * Created by wwagner4 on 17/09/16.
-  */
+ * Created by wwagner4 on 17/09/16.
+ */
 case class DoctusSoundAudioContextJvm() extends DoctusSoundAudioContext {
 
   def createNodeSinkLineOut: NodeSink = ???
@@ -14,8 +14,10 @@ case class DoctusSoundAudioContextJvm() extends DoctusSoundAudioContext {
   def createNodeThroughGain: NodeThroughGain = ???
 
   def createNodeThroughFilter(filterType: FilterType): NodeThroughFilter = ???
-  
+
   def createNodeThroughPan: NodeThroughPan = ???
+
+  def createNodeThroughDelay: NodeThroughDelay = ???
 
   def createNodeControlConstant(value: Double): NodeControl = ???
 

@@ -153,6 +153,18 @@ trait NodeThroughPan extends NodeThrough {
 }
 
 /**
+  * Component for panning control
+  */
+trait NodeThroughDelay extends NodeThrough {
+
+  /**
+   * The time the sound signal is delayed in seconds
+   */
+  def delay: ControlParam
+
+}
+
+/**
   * Creates audio components and provides auxiliary functions
   */
 trait DoctusSoundAudioContext {
@@ -190,6 +202,11 @@ trait DoctusSoundAudioContext {
    * Creates a panning node. @see NodeThroughPan
    */
   def createNodeThroughPan: NodeThroughPan
+  
+  /**
+   * Creates a delay node. @see NodeThroughDelay
+   */
+  def createNodeThroughDelay: NodeThroughDelay
 
   /**
     * @param value the constant value provided by the node
