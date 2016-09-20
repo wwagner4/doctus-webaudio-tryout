@@ -140,6 +140,19 @@ trait NodeThroughGain extends NodeThrough {
 }
 
 /**
+  * Component for panning control
+  */
+trait NodeThroughPan extends NodeThrough {
+
+  /**
+   * Takes values between -1 and +1 to control how
+   * the sound signal is split between the right and the left channel.
+   */
+  def pan: ControlParam
+
+}
+
+/**
   * Creates audio components and provides auxiliary functions
   */
 trait DoctusSoundAudioContext {
@@ -149,16 +162,36 @@ trait DoctusSoundAudioContext {
     */
   def createNodeSinkLineOut: NodeSink
 
+  /**
+   * Creates an oscillator with a certain wave form.
+   * The wave form might be 'sine', 'sawtooth', ... . @see WaveType
+   */
   def createNodeSourceOscil(waveType: WaveType): NodeSourceOscil
 
+  /**
+   * Creates a noise signal of a certain characteristic.
+   * The characteristic might be 'brown noise', 'white noise', ... . @see NoiseType
+   */
   def createNodeSourceNoise(noiseType: NoiseType): NodeSourceNoise
 
+  /**
+   * Creates a node for controlling the gain of
+   * a sound signal. @see NodeThroughGain
+   */
   def createNodeThroughGain: NodeThroughGain
 
+  /**
+   * Creates a sound filter of a certain characteristic.
+   * The characteristic might be 'lowpass', 'highpass', ... . @see FilterType
+   */
   def createNodeThroughFilter(filterType: FilterType): NodeThroughFilter
+  
+  /**
+   * Creates a panning node. @see NodeThroughPan
+   */
+  def createNodeThroughPan: NodeThroughPan
 
   /**
-    *
     * @param value the constant value provided by the node
     * @return a new constant value parameter control
     */
@@ -186,6 +219,9 @@ trait DoctusSoundAudioContext {
     */
   def createNodeControlLfo(waveType: WaveType, frequency: Double, amplitude: Double): NodeControlLfo
 
+  /**
+   * The current time of the underlaying sound system in seconds.
+   */
   def currentTime: Double
 
 }

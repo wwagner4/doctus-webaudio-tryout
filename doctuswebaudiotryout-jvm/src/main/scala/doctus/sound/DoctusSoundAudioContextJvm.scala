@@ -14,6 +14,8 @@ case class DoctusSoundAudioContextJvm() extends DoctusSoundAudioContext {
   def createNodeThroughGain: NodeThroughGain = ???
 
   def createNodeThroughFilter(filterType: FilterType): NodeThroughFilter = ???
+  
+  def createNodeThroughPan: NodeThroughPan = ???
 
   def createNodeControlConstant(value: Double): NodeControl = ???
 
