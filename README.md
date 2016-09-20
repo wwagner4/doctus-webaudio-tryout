@@ -32,11 +32,11 @@ Trying out the components of the webaudio api and how they work together
 
 #### Implemented Ideas
 * Make a panning Example
-* Implemet some sound filters where the cutoff frequency is controlled by the pitch, an envelope and/or a modulator
+* Implement some sound filters where the cutoff frequency is controlled by the pitch, an envelope and/or a modulator
 * Make a metallic sound using inharmonic partials. 'metallic'
-* Designe a sound with a reusable ADSR envelope. 'ADSR'
+* Design a sound with a reusable ADSR envelope. 'ADSR'
 * Make a reusable noise AudioNode. 'noise'
-* Create some kind of 'Tremolo Controler'. 'noise's
+* Create some kind of 'Tremolo Controller'. 'noise's
 
 #### TODOs
 * Check why noise has delay on portable devices
