@@ -89,18 +89,11 @@ trait ControlParam {
 }
 
 /**
-  * Starts a task at a defined time
-  */
-trait Startable {
-
-  def start(time: Double): Unit
-
-}
-
-/**
   * Starts and stops a task at a defined time
   */
-trait StartStoppable extends Startable {
+trait StartStoppable {
+
+  def start(time: Double): Unit
 
   def stop(time: Double): Unit
 
