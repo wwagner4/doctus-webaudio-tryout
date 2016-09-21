@@ -29,17 +29,21 @@ case class DelayExperiment(ctx: DoctusSoundAudioContext) extends SoundExperiment
 
   type N = NodeSource with StartStoppable
 
+  case class SrcParam(gainVal: Double, freq: Double)
+
   case class Inst() extends StartStoppable {
 
-    def createSource(gainVal: Double): N = {
+    def createSource(param: SrcParam): N = {
+      println("param:%s" format param)
 
       val gain = ctx.createNodeThroughGain
-      val gainCtrl = ctx.createNodeControlConstant(gainVal)
+      val gainCtrl = ctx.createNodeControlConstant(param.gainVal)
 
       val oscil = ctx.createNodeSourceOscil(WaveType_Sine)
-      
+      val oscilCtrl = ctx.createNodeControlConstant(param.freq)
+
       gainCtrl >- gain.gain
-      
+
       oscil >- gain
 
       new NodeSource with StartStoppable {
@@ -56,7 +60,14 @@ case class DelayExperiment(ctx: DoctusSoundAudioContext) extends SoundExperiment
 
     }
 
-    val sources = List(0.01, 0.01, 0.01).map { gain => createSource(gain) }
+    val gainSeq = Stream.iterate(0.07)(x => x * 0.999)
+    val freqSeq = Stream.iterate(350.0)(x => x * 1.2345)
+
+    val sources = gainSeq.zip(freqSeq)
+      .map { case (g, f) => SrcParam(g, f) }
+      .map { p => createSource(p) }
+      .take(4)
+
     val sink = ctx.createNodeSinkLineOut
 
     sources.foreach { src =>
@@ -78,5 +89,4 @@ case class DelayExperiment(ctx: DoctusSoundAudioContext) extends SoundExperiment
     }
 
   }
-
 }
