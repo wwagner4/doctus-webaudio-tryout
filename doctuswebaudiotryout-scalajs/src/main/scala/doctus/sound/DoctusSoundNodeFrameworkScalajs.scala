@@ -121,6 +121,52 @@ case class NodeThroughPanScalajs(waCtx: AudioContext) extends NodeThroughPan wit
 
 }
 
+case class NodeThroughDelayScalajs(waCtx: AudioContext) extends NodeThroughDelay with AudioNodeAware {
+
+  val waDelay = waCtx.createDelay(1)
+  
+  val paramDelay = new ConnectableParam with ControlParam {
+
+    def onConnect = {
+      case holder: WebAudioParamHolder => holder.addAudioParam(waDelay.delayTime)
+      case nodeControl =>
+        println("control node %s is not a WebAudioParamHolder" format nodeControl)
+        throw new IllegalStateException()
+    }
+
+    override def toString: String = "NodeThroughGainScalajs paramGain"
+
+  }
+
+  def connect(through: NodeThrough): NodeSource = {
+    through match {
+      case node: AudioNodeAware =>
+        val src = node.audioNode
+        waDelay.connect(src)
+      case _ =>
+        println("through %s is not AudioNodeAware" format through)
+        throw new IllegalStateException()
+    }
+    through
+  }
+
+  def connect(sink: NodeSink): Unit = {
+    sink match {
+      case node: AudioNodeAware =>
+        val src = node.audioNode
+        waDelay.connect(src)
+      case _ =>
+        println("sink %s is not AudioNodeAware" format sink)
+        throw new IllegalStateException()
+    }
+  }
+
+  def delay: ControlParam = paramDelay
+
+  def audioNode: AudioNode = waDelay
+
+}
+
 case class NodeThroughFilterScalajs(filterType: FilterType)(waCtx: AudioContext) extends NodeThroughFilter with AudioNodeAware {
 
   private val waFilter = waCtx.createBiquadFilter()
@@ -435,7 +481,7 @@ case class DoctusSoundAudioContextScalajs(waCtx: AudioContext) extends DoctusSou
   }
   
   def createNodeThroughDelay: NodeThroughDelay = {
-    ???
+    NodeThroughDelayScalajs(waCtx)
   }
 
 
