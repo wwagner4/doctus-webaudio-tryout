@@ -27,14 +27,11 @@ case class DelayExperiment(ctx: DoctusSoundAudioContext) extends SoundExperiment
     instOpt.foreach { _.stop(now) }
   }
 
-  type N = NodeSource with StartStoppable
-
-  case class SrcParam(gainVal: Double, freq: Double)
+  case class SrcParam(gainVal: Double, freq: Double, delay: Double)
 
   case class Inst() extends StartStoppable {
 
-    def createSource(param: SrcParam): N = {
-      println("param:%s" format param)
+    def createSource(param: SrcParam): NodeSource with StartStoppable = {
 
       val gain = ctx.createNodeThroughGain
       val gainCtrl = ctx.createNodeControlConstant(param.gainVal)
@@ -42,30 +39,46 @@ case class DelayExperiment(ctx: DoctusSoundAudioContext) extends SoundExperiment
       val oscil = ctx.createNodeSourceOscil(WaveType_Sine)
       val oscilCtrl = ctx.createNodeControlConstant(param.freq)
 
+      val delay = ctx.createNodeThroughDelay
+      val delayCtrl = ctx.createNodeControlConstant(param.delay)
+
+      val envel = ctx.createNodeThroughGain
+      val envelCtrl = ctx.createNodeControlAdsr(0.3, 0.0, 1.0, 2.5)
+
+      delayCtrl >- delay.delay
       gainCtrl >- gain.gain
       oscilCtrl >- oscil.frequency
+      envelCtrl >- envel.gain
 
-      oscil >- gain
+      oscil >- gain >- envel >- delay
+
 
       new NodeSource with StartStoppable {
 
-        def connect(sink: NodeSink): Unit = gain.connect(sink)
+        def connect(sink: NodeSink): Unit = delay.connect(sink)
 
-        def connect(through: NodeThrough): NodeSource = gain.connect(through)
+        def connect(through: NodeThrough): NodeSource = delay.connect(through)
 
-        def start(time: Double): Unit = oscil.start(time)
+        def start(time: Double): Unit = {
+          oscil.start(0.0)
+          envelCtrl.start(time)
+        }
 
-        def stop(time: Double): Unit = oscil.stop(time)
+        def stop(time: Double): Unit = {
+          envelCtrl.stop(time)
+          oscil.stop(time + 3)
+        }
 
       }
 
     }
 
     val gainSeq = Stream.iterate(0.07)(x => x * 0.999)
-    val freqSeq = Stream.iterate(350.0)(x => x * 1.234)
+    val freqSeq = Stream.iterate(450.0)(x => x * 1.12599)
+    val delaySeq = Stream.iterate(0.0)(x => x + 0.05)
 
-    val sources = gainSeq.zip(freqSeq)
-      .map { case (g, f) => SrcParam(g, f) }
+    val sources = gainSeq.zip(freqSeq).zip(delaySeq)
+      .map { case ((g, f), d) => SrcParam(g, f, d) }
       .map { p => createSource(p) }
       .take(4)
 
@@ -78,14 +91,12 @@ case class DelayExperiment(ctx: DoctusSoundAudioContext) extends SoundExperiment
     def start(time: Double): Unit = {
       sources.foreach { src =>
         src.start(time)
-        println("INST started at %.2f" format time)
       }
     }
 
     def stop(time: Double): Unit = {
       sources.foreach { src =>
         src.stop(time)
-        println("INST stopped at %.2f" format time)
       }
     }
 
