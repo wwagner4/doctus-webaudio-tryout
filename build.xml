@@ -1,4 +1,4 @@
-<project name="deploy">
+<project name="deploy" default="deploy">
     <target name="deploy">
         <exec executable="sbt" >
             <arg line="-Dsbt.log.noformat=true fullOptJS"/>
