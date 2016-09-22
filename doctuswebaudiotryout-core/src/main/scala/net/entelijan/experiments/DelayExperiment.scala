@@ -43,6 +43,7 @@ case class DelayExperiment(ctx: DoctusSoundAudioContext) extends SoundExperiment
       val oscilCtrl = ctx.createNodeControlConstant(param.freq)
 
       gainCtrl >- gain.gain
+      oscilCtrl >- oscil.frequency
 
       oscil >- gain
 
@@ -61,7 +62,7 @@ case class DelayExperiment(ctx: DoctusSoundAudioContext) extends SoundExperiment
     }
 
     val gainSeq = Stream.iterate(0.07)(x => x * 0.999)
-    val freqSeq = Stream.iterate(350.0)(x => x * 1.2345)
+    val freqSeq = Stream.iterate(350.0)(x => x * 1.234)
 
     val sources = gainSeq.zip(freqSeq)
       .map { case (g, f) => SrcParam(g, f) }
