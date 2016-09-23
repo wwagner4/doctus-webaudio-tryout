@@ -24,10 +24,10 @@ Trying out the components of the webaudio api and how they work together
 
 
 #### Ideas
-* Make an example using delay
+* FM-Synth
+* Make the ADSR ramping logarithmic
 * Tryout some modulated delay. Do this differently on the left and right output to widen the sound.
 * Make some waveforms using AudioBuffers.
-* FM-Synth
 * [Modulation Synthesi](https://en.wikibooks.org/wiki/Sound_Synthesis_Theory/Modulation_Synthesis)
 * [Modulation Synthesi](https://en.wikibooks.org/wiki/Sound_Synthesis_Theory/Modulation_Synthesis)
 * [Karplus-Strong-Algorithmus](https://de.wikipedia.org/wiki/Karplus-Strong-Algorithmus)
@@ -35,6 +35,7 @@ Trying out the components of the webaudio api and how they work together
 
 
 #### Implemented Ideas
+* Make an example using delay
 * Synchronize a new sequence of of notes with another already plying sequence (melody)
 * Make a panning Example
 * Implement some sound filters where the cutoff frequency is controlled by the pitch, an envelope and/or a modulator
