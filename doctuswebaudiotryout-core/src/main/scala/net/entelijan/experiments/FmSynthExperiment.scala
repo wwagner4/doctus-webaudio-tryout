@@ -12,14 +12,14 @@ case class FmSynthExperiment(ctx: DoctusSoundAudioContext) extends SoundExperime
   def title: String = "fm-synth"
 
   val frequencies = List(400.0, 500.0, 600.0)
-  val durations = List(0.2, 1.0, 2.5)
+  val lfoFreqs = List(10, 20, 50)
   
   def start(nineth: Nineth): Unit = {
-    val (f, d) = SoundUtil.xyParams(frequencies, durations)(nineth)
-    val inst = Instrument(f)
+    val (freq, lfoFreq) = SoundUtil.xyParams(frequencies, lfoFreqs)(nineth)
+    val inst = Instrument(freq, lfoFreq)
     val  now = ctx.currentTime
     inst.start(now)
-    inst.stop(now + d)
+    inst.stop(now + 1.0)
     
   }
 
@@ -27,19 +27,23 @@ case class FmSynthExperiment(ctx: DoctusSoundAudioContext) extends SoundExperime
     // Nothing to do
   }
 
-  case class Instrument(freq: Double) extends StartStoppable {
+  case class Instrument(freq: Double, lfoFrq: Double) extends StartStoppable {
     
     val oscil = ctx.createNodeSourceOscil(WaveType_Triangle)
     val gain = ctx.createNodeThroughGain
     val sink = ctx.createNodeSinkLineOut
 
-    val oscilCtrl = ctx.createNodeControlConstant(freq)
     val gainCtrl = ctx.createNodeControlAdsr(0.1, 0.1, 0.2, 1.0, 0.5)
-    
+    val oscilFmLfoCtrl = ctx.createNodeControlLfo(WaveType_Triangle, lfoFrq, freq * 0.7)
+    val oscilFmOffsetCtrl = ctx.createNodeControlConstant(freq)
+
     gainCtrl >-gain.gain
-    oscilCtrl >- oscil.frequency
-    
+    oscilFmOffsetCtrl >- oscil.frequency
+    oscilFmLfoCtrl >- oscil.frequency
+
     oscil >- gain >- sink
+
+    oscilFmLfoCtrl.start(0.0)
 
     def start(time: Double): Unit = {
       oscil.start(time)
@@ -47,8 +51,9 @@ case class FmSynthExperiment(ctx: DoctusSoundAudioContext) extends SoundExperime
     }
 
     def stop(time: Double): Unit = {
-      oscil.stop(time + 2)
+      oscil.stop(time + 5)
       gainCtrl.stop(time)
+      oscilFmLfoCtrl.stop(time + 5)
     }
 
   }
