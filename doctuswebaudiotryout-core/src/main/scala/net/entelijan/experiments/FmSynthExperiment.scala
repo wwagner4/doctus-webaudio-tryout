@@ -2,10 +2,8 @@ package net.entelijan.experiments
 
 import net.entelijan.SoundExperiment
 import net.entelijan.Nineth
-import doctus.sound.DoctusSoundAudioContext
-import doctus.sound.StartStoppable
+import doctus.sound.{DoctusSoundAudioContext, StartStoppable, WaveType_Sine, WaveType_Triangle}
 import net.entelijan.SoundUtil
-import doctus.sound.WaveType_Triangle
 
 case class FmSynthExperiment(ctx: DoctusSoundAudioContext) extends SoundExperiment {
 
@@ -29,28 +27,39 @@ case class FmSynthExperiment(ctx: DoctusSoundAudioContext) extends SoundExperime
   }
 
   case class Instrument(freq: Double, lfoFreq: Double) extends StartStoppable {
+
+    val lfoFreq1 = 100
     
     val oscil = ctx.createNodeSourceOscil(WaveType_Triangle)
     val gain = ctx.createNodeThroughGain
     val sink = ctx.createNodeSinkLineOut
 
     val gainCtrl = ctx.createNodeControlAdsr(0.1, 0.1, 0.2, 1.0, 0.5)
-    val oscilFmLfoCtrl = ctx.createNodeControlLfo(WaveType_Triangle)
-    val lfoFreqCtrl = ctx.createNodeControlConstant(lfoFreq)
-    val lfoAmplCtrl = ctx.createNodeControlConstant(freq * 0.7)
+    val oscilFmLfoCtrl0 = ctx.createNodeControlLfo(WaveType_Triangle)
+    val lfoFreqCtrl0 = ctx.createNodeControlConstant(lfoFreq)
+    val lfoAmplCtrl0 = ctx.createNodeControlConstant(freq * 0.7)
+
+    val oscilFmLfoCtrl1 = ctx.createNodeControlLfo(WaveType_Sine)
+    val lfoFreqCtrl1 = ctx.createNodeControlConstant(lfoFreq1)
+    val lfoAmplCtrl1 = ctx.createNodeControlConstant(lfoFreq * 0.9)
 
     val oscilFmOffsetCtrl = ctx.createNodeControlConstant(freq)
 
-    lfoFreqCtrl >- oscilFmLfoCtrl.frequency
-    lfoAmplCtrl >- oscilFmLfoCtrl.amplitude
+    oscilFmLfoCtrl1 >- oscilFmLfoCtrl0.frequency
+    lfoFreqCtrl0 >- oscilFmLfoCtrl0.frequency
+    lfoAmplCtrl0 >- oscilFmLfoCtrl0.amplitude
+
+    lfoFreqCtrl1 >- oscilFmLfoCtrl1.frequency
+    lfoAmplCtrl1 >- oscilFmLfoCtrl1.amplitude
 
     gainCtrl >-gain.gain
     oscilFmOffsetCtrl >- oscil.frequency
-    oscilFmLfoCtrl >- oscil.frequency
+    oscilFmLfoCtrl0 >- oscil.frequency
 
     oscil >- gain >- sink
 
-    oscilFmLfoCtrl.start(0.0)
+    oscilFmLfoCtrl0.start(0.0)
+    oscilFmLfoCtrl1.start(0.0)
 
     def start(time: Double): Unit = {
       oscil.start(time)
@@ -60,7 +69,8 @@ case class FmSynthExperiment(ctx: DoctusSoundAudioContext) extends SoundExperime
     def stop(time: Double): Unit = {
       oscil.stop(time + 5)
       gainCtrl.stop(time)
-      oscilFmLfoCtrl.stop(time + 5)
+      oscilFmLfoCtrl0.stop(time + 5)
+      oscilFmLfoCtrl1.stop(time + 5)
     }
 
   }
