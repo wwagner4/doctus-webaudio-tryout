@@ -24,7 +24,6 @@ Trying out the components of the webaudio api and how they work together
 
 
 #### Ideas
-* Make an Oscilator with a rectangular shape
 * Make the ADSR ramping logarithmic
 * Tryout some modulated delay. Do this differently on the left and right output to widen the sound.
 * Make some waveforms using AudioBuffers.
@@ -35,6 +34,7 @@ Trying out the components of the webaudio api and how they work together
 
 
 #### Implemented Ideas
+* Make an Oscilator with a square wave. Filter works with square wave
 * FM-Synth
 * Make an example using delay
 * Synchronize a new sequence of of notes with another already plying sequence (melody)

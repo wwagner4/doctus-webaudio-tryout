@@ -9,6 +9,7 @@ sealed trait WaveType
 case object WaveType_Sine extends WaveType
 case object WaveType_Triangle extends WaveType
 case object WaveType_Sawtooth extends WaveType
+case object WaveType_Square extends WaveType
 
 sealed trait NoiseType
 

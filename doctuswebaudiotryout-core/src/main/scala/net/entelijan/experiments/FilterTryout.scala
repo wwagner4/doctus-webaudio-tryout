@@ -37,7 +37,7 @@ case class FilterTryout(ctx: DoctusSoundAudioContext) extends SoundExperiment {
 
     // Create nodes
     val oscilFreqCtrl = ctx.createNodeControlConstant(freq)
-    val oscil = ctx.createNodeSourceOscil(WaveType_Sawtooth)
+    val oscil = ctx.createNodeSourceOscil(WaveType_Square)
 
     val gainAdsr = ctx.createNodeThroughGain
     val gainAdsrCtrl = ctx.createNodeControlAdsr(0.1, 0.1, 0.9, 2.0)

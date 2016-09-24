@@ -427,6 +427,7 @@ trait OscilUtil {
     case WaveType_Sine => "sine"
     case WaveType_Triangle => "triangle"
     case WaveType_Sawtooth => "sawtooth"
+    case WaveType_Square => "square"
   }
 
 }
