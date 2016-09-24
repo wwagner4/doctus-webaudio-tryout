@@ -19,12 +19,18 @@ case class Noise(ctx: DoctusSoundAudioContext) extends SoundExperiment {
 
     val (noiseType, lfoFreq) = SoundUtil.xyParams(noiseTypes, lfoFreqs)(nineth)
 
-    val lfoCtrl = ctx.createNodeControlLfo(WaveType_Sine, lfoFreq, 0.05)
+    val lfoCtrl = ctx.createNodeControlLfo(WaveType_Sine)
+    val lfoFreqCtrl = ctx.createNodeControlConstant(lfoFreq)
+    val lfoAmplCtrl = ctx.createNodeControlConstant(0.05)
+
     val constCtrl = ctx.createNodeControlConstant(0.1)
 
     val noise = ctx.createNodeSourceNoise(noiseType)
     val gain = ctx.createNodeThroughGain
     val out = ctx.createNodeSinkLineOut
+
+    lfoAmplCtrl >- lfoCtrl.amplitude
+    lfoFreqCtrl >- lfoCtrl.frequency
 
     lfoCtrl >- gain.gain
     constCtrl >- gain.gain

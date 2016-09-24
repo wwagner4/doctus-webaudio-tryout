@@ -34,8 +34,14 @@ case class FmSynthExperiment(ctx: DoctusSoundAudioContext) extends SoundExperime
     val sink = ctx.createNodeSinkLineOut
 
     val gainCtrl = ctx.createNodeControlAdsr(0.1, 0.1, 0.2, 1.0, 0.5)
-    val oscilFmLfoCtrl = ctx.createNodeControlLfo(WaveType_Triangle, lfoFrq, freq * 0.7)
+    val oscilFmLfoCtrl = ctx.createNodeControlLfo(WaveType_Triangle)
+    val lfoFreqCtrl = ctx.createNodeControlConstant(lfoFrq)
+    val lfoAmplCtrl = ctx.createNodeControlConstant(freq * 0.7)
+
     val oscilFmOffsetCtrl = ctx.createNodeControlConstant(freq)
+
+    lfoFreqCtrl >- oscilFmLfoCtrl.frequency
+    lfoAmplCtrl >- oscilFmLfoCtrl.amplitude
 
     gainCtrl >-gain.gain
     oscilFmOffsetCtrl >- oscil.frequency

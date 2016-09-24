@@ -431,17 +431,47 @@ trait OscilUtil {
 
 }
 
-case class NodeControlLfoScalajs(waveType: WaveType, frequency: Double, amplitude: Double)(waCtx: AudioContext)
+case class NodeControlLfoScalajs(waveType: WaveType)(waCtx: AudioContext)
   extends NodeControlLfo with WebAudioParamHolder with OscilUtil {
 
   val waOscil = waCtx.createOscillator()
   waOscil.`type` = waWaveType(waveType)
-  waOscil.frequency.value = frequency
+  waOscil.frequency.value = 400.0 // default value
 
   val waGain = waCtx.createGain()
-  waGain.gain.value = amplitude
+  waGain.gain.value = 1.0 // Default value
 
   waOscil.connect(waGain)
+
+  def frequency: ControlParam = paramFrequency
+
+  private val paramFrequency = new ControlParam with ConnectableParam {
+    def onConnect: (NodeControl) => Unit = {
+      case holder: WebAudioParamHolder =>
+        holder.addAudioParam(waOscil.frequency)
+      case nodeControl =>
+        println("control node %s is not a WebAudioParamHolder" format nodeControl)
+        throw new IllegalStateException()
+    }
+
+    override def toString: String = "NodeControlLfoScalajs paramFrequency"
+  }
+
+  def amplitude: ControlParam = paramAmplitude
+
+  private val paramAmplitude = new ControlParam with ConnectableParam {
+    def onConnect: (NodeControl) => Unit = {
+      case holder: WebAudioParamHolder =>
+        holder.addAudioParam(waGain.gain)
+      case nodeControl =>
+        println("control node %s is not a WebAudioParamHolder" format nodeControl)
+        throw new IllegalStateException()
+    }
+
+    override def toString: String = "NodeControlLfoScalajs paramAmplitude"
+  }
+
+
 
   def start(time: Double): Unit = {
     waOscil.start(time)
@@ -501,8 +531,8 @@ case class DoctusSoundAudioContextScalajs(waCtx: AudioContext) extends DoctusSou
     NodeControlAdsrScalajs(attack, decay, sustain, release, gain)(waCtx)
   }
 
-  def createNodeControlLfo(waveType: WaveType, frequency: Double, amplitude: Double): NodeControlLfo = {
-    NodeControlLfoScalajs(waveType, frequency, amplitude)(waCtx)
+  def createNodeControlLfo(waveType: WaveType): NodeControlLfo = {
+    NodeControlLfoScalajs(waveType)(waCtx)
   }
 
   def createNodeThroughFilter(filterType: FilterType): NodeThroughFilter = {

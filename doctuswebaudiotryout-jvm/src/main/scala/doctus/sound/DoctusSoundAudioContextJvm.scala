@@ -24,7 +24,7 @@ case class DoctusSoundAudioContextJvm() extends DoctusSoundAudioContext {
 
   def createNodeControlAdsr(attack: Double, decay: Double, sustain: Double, release: Double, gain: Double): NodeControlEnvelope = ???
 
-  def createNodeControlLfo(waveType: WaveType, frequency: Double, amplitude: Double): NodeControlLfo = ???
+  def createNodeControlLfo(waveType: WaveType): NodeControlLfo = ???
 
   def currentTime: Double = ???
 }

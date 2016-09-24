@@ -121,7 +121,19 @@ trait NodeControlEnvelope extends NodeControl with StartStoppable {}
 /**
   * A LFO node
   */
-trait NodeControlLfo extends NodeControl with StartStoppable {}
+trait NodeControlLfo extends NodeControl with StartStoppable {
+
+  /**
+    * @return control parameter for the frequency of the LFO
+    */
+  def frequency: ControlParam
+
+  /**
+    * @return control parameter for the amplitude of the LFO
+    */
+  def amplitude: ControlParam
+
+}
 
 /**
   * Component for gain control
@@ -223,11 +235,9 @@ trait DoctusSoundAudioContext {
     * Low frequency oscillator
     *
     * @param waveType Type of the LFOs wave (sine, triangle, ...)
-    * @param frequency of the LFO in Herz
-    * @param amplitude of the LFO
     * @return a new LFO
     */
-  def createNodeControlLfo(waveType: WaveType, frequency: Double, amplitude: Double): NodeControlLfo
+  def createNodeControlLfo(waveType: WaveType): NodeControlLfo
 
   /**
    * The current time of the underlaying sound system in seconds.
