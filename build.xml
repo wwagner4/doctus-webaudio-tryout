@@ -1,7 +1,7 @@
 <!--suppress XmlUnboundNsPrefix -->
 <project name="deploy" default="deploy">
     <target name="deploy">
-        <exec executable="sbt" >
+        <exec executable="sbt" failonerror="true">
             <arg line="-Dsbt.log.noformat=true clean test fullOptJS"/>
         </exec>
         <mkdir dir="staging"/>
