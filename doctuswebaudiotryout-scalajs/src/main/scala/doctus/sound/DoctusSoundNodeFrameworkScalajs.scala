@@ -9,12 +9,21 @@ trait ConnectableParam {
 
 }
 
+/**
+  * Accepts audio parameters and holds them for further use.
+  * The way how audio parameters are stored is left to
+  * the implementing class
+  */
 trait WebAudioParamHolder {
 
   def addAudioParam(waParam: AudioParam)
 
 }
 
+/**
+  * Implementing classes contain an audio node they want to
+  * expose to other classes
+  */
 trait AudioNodeAware {
 
   def audioNode: AudioNode
@@ -466,8 +475,6 @@ case class NodeControlLfoScalajs(waveType: WaveType, initialFrequency: Double, i
 
     override def toString: String = "NodeControlLfoScalajs paramFrequency"
   }
-
-
 
   def start(time: Double): Unit = {
     waOscil.start(time)
