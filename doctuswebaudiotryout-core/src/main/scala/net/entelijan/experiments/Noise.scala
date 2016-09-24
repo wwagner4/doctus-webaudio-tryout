@@ -23,7 +23,7 @@ case class Noise(ctx: DoctusSoundAudioContext) extends SoundExperiment {
     val constCtrl = ctx.createNodeControlConstant(0.1)
 
     val noise = ctx.createNodeSourceNoise(noiseType)
-    val gain = ctx.createNodeThroughGain
+    val gain = ctx.createNodeThroughGain()
     val out = ctx.createNodeSinkLineOut
 
     lfoCtrl >- gain.gain

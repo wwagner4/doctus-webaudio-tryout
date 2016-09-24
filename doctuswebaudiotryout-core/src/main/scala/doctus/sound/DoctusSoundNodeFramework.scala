@@ -121,7 +121,13 @@ trait NodeControlEnvelope extends NodeControl with StartStoppable {}
 /**
   * A LFO node
   */
-trait NodeControlLfo extends NodeControl with StartStoppable {}
+trait NodeControlLfo extends NodeControl with StartStoppable {
+
+  def amplitude: ControlParam
+
+  def frequency: ControlParam
+
+}
 
 /**
   * Component for gain control
@@ -182,24 +188,28 @@ trait DoctusSoundAudioContext {
   /**
    * Creates a node for controlling the gain of
    * a sound signal. @see NodeThroughGain
+   * @param initialGain of the gain node
    */
-  def createNodeThroughGain: NodeThroughGain
+  def createNodeThroughGain(initialGain: Double = 1.0): NodeThroughGain
 
   /**
    * Creates a sound filter of a certain characteristic.
    * The characteristic might be 'lowpass', 'highpass', ... . @see FilterType
+   * @param initialFrequency of the filter
+   * @param initialQuality of the filter
    */
-  def createNodeThroughFilter(filterType: FilterType): NodeThroughFilter
+  def createNodeThroughFilter(filterType: FilterType, initialFrequency: Double = 400.0, initialQuality: Double = 5.0): NodeThroughFilter
   
   /**
    * Creates a panning node. @see NodeThroughPan
+   * @param initialPan of the panning node
    */
-  def createNodeThroughPan: NodeThroughPan
+  def createNodeThroughPan(initialPan: Double = 0.0): NodeThroughPan
   
   /**
    * Creates a delay node. @see NodeThroughDelay
    */
-  def createNodeThroughDelay: NodeThroughDelay
+  def createNodeThroughDelay(initialDelay: Double = 1.0): NodeThroughDelay
 
   /**
     * @param value the constant value provided by the node
@@ -223,11 +233,11 @@ trait DoctusSoundAudioContext {
     * Low frequency oscillator
     *
     * @param waveType Type of the LFOs wave (sine, triangle, ...)
-    * @param frequency of the LFO in Herz
-    * @param amplitude of the LFO
+    * @param initialFrequency of the LFO in Herz
+    * @param initialAmplitude of the LFO
     * @return a new LFO
     */
-  def createNodeControlLfo(waveType: WaveType, frequency: Double, amplitude: Double): NodeControlLfo
+  def createNodeControlLfo(waveType: WaveType, initialFrequency: Double, initialAmplitude: Double): NodeControlLfo
 
   /**
    * The current time of the underlaying sound system in seconds.

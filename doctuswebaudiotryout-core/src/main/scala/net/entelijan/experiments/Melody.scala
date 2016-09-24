@@ -81,7 +81,7 @@ case class Melody(ctx: DoctusSoundAudioContext) extends SoundExperiment {
     val adsrCtrl = ctx.createNodeControlAdsr(0.001, 0.4, 0.4, 2.0, 0.1)
 
     val oscil = ctx.createNodeSourceOscil(WaveType_Sawtooth)
-    val gain = ctx.createNodeThroughGain
+    val gain = ctx.createNodeThroughGain()
     val sink = ctx.createNodeSinkLineOut
 
     freqCtrl >- oscil.frequency

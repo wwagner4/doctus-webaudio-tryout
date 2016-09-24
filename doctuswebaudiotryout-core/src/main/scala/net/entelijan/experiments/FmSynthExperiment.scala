@@ -30,7 +30,7 @@ case class FmSynthExperiment(ctx: DoctusSoundAudioContext) extends SoundExperime
   case class Instrument(freq: Double, lfoFrq: Double) extends StartStoppable {
     
     val oscil = ctx.createNodeSourceOscil(WaveType_Triangle)
-    val gain = ctx.createNodeThroughGain
+    val gain = ctx.createNodeThroughGain()
     val sink = ctx.createNodeSinkLineOut
 
     val gainCtrl = ctx.createNodeControlAdsr(0.1, 0.1, 0.2, 1.0, 0.5)
