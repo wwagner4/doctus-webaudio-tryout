@@ -38,16 +38,20 @@ case class DelayExperiment(ctx: DoctusSoundAudioContext) extends SoundExperiment
 
     def createSource(param: SrcParam): NodeSource with StartStoppable = {
 
-      val gain = ctx.createNodeThroughGain(param.gainVal)
+      val gain = ctx.createNodeThroughGain
+      val gainCtrl = ctx.createNodeControlConstant(param.gainVal)
 
       val oscil = ctx.createNodeSourceOscil(WaveType_Sine)
       val oscilCtrl = ctx.createNodeControlConstant(param.freq)
 
-      val delay = ctx.createNodeThroughDelay(param.delay)
+      val delay = ctx.createNodeThroughDelay
+      val delayCtrl = ctx.createNodeControlConstant(param.delay)
 
-      val envel = ctx.createNodeThroughGain()
+      val envel = ctx.createNodeThroughGain
       val envelCtrl = ctx.createNodeControlAdsr(attack, 0.0, 1.0, 2.5)
 
+      delayCtrl >- delay.delay
+      gainCtrl >- gain.gain
       oscilCtrl >- oscil.frequency
       envelCtrl >- envel.gain
 

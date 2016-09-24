@@ -39,10 +39,11 @@ case class FilterTryout(ctx: DoctusSoundAudioContext) extends SoundExperiment {
     val oscilFreqCtrl = ctx.createNodeControlConstant(freq)
     val oscil = ctx.createNodeSourceOscil(WaveType_Sawtooth)
 
-    val gainAdsr = ctx.createNodeThroughGain()
+    val gainAdsr = ctx.createNodeThroughGain
     val gainAdsrCtrl = ctx.createNodeControlAdsr(0.1, 0.1, 0.9, 2.0)
 
-    val gainMain = ctx.createNodeThroughGain(0.8)
+    val gainMain = ctx.createNodeThroughGain
+    val gainMainCtrl = ctx.createNodeControlConstant(0.8)
 
     val filter = ctx.createNodeThroughFilter(FilterType_Lowpass)
     val filterFreqAdsrCtrl = ctx.createNodeControlAdsr(0.001, 0, 1.0, 2.0, freq * filterFreqMultiple)
@@ -51,6 +52,8 @@ case class FilterTryout(ctx: DoctusSoundAudioContext) extends SoundExperiment {
     val sink = ctx.createNodeSinkLineOut
 
     // Connect nodes
+    gainMainCtrl >- gainMain.gain
+
     gainAdsrCtrl >- gainAdsr.gain
 
     filterFreqAdsrCtrl >- filter.frequency

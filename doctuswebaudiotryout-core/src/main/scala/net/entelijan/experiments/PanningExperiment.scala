@@ -24,8 +24,8 @@ case class PanningExperiment(ctx: DoctusSoundAudioContext) extends SoundExperime
     val (pf, frq) = SoundUtil.xyParams(panningFreq, frequencies)(nineth)
     
     val oscil = ctx.createNodeSourceOscil(WaveType_Triangle)
-    val pan = ctx.createNodeThroughPan()
-    val gain = ctx.createNodeThroughGain()
+    val pan = ctx.createNodeThroughPan
+    val gain = ctx.createNodeThroughGain
     val sink = ctx.createNodeSinkLineOut 
     
     val panCtrl = ctx.createNodeControlLfo(WaveType_Sine, pf, 1.0)

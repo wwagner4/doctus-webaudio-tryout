@@ -1,8 +1,9 @@
 package doctus.sound
 
 /**
- * Created by wwagner4 on 17/09/16.
+ * Jvm implementation of the DoctusSoundAudioContext
  */
+//noinspection NotImplementedCode
 case class DoctusSoundAudioContextJvm() extends DoctusSoundAudioContext {
 
   def createNodeSinkLineOut: NodeSink = ???
@@ -11,19 +12,19 @@ case class DoctusSoundAudioContextJvm() extends DoctusSoundAudioContext {
 
   def createNodeSourceNoise(noiseType: NoiseType): NodeSourceNoise = ???
 
-  def createNodeThroughGain(initialGain: Double): NodeThroughGain = ???
+  def createNodeThroughGain: NodeThroughGain = ???
 
-  def createNodeThroughFilter(filterType: FilterType, initialFrequency: Double, initialQuality: Double): NodeThroughFilter = ???
+  def createNodeThroughFilter(filterType: FilterType): NodeThroughFilter = ???
 
-  def createNodeThroughPan(initialPan: Double): NodeThroughPan = ???
+  def createNodeThroughPan: NodeThroughPan = ???
 
-  def createNodeThroughDelay(initialDelay: Double): NodeThroughDelay = ???
+  def createNodeThroughDelay: NodeThroughDelay = ???
 
   def createNodeControlConstant(value: Double): NodeControl = ???
 
   def createNodeControlAdsr(attack: Double, decay: Double, sustain: Double, release: Double, gain: Double): NodeControlEnvelope = ???
 
-  def createNodeControlLfo(waveType: WaveType, initialFrequency: Double, initialAmplitude: Double): NodeControlLfo = ???
+  def createNodeControlLfo(waveType: WaveType, frequency: Double, amplitude: Double): NodeControlLfo = ???
 
   def currentTime: Double = ???
 }

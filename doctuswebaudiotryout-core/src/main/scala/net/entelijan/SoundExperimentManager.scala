@@ -4,7 +4,7 @@ import doctus.sound.DoctusSoundAudioContext
 import net.entelijan.experiments._
 
 /**
-  * Created by wwagner4 on 18/09/16.
+  * Manager for sound experiments. Makes them appear and run on the gui.
   */
 case class SoundExperimentManager(soundContext: DoctusSoundAudioContext) {
 

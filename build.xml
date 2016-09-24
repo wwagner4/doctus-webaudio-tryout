@@ -1,3 +1,4 @@
+<!--suppress XmlUnboundNsPrefix -->
 <project name="deploy" default="deploy">
     <target name="deploy">
         <exec executable="sbt" >
