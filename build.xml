@@ -2,7 +2,7 @@
 <project name="deploy" default="deploy">
     <target name="deploy">
         <exec executable="sbt" >
-            <arg line="-Dsbt.log.noformat=true fullOptJS"/>
+            <arg line="-Dsbt.log.noformat=true clean test fullOptJS"/>
         </exec>
         <mkdir dir="staging"/>
         <copy todir="staging">
