@@ -40,13 +40,13 @@ case class FilterTryout(ctx: DoctusSoundAudioContext) extends SoundExperiment {
     val oscil = ctx.createNodeSourceOscil(WaveType_Square)
 
     val gainAdsr = ctx.createNodeThroughGain
-    val gainAdsrCtrl = ctx.createNodeControlAdsr(0.1, 0.1, 0.9, 2.0)
+    val gainAdsrCtrl = ctx.createNodeControlAdsr(0.1, 0.1, 0.9, 4.0)
 
     val gainMain = ctx.createNodeThroughGain
-    val gainMainCtrl = ctx.createNodeControlConstant(0.8)
+    val gainMainCtrl = ctx.createNodeControlConstant(0.4)
 
     val filter = ctx.createNodeThroughFilter(FilterType_Lowpass)
-    val filterFreqAdsrCtrl = ctx.createNodeControlAdsr(0.001, 0, 1.0, 2.0, freq * filterFreqMultiple)
+    val filterFreqAdsrCtrl = ctx.createNodeControlAdsr(0.001, 0, 1.0, 4.0, freq * filterFreqMultiple)
     val filterFreqConstCtrl = ctx.createNodeControlConstant(freq * 0.6)
 
     val sink = ctx.createNodeSinkLineOut

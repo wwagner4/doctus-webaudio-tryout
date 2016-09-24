@@ -24,8 +24,6 @@ Trying out the components of the webaudio api and how they work together
 
 
 #### Ideas
-* Make the ADSR ramping and decay logarithmic
-* [Modulation Synthesi](https://en.wikibooks.org/wiki/Sound_Synthesis_Theory/Modulation_Synthesis)
 * [Modulation Synthesi](https://en.wikibooks.org/wiki/Sound_Synthesis_Theory/Modulation_Synthesis)
 * [Karplus-Strong-Algorithmus](https://de.wikipedia.org/wiki/Karplus-Strong-Algorithmus)
 * [Digital waveguide synthesis](https://en.wikipedia.org/wiki/Digital_waveguide_synthesis)
@@ -34,6 +32,7 @@ Trying out the components of the webaudio api and how they work together
 
 
 #### Implemented Ideas
+* Make the ADSR ramping and decay logarithmic
 * Make an Oscilator with a square wave. Filter works with square wave
 * FM-Synth
 * Make an example using delay
