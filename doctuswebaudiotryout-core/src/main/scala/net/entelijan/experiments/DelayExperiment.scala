@@ -16,15 +16,20 @@ case class DelayExperiment(ctx: DoctusSoundAudioContext) extends SoundExperiment
 
   val attackValues = List(0.0001, 0.1, 0.6)
   val delayValues = List(0.01, 0.1, 0.2)
+  val frequencies = Stream.iterate(200.0)(x => x * 1.1).take(10).toList
+
+  var freqIndex = 0
 
   def start(nineth: Nineth): Unit = {
 
     val (a, d) = SoundUtil.xyParams(attackValues, delayValues)(nineth)
 
+    val f = frequencies(freqIndex)
     val now = ctx.currentTime
-    val inst = Inst(a, d)
+    val inst = Inst(a, d, f)
     inst.start(now)
     instOpt = Some(inst)
+    freqIndex = (freqIndex + 1) % frequencies.size
   }
 
   def stop(): Unit = {
@@ -34,7 +39,7 @@ case class DelayExperiment(ctx: DoctusSoundAudioContext) extends SoundExperiment
 
   case class SrcParam(gainVal: Double, freq: Double, delay: Double)
 
-  case class Inst(attack: Double, delayDiff: Double) extends StartStoppable {
+  case class Inst(attack: Double, delayDiff: Double, baseFreq: Double) extends StartStoppable {
 
     def createSource(param: SrcParam): NodeSource with StartStoppable = {
 
@@ -79,7 +84,7 @@ case class DelayExperiment(ctx: DoctusSoundAudioContext) extends SoundExperiment
     }
 
     val gainSeq = Stream.iterate(0.2)(x => x * 0.999)
-    val freqSeq = Stream.iterate(450.0)(x => x * 1.12599)
+    val freqSeq = Stream.iterate(baseFreq)(x => x * 1.12599)
     val delaySeq = Stream.iterate(0.0)(x => x + delayDiff)
 
     val sources = gainSeq.zip(freqSeq).zip(delaySeq)
