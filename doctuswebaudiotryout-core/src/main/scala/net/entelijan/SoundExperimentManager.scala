@@ -33,7 +33,7 @@ case class SoundExperimentManager(soundContext: DoctusSoundAudioContext) {
 
     case Tile(2, 0, _, _) => fmSynth
     case Tile(2, 1, _, _) => ringModulation
-    case Tile(2, 2, _, _) => EmptySoundExperiment
+    case Tile(2, 2, _, _) => karplusStrong
     case Tile(2, 3, _, _) => EmptySoundExperiment
 
     case _ => EmptySoundExperiment
