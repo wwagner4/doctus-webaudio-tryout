@@ -6,7 +6,7 @@ import net.entelijan.{Nineth, SoundExperiment, SoundUtil}
 /**
   * Example for ring modulation. https://en.wikibooks.org/wiki/Sound_Synthesis_Theory/Modulation_Synthesis#Ring_Modulation
   */
-case class RingModulation(ctx: DoctusSoundAudioContext) extends SoundExperiment {
+case class RingModulationExperiment(ctx: DoctusSoundAudioContext) extends SoundExperiment {
 
   def title: String = "ring modulation"
 

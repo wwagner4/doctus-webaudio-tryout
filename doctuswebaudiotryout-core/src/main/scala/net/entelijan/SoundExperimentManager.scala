@@ -17,7 +17,8 @@ case class SoundExperimentManager(soundContext: DoctusSoundAudioContext) {
   lazy val panning = PanningExperiment(soundContext)
   lazy val delay = DelayExperiment(soundContext)
   lazy val fmSynth = FmSynthExperiment(soundContext)
-  lazy val ringModulation = RingModulation(soundContext)
+  lazy val ringModulation = RingModulationExperiment(soundContext)
+  lazy val karplusStrong = KarplusStrongExperiment(soundContext)
 
   def experiment: Tile => SoundExperiment = {
     case Tile(0, 0, _, _) => tinnitus
