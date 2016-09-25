@@ -1,6 +1,6 @@
 package net.entelijan.experiments
 
-import doctus.sound.{DoctusSoundAudioContext, StartStoppable, WaveType_Sine}
+import doctus.sound.{DoctusSoundAudioContext, StartStoppable, WaveType_Sawtooth, WaveType_Sine}
 import net.entelijan.{Nineth, SoundExperiment, SoundUtil}
 
 /**
@@ -33,27 +33,35 @@ case class RingModulation(ctx: DoctusSoundAudioContext) extends SoundExperiment 
     val oscil = ctx.createNodeSourceOscil(WaveType_Sine)
     val oscilFrqCtrl = ctx.createNodeControlConstant(freq)
 
-    val gain = ctx.createNodeThroughGain
-    val gainGainCtrl = ctx.createNodeControlLfo(WaveType_Sine)
+    val gainRingMod = ctx.createNodeThroughGain
+    val gainGainCtrl = ctx.createNodeControlLfo(WaveType_Sawtooth)
     val lfoFrqCtrl = ctx.createNodeControlConstant(modFreq)
+
+    val gainAdsr = ctx.createNodeThroughGain
+    val adsr = ctx.createNodeControlAdsr(0.2, 0.0, 1.0, 0.5)
+
 
     val sink = ctx.createNodeSinkLineOut
 
     oscilFrqCtrl >- oscil.frequency
 
-    gainGainCtrl >- gain.gain
+    gainGainCtrl >- gainRingMod.gain
     lfoFrqCtrl >- gainGainCtrl.frequency
 
-    oscil >- gain >- sink
+    adsr >- gainAdsr.gain
+
+    oscil >- gainRingMod >- gainAdsr >- sink
 
     def start(time: Double): Unit = {
       oscil.start(time)
       gainGainCtrl.start(time)
+      adsr.start(time)
     }
 
     def stop(time: Double): Unit = {
-      oscil.stop(time)
-      gainGainCtrl.stop(time)
+      oscil.stop(time + 3)
+      gainGainCtrl.stop(time + 3)
+      adsr.stop(time)
     }
   }
 
