@@ -60,6 +60,7 @@ case class KarplusStrongExperiment(ctx: DoctusSoundAudioContext) extends SoundEx
         }
 
         def stop(time: Double): Unit = {
+          println("adsr stop %.2f" format time)
           adsr.stop(time)
         }
 
@@ -74,11 +75,13 @@ case class KarplusStrongExperiment(ctx: DoctusSoundAudioContext) extends SoundEx
   // Reusable ???
   case class InstrumentKarplusStrong() extends NodeSource with StartStoppable {
 
+    val frequency = 440.0 // Herz
+
     val nodeNoise = ctx.createNodeSourceNoise(NoiseType_White)
     val nodeGain = ctx.createNodeThroughGain
     val nodeDelay = delayNode(0.01)
-    val nodeFilter = lowpassNode(500)
-    val nodeAttenuation = attenuationNode(0.5)
+    val nodeFilter = lowpassNode(frequency)
+    val nodeAttenuation = attenuationNode(0.6)
 
     nodeNoise >- nodeGain >- nodeDelay >- nodeFilter >- nodeAttenuation >- nodeGain
 
@@ -92,7 +95,9 @@ case class KarplusStrongExperiment(ctx: DoctusSoundAudioContext) extends SoundEx
 
     def start(time: Double): Unit = {
       nodeNoise.start(time)
-      nodeNoise.stop(time + 0.01)
+      val duration = 0.01
+      println("dur:" + duration)
+      nodeNoise.stop(time + duration )
       println("KS started")
     }
 
