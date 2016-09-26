@@ -60,10 +60,9 @@ case class NodeThroughGainScalajs(waCtx: AudioContext) extends NodeThroughGain w
       case node: AudioNodeAware =>
         val src = node.audioNode
         waGain.connect(src)
-      case cont: NodeThroughContainer => {
+      case cont: NodeThroughContainer =>
         connect(cont.sink)
         cont.source
-      }
       case _ =>
         println("through %s is not AudioNodeAware" format through)
         throw new IllegalStateException()
@@ -76,10 +75,9 @@ case class NodeThroughGainScalajs(waCtx: AudioContext) extends NodeThroughGain w
       case node: AudioNodeAware =>
         val src = node.audioNode
         waGain.connect(src)
-      case cont: NodeThroughContainer => {
+      case cont: NodeThroughContainer =>
         connect(cont.sink)
         ()
-      }
       case _ =>
         println("sink %s is not AudioNodeAware" format sink)
         throw new IllegalStateException()
@@ -114,10 +112,9 @@ case class NodeThroughPanScalajs(waCtx: AudioContext) extends NodeThroughPan wit
       case node: AudioNodeAware =>
         val src = node.audioNode
         waPan.connect(src)
-      case cont: NodeThroughContainer => {
+      case cont: NodeThroughContainer =>
         connect(cont.sink)
         cont.source
-      }
       case _ =>
         println("through %s is not AudioNodeAware" format through)
         throw new IllegalStateException()
@@ -130,10 +127,9 @@ case class NodeThroughPanScalajs(waCtx: AudioContext) extends NodeThroughPan wit
       case node: AudioNodeAware =>
         val src = node.audioNode
         waPan.connect(src)
-      case cont: NodeThroughContainer => {
+      case cont: NodeThroughContainer =>
         connect(cont.sink)
         ()
-      }
       case _ =>
         println("sink %s is not AudioNodeAware" format sink)
         throw new IllegalStateException()
@@ -168,10 +164,9 @@ case class NodeThroughDelayScalajs(waCtx: AudioContext) extends NodeThroughDelay
       case node: AudioNodeAware =>
         val src = node.audioNode
         waDelay.connect(src)
-      case cont: NodeThroughContainer => {
+      case cont: NodeThroughContainer =>
         connect(cont.sink)
         cont.source
-      }
       case _ =>
         println("through %s is not AudioNodeAware" format through)
         throw new IllegalStateException()
@@ -184,10 +179,9 @@ case class NodeThroughDelayScalajs(waCtx: AudioContext) extends NodeThroughDelay
       case node: AudioNodeAware =>
         val src = node.audioNode
         waDelay.connect(src)
-      case cont: NodeThroughContainer => {
+      case cont: NodeThroughContainer =>
         connect(cont.sink)
         ()
-      }
       case _ =>
         println("sink %s is not AudioNodeAware" format sink)
         throw new IllegalStateException()
@@ -241,36 +235,33 @@ case class NodeThroughFilterScalajs(filterType: FilterType)(waCtx: AudioContext)
     override def toString: String = "NodeThroughFilterScalajs paramQuality"
   }
 
-  def connect(sink: NodeSink): Unit = {
-    sink match {
-      case node: AudioNodeAware =>
-        val src = node.audioNode
-        waFilter.connect(src)
-      case cont: NodeThroughContainer => {
-        connect(cont.sink)
-        cont.source
-      }
-      case _ =>
-        println("sink %s is not AudioNodeAware" format sink)
-        throw new IllegalStateException()
-    }
-  }
-
   def connect(through: NodeThrough): NodeSource = {
     through match {
       case node: AudioNodeAware =>
         val src = node.audioNode
         waFilter.connect(src)
-      case cont: NodeThroughContainer => {
+        through
+      case cont: NodeThroughContainer =>
         connect(cont.sink)
-        ()
-      }
+        cont.source
       case _ =>
         println("through %s is not AudioNodeAware" format through)
         throw new IllegalStateException()
     }
-    through
+  }
 
+  def connect(sink: NodeSink): Unit = {
+    sink match {
+      case node: AudioNodeAware =>
+        val src = node.audioNode
+        waFilter.connect(src)
+      case cont: NodeThroughContainer =>
+        connect(cont.sink)
+        ()
+      case _ =>
+        println("sink %s is not AudioNodeAware" format sink)
+        throw new IllegalStateException()
+    }
   }
 
   def audioNode: AudioNode = waFilter
@@ -313,10 +304,9 @@ case class NodeSourceOscilScalajs(waCtx: AudioContext, waveType: WaveType)
         val waThrough = node.audioNode
         waOscil.connect(waThrough)
         through
-      case cont: NodeThroughContainer => {
+      case cont: NodeThroughContainer =>
         connect(cont.sink)
         cont.source
-      }
       case _ =>
         println("through %s is not AudioNodeAware" format through)
         throw new IllegalStateException()
@@ -328,10 +318,9 @@ case class NodeSourceOscilScalajs(waCtx: AudioContext, waveType: WaveType)
       case node: AudioNodeAware =>
         val waSink = node.audioNode
         waOscil.connect(waSink)
-      case cont: NodeThroughContainer => {
+      case cont: NodeThroughContainer =>
         connect(cont.sink)
         ()
-      }
       case _ =>
         println("sink %s is not AudioNodeAware" format sink)
         throw new IllegalStateException()
@@ -378,10 +367,9 @@ case class NodeSourceNoiseWhiteScalajs(waCtx: AudioContext, noiseType: NoiseType
         val waThrough = node.audioNode
         waSrc.connect(waThrough)
         through
-      case cont: NodeThroughContainer => {
+      case cont: NodeThroughContainer =>
         connect(cont.sink)
         cont.source
-      }
       case _ =>
         println("through %s is not AudioNodeAware" format through)
         throw new IllegalStateException()
@@ -393,10 +381,9 @@ case class NodeSourceNoiseWhiteScalajs(waCtx: AudioContext, noiseType: NoiseType
       case node: AudioNodeAware =>
         val waSink = node.audioNode
         waSrc.connect(waSink)
-      case cont: NodeThroughContainer => {
+      case cont: NodeThroughContainer =>
         connect(cont.sink)
         ()
-      }
       case _ =>
         println("sink %s is not AudioNodeAware" format sink)
         throw new IllegalStateException()
