@@ -52,7 +52,7 @@ trait NodeSink {
   * provides the transformed signal like a NodeSource
   * Examples: Gain control, filters, ...
   */
-trait NodeThrough extends NodeSource {
+trait NodeThrough extends NodeSource with NodeSink {
 
 }
 
