@@ -295,9 +295,7 @@ case class NodeControlAdsrScalajs(attack: Double, decay: Double, sustain: Double
       p.cancelScheduledValues(time)
       p.setValueAtTime(0.0, time)
       p.linearRampToValueAtTime(gain, time + attack)
-
-      val to = adjustNotNull(sustain * gain)
-      p.exponentialRampToValueAtTime(to, time + attack + decay)
+      p.linearRampToValueAtTime(sustain * gain, time + attack + decay)
     }
   }
 
@@ -307,19 +305,8 @@ case class NodeControlAdsrScalajs(attack: Double, decay: Double, sustain: Double
       val diff = time - now
       if (diff <= 0.0) p.cancelScheduledValues(0.0)
       else p.cancelScheduledValues(time)
-
-      val to = adjustNotNull(0.0)
-      p.exponentialRampToValueAtTime(to, time + release)
-      p.setValueAtTime(0.0, time + release)
+      p.linearRampToValueAtTime(0.0, time + release)
     }
-  }
-
-  private val minVal = 0.00001
-
-  private def adjustNotNull(value: Double): Double = {
-    if (value > 0.0 && value < minVal) minVal
-    else if (value > -minVal) -minVal
-    else value
   }
 
   def addAudioParam(waParam: AudioParam): Unit = {
