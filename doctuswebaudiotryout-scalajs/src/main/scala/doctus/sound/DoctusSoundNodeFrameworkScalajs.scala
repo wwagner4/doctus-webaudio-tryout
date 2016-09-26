@@ -187,6 +187,7 @@ case class NodeThroughFilterScalajs(filterType: FilterType)(waCtx: AudioContext)
   // Set default values
   waFilter.Q.value = 5.0
   waFilter.frequency.value = 440
+  waFilter.gain.value = 1.0
 
   def frequency: ControlParam = paramFrequency
 
