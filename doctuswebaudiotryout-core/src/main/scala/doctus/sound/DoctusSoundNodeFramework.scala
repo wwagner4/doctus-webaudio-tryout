@@ -56,6 +56,18 @@ trait NodeThrough extends NodeSource with NodeSink {
 
 }
 
+trait NodeThroughContainer extends NodeThrough {
+
+  def source: NodeSource
+
+  def sink: NodeSink
+
+  def connect(sink: NodeSink): Unit = source.connect(sink)
+
+  def connect(through: NodeThrough): NodeSource = source.connect(through)
+
+}
+
 /**
   * Frequency filter 
   */
