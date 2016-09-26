@@ -29,6 +29,7 @@ trait AudioNodeAware {
   def audioNode: AudioNode
 
   def connect(through: NodeThrough): NodeSource = {
+    //println("connecting %s to through %s" format(this, through))
     through match {
       case node: AudioNodeAware =>
         val src = node.audioNode
@@ -44,6 +45,7 @@ trait AudioNodeAware {
   }
 
   def connect(sink: NodeSink): Unit = {
+    //println("connecting %s to sink %s" format(this, sink))
     sink match {
       case node: AudioNodeAware =>
         val src = node.audioNode
@@ -308,14 +310,15 @@ case class NodeControlAdsrScalajs(attack: Double, decay: Double, sustain: Double
 
       val to = adjustNotNull(0.0)
       p.exponentialRampToValueAtTime(to, time + release)
+      p.setValueAtTime(0.0, time + release)
     }
   }
 
   private val minVal = 0.00001
 
   private def adjustNotNull(value: Double): Double = {
-    if (value < 0.0 && value > -minVal) -minVal
-    else if (value < minVal) minVal
+    if (value > 0.0 && value < minVal) minVal
+    else if (value > -minVal) -minVal
     else value
   }
 
