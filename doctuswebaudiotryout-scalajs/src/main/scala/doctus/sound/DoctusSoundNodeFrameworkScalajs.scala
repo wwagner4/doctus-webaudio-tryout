@@ -145,7 +145,7 @@ case class NodeThroughPanScalajs(waCtx: AudioContext) extends NodeThroughPan wit
 case class NodeThroughDelayScalajs(waCtx: AudioContext) extends NodeThroughDelay with AudioNodeAware {
 
   val waDelay = waCtx.createDelay(1)
-  
+
   val paramDelay = new ConnectableParam with ControlParam {
 
     def onConnect = {
@@ -459,7 +459,7 @@ case class NodeControlAdsrScalajs(attack: Double, decay: Double, sustain: Double
 
   private def adjustNotNull(value: Double): Double = {
     if (value < 0.0 && value > -minVal) -minVal
-    else if(value < minVal) minVal
+    else if (value < minVal) minVal
     else value
   }
 
@@ -485,7 +485,8 @@ case class NodeControlLfoScalajs(waveType: WaveType)(waCtx: AudioContext)
 
   val waOscil = waCtx.createOscillator()
   waOscil.`type` = waWaveType(waveType)
-  waOscil.frequency.value = 400.0 // default value
+  waOscil.frequency.value = 400.0
+  // default value
 
   val waGain = waCtx.createGain()
   waGain.gain.value = 1.0 // Default value
@@ -519,7 +520,6 @@ case class NodeControlLfoScalajs(waveType: WaveType)(waCtx: AudioContext)
 
     override def toString: String = "NodeControlLfoScalajs paramAmplitude"
   }
-
 
 
   def start(time: Double): Unit = {
@@ -562,11 +562,11 @@ case class DoctusSoundAudioContextScalajs(waCtx: AudioContext) extends DoctusSou
   def createNodeThroughGain: NodeThroughGain = {
     NodeThroughGainScalajs(waCtx)
   }
-  
+
   def createNodeThroughPan: NodeThroughPan = {
     NodeThroughPanScalajs(waCtx)
   }
-  
+
   def createNodeThroughDelay: NodeThroughDelay = {
     NodeThroughDelayScalajs(waCtx)
   }
@@ -589,6 +589,8 @@ case class DoctusSoundAudioContextScalajs(waCtx: AudioContext) extends DoctusSou
   }
 
   def currentTime: Double = waCtx.currentTime
+
+  def sampleRate: Double = waCtx.sampleRate
 
 }
 

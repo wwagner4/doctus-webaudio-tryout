@@ -257,5 +257,10 @@ trait DoctusSoundAudioContext {
    */
   def currentTime: Double
 
+  /**
+    * @return the sample rate of the underlaying sound system
+    */
+  def sampleRate: Double
+
 }
 
