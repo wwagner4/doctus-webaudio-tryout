@@ -9,7 +9,7 @@ import net.entelijan.{Nineth, SoundExperiment, SoundUtil}
   * Plays one of three melodies
   * Introduces the concept of an 'instrument'
   */
-case class Melody(ctx: DoctusSoundAudioContext) extends SoundExperiment {
+case class MelodyExperiment(ctx: DoctusSoundAudioContext) extends SoundExperiment {
 
   def title: String = "melody"
 

@@ -9,7 +9,7 @@ import net.entelijan.experiments._
 case class SoundExperimentManager(soundContext: DoctusSoundAudioContext) {
 
   lazy val tinnitus = TinnitusExperiment(soundContext)
-  lazy val melody = Melody(soundContext)
+  lazy val melody = MelodyExperiment(soundContext)
   lazy val noise = NoiseExperiment(soundContext)
   lazy val adsr = AdsrTryout(soundContext)
   lazy val metal  = MetalExperiment(soundContext)
