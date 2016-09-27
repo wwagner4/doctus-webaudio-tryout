@@ -131,7 +131,8 @@ case class NodeThroughPanScalajs(waCtx: AudioContext)
 case class NodeThroughDelayScalajs(waCtx: AudioContext) extends NodeThroughDelay
   with AudioNodeAware with ControlParamFactory {
 
-  private val waDelay = waCtx.createDelay(1)
+  private val waDelay = waCtx.createDelay(10)
+  waDelay.delayTime.value = 0.1
 
   lazy val delay: ControlParam = createParam(() => waDelay.delayTime, "NodeThroughDelayScalajs delay")
 
@@ -156,6 +157,7 @@ case class NodeThroughFilterScalajs(filterType: FilterType)(waCtx: AudioContext)
   waFilter.Q.value = 5.0
   waFilter.frequency.value = 440
   waFilter.gain.value = 1.0
+  waFilter.detune.value = 0.0
 
   lazy val frequency: ControlParam = createParam(() => waFilter.frequency, "NodeThroughFilterScalajs frequency")
 
