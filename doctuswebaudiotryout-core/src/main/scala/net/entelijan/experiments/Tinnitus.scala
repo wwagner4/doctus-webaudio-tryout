@@ -17,11 +17,11 @@ case class Tinnitus(ctx: DoctusSoundAudioContext) extends SoundExperiment {
 
   def start(nineth: Nineth): Unit = {
 
-    val (freq, attackRelease) = SoundUtil.xyParams(List(200.0, 401.0, 802.0), List(2.0, 4.0, 6.0))(nineth)
+    val (freq, attackRelease) = SoundUtil.xyParams(List(200.0, 401.0, 802.0), List(1.0, 2.0, 4.0))(nineth)
 
     // Create nodes
     val freqCtrl = ctx.createNodeControlConstant(freq)
-    val gainCtrl = ctx.createNodeControlAdsr(attackRelease, 0.0, 1.0, attackRelease, 0.3)
+    val gainCtrl = ctx.createNodeControlAdsr(attackRelease, 0.0, 1.0, attackRelease, 0.15)
 
     val oscil = ctx.createNodeSourceOscil(WaveType_Sine)
     val gain = ctx.createNodeThroughGain

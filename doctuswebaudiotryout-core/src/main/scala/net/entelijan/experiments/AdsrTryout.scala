@@ -85,7 +85,6 @@ case class AdsrTryout(ctx: DoctusSoundAudioContext) extends SoundExperiment {
       }
 
       def stop(time: Double): Unit = {
-        println("adsr stop %.2f" format time)
         adsr.stop(time)
       }
 
