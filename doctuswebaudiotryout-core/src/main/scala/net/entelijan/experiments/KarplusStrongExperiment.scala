@@ -51,11 +51,11 @@ case class KarplusStrongExperiment(ctx: DoctusSoundAudioContext) extends SoundEx
     val masterGain = createGain(1.0)
 
     val delay = createDelay(0.001)
-    val filter = createLowpass(5000)
+    val filter = createFilter(5000, -3.0, FilterType_Lowpass)
     val attenuation = createGain(0.99)
 
     burst >- masterGain >- sink
-    burst >- delay >- attenuation >- delay
+    burst >- delay >- filter >- attenuation >- delay
     attenuation >- masterGain
 
     def start(time: Double): Unit = {
@@ -110,11 +110,14 @@ case class KarplusStrongExperiment(ctx: DoctusSoundAudioContext) extends SoundEx
     gain
   }
 
-  def createLowpass(freq: Double): NodeThrough = {
-    val filter = ctx.createNodeThroughFilter(FilterType_Lowpass)
-    val freqCtr = ctx.createNodeControlConstant(freq)
+  def createFilter(frequency: Double, quality: Double, filterType: FilterType): NodeThroughFilter = {
 
-    freqCtr >- filter.frequency
+    val filter = ctx.createNodeThroughFilter(filterType)
+    val ctrlFreq = ctx.createNodeControlConstant(frequency)
+    val ctrlQ = ctx.createNodeControlConstant(quality)
+
+    ctrlFreq >- filter.frequency
+    ctrlQ >- filter.quality
 
     filter
   }
