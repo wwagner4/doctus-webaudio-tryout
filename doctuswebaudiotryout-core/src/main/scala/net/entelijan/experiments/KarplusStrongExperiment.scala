@@ -50,13 +50,13 @@ case class KarplusStrongExperiment(ctx: DoctusSoundAudioContext) extends SoundEx
     val sink = ctx.createNodeSinkLineOut
     val masterGain = createGain(1.0)
 
-    /*
-    val delay = createDelay(0.01)
+    val delay = createDelay(0.001)
     val filter = createLowpass(5000)
     val attenuation = createGain(0.99)
-    */
 
     burst >- masterGain >- sink
+    burst >- delay >- attenuation >- delay
+    attenuation >- masterGain
 
     def start(time: Double): Unit = {
       burst.start(time)
@@ -74,7 +74,7 @@ case class KarplusStrongExperiment(ctx: DoctusSoundAudioContext) extends SoundEx
     val burst = ctx.createNodeSourceNoise(NoiseType_Pink)
     val burstGain = ctx.createNodeThroughGain
 
-    val adsr = ctx.createNodeControlAdsr(0.001, 0.0, 1.0, 0.001)
+    val adsr = ctx.createNodeControlAdsr(0.0001, 0.0, 1.0, 0.0001)
 
     adsr >- burstGain.gain
 
@@ -123,7 +123,7 @@ case class KarplusStrongExperiment(ctx: DoctusSoundAudioContext) extends SoundEx
     val delay = ctx.createNodeThroughDelay
     val timeCtrl = ctx.createNodeControlConstant(time)
 
-    timeCtrl -> delay.delay
+    timeCtrl >- delay.delay
 
     delay
   }
