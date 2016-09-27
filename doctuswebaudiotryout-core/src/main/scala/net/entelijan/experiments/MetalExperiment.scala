@@ -15,7 +15,7 @@ case class MetalExperiment(ctx: DoctusSoundAudioContext) extends SoundExperiment
   val ran = Random
 
   val baseFreqList = List(222.0, 333.0, 444.0)
-  val logarthmicDecayList = List(1.1, 2, 4.0)
+  val logarthmicDecayList = List(0.8, 0.6, 0.4)
 
   var gainableOscilsOpt = Option.empty[Seq[StartStoppableSource]]
   var adsrOpt = Option.empty[NodeControlEnvelope]
@@ -24,10 +24,11 @@ case class MetalExperiment(ctx: DoctusSoundAudioContext) extends SoundExperiment
     
     val (freq, ld) = SoundUtil.xyParams(baseFreqList, logarthmicDecayList)(nineth) 
 
-    val harmonics = SoundUtil.metalHarmonics(freq, 6)
-    val gains = Stream.from(0).map(SoundUtil.logarithmicDecay(ld)(_)).map(_ * ld * -0.06 + 0.2)
+    val harmonics = Stream.iterate(freq)(f => f * math.sqrt(2.0))
+    val baseGain = 1.0 - 1.0 * ld // Base gain must be smaller if decay is slower
+    val gains = Stream.iterate(baseGain)(g => g * ld)
 
-    val params = harmonics.zip(gains)
+    val params = harmonics.zip(gains).take(6).toList
 
     val gainableOscils = params.map { case (f, g) => gainableOscil(f, g) }
 
