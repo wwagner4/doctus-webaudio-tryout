@@ -46,23 +46,21 @@ case class KarplusStrongExperiment(ctx: DoctusSoundAudioContext) extends SoundEx
 
   case class Instrument(frequency: Double) extends StartStoppable {
 
-    val noise = ctx.createNodeSourceNoise(NoiseType_Pink)
-    val gain = ctx.createNodeThroughGain
+    val burst = createBurst
     val sink = ctx.createNodeSinkLineOut
-    val masterGain = createMasterGain(1.0)
+    val masterGain = createGain(1.0)
 
-    val adsr = ctx.createNodeControlAdsr(0.001, 0.0, 1.0, 0.001)
+    /*
+    val delay = createDelay(0.01)
+    val filter = createLowpass(5000)
+    val attenuation = createGain(0.99)
+    */
 
-    adsr >- gain.gain
-
-    noise >- gain >- masterGain >- sink
+    burst >- masterGain >- sink
 
     def start(time: Double): Unit = {
-      noise.start(0.0)
-      adsr.start(time)
-      val dur = 0.01
-      noise.stop(time + dur + 3.0)
-      adsr.stop(time + dur)
+      burst.start(time)
+      burst.stop(time + 0.01)
     }
 
     def stop(time: Double): Unit = {
@@ -71,7 +69,39 @@ case class KarplusStrongExperiment(ctx: DoctusSoundAudioContext) extends SoundEx
 
   }
 
-  def createMasterGain(gainVal: Double): NodeThrough = {
+  def createBurst: NodeSource with StartStoppable = {
+
+    val burst = ctx.createNodeSourceNoise(NoiseType_Pink)
+    val burstGain = ctx.createNodeThroughGain
+
+    val adsr = ctx.createNodeControlAdsr(0.001, 0.0, 1.0, 0.001)
+
+    adsr >- burstGain.gain
+
+    burst >- burstGain
+
+    // TODO Create some NodeSourceContainer to avoid reimplementation of the connect methods
+    new NodeSource with StartStoppable {
+
+      def connect(sink: NodeSink): Unit = burstGain.connect(sink)
+
+      def connect(through: NodeThrough): NodeSource = burstGain.connect(through)
+
+      def start(time: Double): Unit = {
+        burst.start(time)
+        adsr.start(time)
+      }
+
+      def stop(time: Double): Unit = {
+        burst.stop(time + 1)
+        adsr.stop(time)
+      }
+
+    }
+
+  }
+
+  def createGain(gainVal: Double): NodeThrough = {
     val gain = ctx.createNodeThroughGain
     val gainCtrl = ctx.createNodeControlConstant(gainVal)
 
@@ -80,4 +110,21 @@ case class KarplusStrongExperiment(ctx: DoctusSoundAudioContext) extends SoundEx
     gain
   }
 
+  def createLowpass(freq: Double): NodeThrough = {
+    val filter = ctx.createNodeThroughFilter(FilterType_Lowpass)
+    val freqCtr = ctx.createNodeControlConstant(freq)
+
+    freqCtr >- filter.frequency
+
+    filter
+  }
+
+  def createDelay(time: Double): NodeThrough = {
+    val delay = ctx.createNodeThroughDelay
+    val timeCtrl = ctx.createNodeControlConstant(time)
+
+    timeCtrl -> delay.delay
+
+    delay
+  }
 }
