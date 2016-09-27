@@ -21,6 +21,25 @@ trait WebAudioParamHolder {
 }
 
 /**
+  * Helper thread to create audio parameters for the scalajs implementation
+  */
+trait ControlParamFactory {
+
+  def createParam(audioParam: () => AudioParam, description: String) = new ControlParam with ConnectableParam {
+    def onConnect: (NodeControl) => Unit = {
+      case holder: WebAudioParamHolder =>
+        holder.addAudioParam(audioParam())
+      case nodeControl =>
+        println("control node %s is not a WebAudioParamHolder" format nodeControl)
+        throw new IllegalStateException()
+    }
+
+    override def toString: String = description
+  }
+
+}
+
+/**
   * Implementing classes contain an audio node they want to
   * expose to other classes
   */
@@ -29,7 +48,6 @@ trait AudioNodeAware {
   def audioNode: AudioNode
 
   def connect(through: NodeThrough): NodeSource = {
-    //println("connecting %s to through %s" format(this, through))
     through match {
       case node: AudioNodeAware =>
         val src = node.audioNode
@@ -45,7 +63,6 @@ trait AudioNodeAware {
   }
 
   def connect(sink: NodeSink): Unit = {
-    //println("connecting %s to sink %s" format(this, sink))
     sink match {
       case node: AudioNodeAware =>
         val src = node.audioNode
@@ -61,7 +78,8 @@ trait AudioNodeAware {
 
 }
 
-case class NodeSinkLineOutScalajs(waCtx: AudioContext) extends NodeSink with AudioNodeAware {
+case class NodeSinkLineOutScalajs(waCtx: AudioContext) extends NodeSink
+  with AudioNodeAware {
 
   val waDestination = waCtx.destination
 
@@ -69,127 +87,71 @@ case class NodeSinkLineOutScalajs(waCtx: AudioContext) extends NodeSink with Aud
 
 }
 
-case class NodeThroughGainScalajs(waCtx: AudioContext) extends NodeThroughGain with AudioNodeAware {
+case class NodeThroughGainScalajs(waCtx: AudioContext) extends NodeThroughGain
+  with AudioNodeAware with ControlParamFactory {
 
-  val waGain = waCtx.createGain()
+  private val waGain = waCtx.createGain()
 
-  val paramGain = new ConnectableParam with ControlParam {
-
-    def onConnect = {
-      case holder: WebAudioParamHolder => holder.addAudioParam(waGain.gain)
-      case nodeControl =>
-        println("control node %s is not a WebAudioParamHolder" format nodeControl)
-        throw new IllegalStateException()
-    }
-
-    override def toString: String = "NodeThroughGainScalajs paramGain"
-
-  }
-
-  def gain: ControlParam = paramGain
+  lazy val gain: ControlParam = createParam(() => waGain.gain, "NodeThroughGainScalajs gain")
 
   def audioNode: AudioNode = waGain
 
 }
 
-case class NodeThroughPanScalajs(waCtx: AudioContext) extends NodeThroughPan with AudioNodeAware {
+case class NodeThroughPanScalajs(waCtx: AudioContext)
+  extends NodeThroughPan
+    with AudioNodeAware with ControlParamFactory {
 
-  val waPan = waCtx.createStereoPanner()
+  private val waPan = waCtx.createStereoPanner()
 
-  val paramPan = new ConnectableParam with ControlParam {
-
-    def onConnect = {
-      case holder: WebAudioParamHolder => holder.addAudioParam(waPan.pan)
-      case nodeControl =>
-        println("control node %s is not a WebAudioParamHolder" format nodeControl)
-        throw new IllegalStateException()
-    }
-
-    override def toString: String = "NodeThroughGainScalajs paramGain"
-
-  }
-
-  def pan: ControlParam = paramPan
+  lazy val pan: ControlParam = createParam(() => waPan.pan, "NodeThroughPanScalajs pan")
 
   def audioNode: AudioNode = waPan
 
 }
 
-case class NodeThroughDelayScalajs(waCtx: AudioContext) extends NodeThroughDelay with AudioNodeAware {
+case class NodeThroughDelayScalajs(waCtx: AudioContext) extends NodeThroughDelay
+  with AudioNodeAware with ControlParamFactory {
 
-  val waDelay = waCtx.createDelay(1)
+  private val waDelay = waCtx.createDelay(1)
 
-  val paramDelay = new ConnectableParam with ControlParam {
-
-    def onConnect = {
-      case holder: WebAudioParamHolder => holder.addAudioParam(waDelay.delayTime)
-      case nodeControl =>
-        println("control node %s is not a WebAudioParamHolder" format nodeControl)
-        throw new IllegalStateException()
-    }
-
-    override def toString: String = "NodeThroughGainScalajs paramGain"
-
-  }
-
-  def delay: ControlParam = paramDelay
+  lazy val delay: ControlParam = createParam(() => waDelay.delayTime, "NodeThroughDelayScalajs delay")
 
   def audioNode: AudioNode = waDelay
 
 }
 
-case class NodeThroughFilterScalajs(filterType: FilterType)(waCtx: AudioContext) extends NodeThroughFilter with AudioNodeAware {
+case class NodeThroughFilterScalajs(filterType: FilterType)(waCtx: AudioContext) extends NodeThroughFilter
+  with AudioNodeAware with ControlParamFactory {
 
   private val waFilter = waCtx.createBiquadFilter()
-  waFilter.`type` = filterType match {
+
+  private val filterTypeStr = filterType match {
     case FilterType_Lowpass => "lowpass"
     case FilterType_Highpass => "highpass"
     case FilterType_Bandpass => "bandpass"
+    // TODO Extend for further filter types ???
   }
+  waFilter.`type` = filterTypeStr
+
   // Set default values
   waFilter.Q.value = 5.0
   waFilter.frequency.value = 440
   waFilter.gain.value = 1.0
 
-  def frequency: ControlParam = paramFrequency
+  lazy val frequency: ControlParam = createParam(() => waFilter.frequency, "NodeThroughFilterScalajs frequency")
 
-  private val paramFrequency = new ControlParam with ConnectableParam {
-    def onConnect: (NodeControl) => Unit = {
-      case holder: WebAudioParamHolder =>
-        holder.addAudioParam(waFilter.frequency)
-      case nodeControl =>
-        println("control node %s is not a WebAudioParamHolder" format nodeControl)
-        throw new IllegalStateException()
-    }
-
-    override def toString: String = "NodeThroughFilterScalajs paramFrequency"
-  }
-
-  def quality: ControlParam = paramQuality
-
-  private val paramQuality = new ControlParam with ConnectableParam {
-    def onConnect: (NodeControl) => Unit = {
-      case holder: WebAudioParamHolder =>
-        holder.addAudioParam(waFilter.Q)
-      case nodeControl =>
-        println("control node %s is not a WebAudioParamHolder" format nodeControl)
-        throw new IllegalStateException()
-    }
-
-    override def toString: String = "NodeThroughFilterScalajs paramQuality"
-  }
+  lazy val quality: ControlParam = createParam(() => waFilter.Q, "NodeThroughFilterScalajs quality")
 
   def audioNode: AudioNode = waFilter
 
 }
 
-case class NodeSourceOscilScalajs(waCtx: AudioContext, waveType: WaveType)
-  extends NodeSourceOscil with AudioNodeAware with OscilUtil {
-
-  private def waveTypeStr = waWaveType(waveType)
+case class NodeSourceOscilScalajs(waCtx: AudioContext, waveType: WaveType) extends NodeSourceOscil
+  with AudioNodeAware with ControlParamFactory with OscilUtil {
 
   private val waOscil = waCtx.createOscillator()
-  waOscil.`type` = waveTypeStr
+  waOscil.`type` = waWaveType(waveType)
 
   def start(time: Double): Unit = {
     waOscil.start(time)
@@ -199,25 +161,14 @@ case class NodeSourceOscilScalajs(waCtx: AudioContext, waveType: WaveType)
     waOscil.stop(time)
   }
 
-  def frequency: ControlParam = paramFrequency
-
-  private val paramFrequency = new ControlParam with ConnectableParam {
-    def onConnect: (NodeControl) => Unit = {
-      case holder: WebAudioParamHolder =>
-        holder.addAudioParam(waOscil.frequency)
-      case nodeControl =>
-        println("control node %s is not a WebAudioParamHolder" format nodeControl)
-        throw new IllegalStateException()
-    }
-
-    override def toString: String = "NodeSourceOscilSineScalajs paramFrequency"
-  }
+  lazy val frequency: ControlParam = createParam(() => waOscil.frequency, "NodeSourceOscilScalajs frequency")
 
   def audioNode: AudioNode = waOscil
 
 }
 
-case class NodeSourceNoiseWhiteScalajs(waCtx: AudioContext, noiseType: NoiseType) extends NodeSourceNoise with AudioNodeAware {
+case class NodeSourceNoiseWhiteScalajs(waCtx: AudioContext, noiseType: NoiseType) extends NodeSourceNoise
+  with AudioNodeAware {
 
   val valueSeq: ValueSequence = noiseType match {
     case NoiseType_White => NoiseWhite
@@ -261,6 +212,7 @@ case class NodeSourceNoiseWhiteScalajs(waCtx: AudioContext, noiseType: NoiseType
 case class NodeControlConstantScalajs(value: Double)(waCtx: AudioContext)
   extends NodeControl with WebAudioParamHolder {
 
+  // TODO extract this connect method to a trait.
   def connect(param: ControlParam): Unit = {
     param match {
       case connectable: ConnectableParam => connectable.onConnect(this)
@@ -276,8 +228,10 @@ case class NodeControlConstantScalajs(value: Double)(waCtx: AudioContext)
 
 }
 
-case class NodeControlAdsrScalajs(attack: Double, decay: Double, sustain: Double, release: Double, gain: Double)(waCtx: AudioContext)
-  extends NodeControlEnvelope with WebAudioParamHolder {
+case class NodeControlAdsrScalajs(attack: Double, decay: Double, sustain: Double, release: Double, gain: Double)
+                                 (waCtx: AudioContext)
+  extends NodeControlEnvelope
+    with WebAudioParamHolder {
 
   var waParamList = List.empty[AudioParam]
 
@@ -315,58 +269,22 @@ case class NodeControlAdsrScalajs(attack: Double, decay: Double, sustain: Double
   }
 }
 
-trait OscilUtil {
+case class NodeControlLfoScalajs(waveType: WaveType)(waCtx: AudioContext) extends NodeControlLfo
+  with WebAudioParamHolder with ControlParamFactory with OscilUtil {
 
-  def waWaveType(waveType: WaveType) = waveType match {
-    case WaveType_Sine => "sine"
-    case WaveType_Triangle => "triangle"
-    case WaveType_Sawtooth => "sawtooth"
-    case WaveType_Square => "square"
-  }
-
-}
-
-case class NodeControlLfoScalajs(waveType: WaveType)(waCtx: AudioContext)
-  extends NodeControlLfo with WebAudioParamHolder with OscilUtil {
-
-  val waOscil = waCtx.createOscillator()
+  private val waOscil = waCtx.createOscillator()
   waOscil.`type` = waWaveType(waveType)
   waOscil.frequency.value = 400.0
   // default value
 
-  val waGain = waCtx.createGain()
+  private val waGain = waCtx.createGain()
   waGain.gain.value = 1.0 // Default value
 
   waOscil.connect(waGain)
 
-  def frequency: ControlParam = paramFrequency
+  lazy val frequency: ControlParam = createParam(() => waOscil.frequency, "NodeControlLfoScalajs frequency")
 
-  private val paramFrequency = new ControlParam with ConnectableParam {
-    def onConnect: (NodeControl) => Unit = {
-      case holder: WebAudioParamHolder =>
-        holder.addAudioParam(waOscil.frequency)
-      case nodeControl =>
-        println("control node %s is not a WebAudioParamHolder" format nodeControl)
-        throw new IllegalStateException()
-    }
-
-    override def toString: String = "NodeControlLfoScalajs paramFrequency"
-  }
-
-  def amplitude: ControlParam = paramAmplitude
-
-  private val paramAmplitude = new ControlParam with ConnectableParam {
-    def onConnect: (NodeControl) => Unit = {
-      case holder: WebAudioParamHolder =>
-        holder.addAudioParam(waGain.gain)
-      case nodeControl =>
-        println("control node %s is not a WebAudioParamHolder" format nodeControl)
-        throw new IllegalStateException()
-    }
-
-    override def toString: String = "NodeControlLfoScalajs paramAmplitude"
-  }
-
+  lazy val amplitude: ControlParam = createParam(() => waGain.gain, "NodeControlLfoScalajs amplitude")
 
   def start(time: Double): Unit = {
     waOscil.start(time)
@@ -439,4 +357,17 @@ case class DoctusSoundAudioContextScalajs(waCtx: AudioContext) extends DoctusSou
   def sampleRate: Double = waCtx.sampleRate
 
 }
+
+trait OscilUtil {
+
+  def waWaveType(waveType: WaveType) = waveType match {
+    case WaveType_Sine => "sine"
+    case WaveType_Triangle => "triangle"
+    case WaveType_Sawtooth => "sawtooth"
+    case WaveType_Square => "square"
+  }
+
+}
+
+
 
