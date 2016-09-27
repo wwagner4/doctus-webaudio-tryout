@@ -41,12 +41,10 @@ case class FilterExperiment(ctx: DoctusSoundAudioContext) extends SoundExperimen
 
     def start(time: Double): Unit = {
       noise.start(time)
-      println("started %.2f %s" format(frequency, filterType))
     }
 
     def stop(time: Double): Unit = {
       noise.stop(time)
-      println("stopped")
     }
 
     def createFilter(frequency: Double, quality: Double, filterType: FilterType): NodeThroughFilter = {

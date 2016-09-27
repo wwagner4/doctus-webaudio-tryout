@@ -59,8 +59,6 @@ case class KarplusStrongExperiment(ctx: DoctusSoundAudioContext) extends SoundEx
 
   def createBurst(noiseType: NoiseType): NodeSource with StartStoppable = {
 
-    println("noise type " + noiseType)
-
     val burst = ctx.createNodeSourceNoise(noiseType)
     val burstGain = ctx.createNodeThroughGain
 
