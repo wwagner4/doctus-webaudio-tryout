@@ -8,7 +8,7 @@ import net.entelijan.{Nineth, SoundExperiment, SoundUtil}
 /**
   * Plays a slowly increasing and releasing sine wave
   */
-case class Tinnitus(ctx: DoctusSoundAudioContext) extends SoundExperiment {
+case class TinnitusExperiment(ctx: DoctusSoundAudioContext) extends SoundExperiment {
 
   var oscilOpt = Option.empty[NodeSourceOscil]
   var gainCtrlOpt = Option.empty[NodeControlEnvelope]
@@ -17,11 +17,11 @@ case class Tinnitus(ctx: DoctusSoundAudioContext) extends SoundExperiment {
 
   def start(nineth: Nineth): Unit = {
 
-    val (freq, attackRelease) = SoundUtil.xyParams(List(200.0, 401.0, 802.0), List(1.0, 2.0, 4.0))(nineth)
+    val (freq, attackRelease) = SoundUtil.xyParams(List(300.0, 401.0, 802.0), List(1.0, 2.0, 4.0))(nineth)
 
     // Create nodes
     val freqCtrl = ctx.createNodeControlConstant(freq)
-    val gainCtrl = ctx.createNodeControlAdsr(attackRelease, 0.0, 1.0, attackRelease, 0.15)
+    val gainCtrl = ctx.createNodeControlAdsr(attackRelease, 0.0, 1.0, attackRelease, 0.5)
 
     val oscil = ctx.createNodeSourceOscil(WaveType_Sine)
     val gain = ctx.createNodeThroughGain
