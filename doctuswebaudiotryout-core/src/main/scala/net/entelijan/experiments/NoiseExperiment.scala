@@ -6,7 +6,7 @@ import net.entelijan.{Nineth, SoundExperiment, SoundUtil}
 /**
   * Creating some noise.
   */
-case class Noise(ctx: DoctusSoundAudioContext) extends SoundExperiment {
+case class NoiseExperiment(ctx: DoctusSoundAudioContext) extends SoundExperiment {
 
   def title: String = "noise"
 
