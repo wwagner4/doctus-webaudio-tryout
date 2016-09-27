@@ -8,7 +8,7 @@ import scala.util.Random
 /**
   * Example creating some metal like sound
   */
-case class MetalTryout(ctx: DoctusSoundAudioContext) extends SoundExperiment {
+case class MetalExperiment(ctx: DoctusSoundAudioContext) extends SoundExperiment {
 
   def title = "metal"
 

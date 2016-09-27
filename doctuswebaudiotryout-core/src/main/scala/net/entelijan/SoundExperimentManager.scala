@@ -12,7 +12,7 @@ case class SoundExperimentManager(soundContext: DoctusSoundAudioContext) {
   lazy val melody = Melody(soundContext)
   lazy val noise = Noise(soundContext)
   lazy val adsr = AdsrTryout(soundContext)
-  lazy val metal  = MetalTryout(soundContext)
+  lazy val metal  = MetalExperiment(soundContext)
   lazy val filter = FilterExperiment(soundContext)
   lazy val dynamicFilter = DynamicFilterExperiment(soundContext)
   lazy val panning = PanningExperiment(soundContext)
