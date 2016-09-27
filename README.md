@@ -25,14 +25,15 @@ Trying out the components of the webaudio api and how they work together
 
 #### Ideas
 * [Karplus-Strong-Algorithmus](https://de.wikipedia.org/wiki/Karplus-Strong-Algorithmus)
+* [Modal Scnthesis](https://ccrma.stanford.edu/~bilbao/booktop/node14.html)
 * [Digital waveguide synthesis](https://en.wikipedia.org/wiki/Digital_waveguide_synthesis)
 * Tryout some modulated delay. Do this differently on the left and right output to widen the sound.
 * Make some waveforms using AudioBuffers. (shall we really implement waveforms)
+* Make the ADSR ramping and decay logarithmic
 
 
 #### Implemented Ideas
 * [Ring modulation synthesi](https://en.wikibooks.org/wiki/Sound_Synthesis_Theory/Modulation_Synthesis)
-* Make the ADSR ramping and decay logarithmic
 * Make an Oscilator with a square wave. Filter works with square wave
 * FM-Synth
 * Make an example using delay

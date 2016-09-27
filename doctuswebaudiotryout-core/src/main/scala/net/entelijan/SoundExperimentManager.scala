@@ -13,7 +13,8 @@ case class SoundExperimentManager(soundContext: DoctusSoundAudioContext) {
   lazy val noise = Noise(soundContext)
   lazy val adsr = AdsrTryout(soundContext)
   lazy val metal  = MetalTryout(soundContext)
-  lazy val filter = FilterTryout(soundContext)
+  lazy val filter = FilterExperiment(soundContext)
+  lazy val dynamicFilter = FilterTryout(soundContext)
   lazy val panning = PanningExperiment(soundContext)
   lazy val delay = DelayExperiment(soundContext)
   lazy val fmSynth = FmSynthExperiment(soundContext)
@@ -34,7 +35,7 @@ case class SoundExperimentManager(soundContext: DoctusSoundAudioContext) {
     case Tile(2, 0, _, _) => fmSynth
     case Tile(2, 1, _, _) => ringModulation
     case Tile(2, 2, _, _) => karplusStrong
-    case Tile(2, 3, _, _) => EmptySoundExperiment
+    case Tile(2, 3, _, _) => dynamicFilter
 
     case _ => EmptySoundExperiment
 

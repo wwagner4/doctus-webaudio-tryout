@@ -12,7 +12,7 @@ case class FilterTryout(ctx: DoctusSoundAudioContext) extends SoundExperiment {
 
   var inst = Option.empty[Inst]
 
-  def title: String = "filter"
+  def title: String = "dynamic filter"
 
   private val baseFreq = 300.0
   private val freqMulti = 1.5
