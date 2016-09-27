@@ -21,6 +21,24 @@ trait WebAudioParamHolder {
 }
 
 /**
+  * Enables a node to connect to control Parameters
+  */
+trait ParamConnectable {
+
+  def self: NodeControl
+
+  def connect(param: ControlParam): Unit = {
+    param match {
+      case connectable: ConnectableParam => connectable.onConnect(self)
+      case _ =>
+        println("control pram %s is not connectable" format param)
+        throw new IllegalStateException()
+    }
+  }
+
+}
+
+/**
   * Helper thread to create audio parameters for the scalajs implementation
   */
 trait ControlParamFactory {
@@ -210,17 +228,9 @@ case class NodeSourceNoiseWhiteScalajs(waCtx: AudioContext, noiseType: NoiseType
 }
 
 case class NodeControlConstantScalajs(value: Double)(waCtx: AudioContext)
-  extends NodeControl with WebAudioParamHolder {
+  extends NodeControl with WebAudioParamHolder with ParamConnectable {
 
-  // TODO extract this connect method to a trait.
-  def connect(param: ControlParam): Unit = {
-    param match {
-      case connectable: ConnectableParam => connectable.onConnect(this)
-      case _ =>
-        println("control pram %s is not connectable" format param)
-        throw new IllegalStateException()
-    }
-  }
+  def self = this
 
   override def addAudioParam(waParam: AudioParam): Unit = {
     waParam.value = value
@@ -231,18 +241,11 @@ case class NodeControlConstantScalajs(value: Double)(waCtx: AudioContext)
 case class NodeControlAdsrScalajs(attack: Double, decay: Double, sustain: Double, release: Double, gain: Double)
                                  (waCtx: AudioContext)
   extends NodeControlEnvelope
-    with WebAudioParamHolder {
+    with WebAudioParamHolder with ParamConnectable {
+
+  def self = this
 
   var waParamList = List.empty[AudioParam]
-
-  def connect(param: ControlParam): Unit = {
-    param match {
-      case connectable: ConnectableParam => connectable.onConnect(this)
-      case _ =>
-        println("control pram %s is not connectable" format param)
-        throw new IllegalStateException()
-    }
-  }
 
   def start(time: Double): Unit = {
     waParamList.foreach { p =>
@@ -270,7 +273,9 @@ case class NodeControlAdsrScalajs(attack: Double, decay: Double, sustain: Double
 }
 
 case class NodeControlLfoScalajs(waveType: WaveType)(waCtx: AudioContext) extends NodeControlLfo
-  with WebAudioParamHolder with ControlParamFactory with OscilUtil {
+  with WebAudioParamHolder with ControlParamFactory with OscilUtil with ParamConnectable {
+
+  def self = this
 
   private val waOscil = waCtx.createOscillator()
   waOscil.`type` = waWaveType(waveType)
@@ -292,15 +297,6 @@ case class NodeControlLfoScalajs(waveType: WaveType)(waCtx: AudioContext) extend
 
   def stop(time: Double): Unit = {
     waOscil.stop(time)
-  }
-
-  def connect(param: ControlParam): Unit = {
-    param match {
-      case connectable: ConnectableParam => connectable.onConnect(this)
-      case _ =>
-        println("control pram %s is not connectable" format param)
-        throw new IllegalStateException()
-    }
   }
 
   def addAudioParam(waParam: AudioParam): Unit = {
