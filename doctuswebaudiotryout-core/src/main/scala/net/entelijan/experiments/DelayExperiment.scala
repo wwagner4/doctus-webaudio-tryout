@@ -1,12 +1,7 @@
 package net.entelijan.experiments
 
 import net.entelijan.{Nineth, SoundExperiment, SoundUtil}
-import doctus.sound.DoctusSoundAudioContext
-import doctus.sound.StartStoppable
-import doctus.sound.WaveType_Sine
-import doctus.sound.NodeSource
-import doctus.sound.NodeThrough
-import doctus.sound.NodeSink
+import doctus.sound._
 
 case class DelayExperiment(ctx: DoctusSoundAudioContext) extends SoundExperiment {
 
@@ -14,7 +9,7 @@ case class DelayExperiment(ctx: DoctusSoundAudioContext) extends SoundExperiment
 
   var instOpt = Option.empty[Inst]
 
-  val attackValues = List(0.0001, 0.1, 0.6)
+  val attackValues = List(0.011, 0.1, 0.6)
   val delayValues = List(0.01, 0.1, 0.2)
   val frequencies = Stream.iterate(200.0)(x => x * 1.1).take(10).toList
 
@@ -41,74 +36,102 @@ case class DelayExperiment(ctx: DoctusSoundAudioContext) extends SoundExperiment
 
   case class Inst(attack: Double, delayDiff: Double, baseFreq: Double) extends StartStoppable {
 
-    def createSource(param: SrcParam): NodeSource with StartStoppable = {
-
-      val gain = ctx.createNodeThroughGain
-      val gainCtrl = ctx.createNodeControlConstant(param.gainVal)
-
-      val oscil = ctx.createNodeSourceOscil(WaveType_Sine)
-      val oscilCtrl = ctx.createNodeControlConstant(param.freq)
-
-      val delay = ctx.createNodeThroughDelay
-      val delayCtrl = ctx.createNodeControlConstant(param.delay)
-
-      val envel = ctx.createNodeThroughGain
-      val envelCtrl = ctx.createNodeControlAdsr(attack, 0.0, 1.0, 2.5)
-
-      delayCtrl >- delay.delay
-      gainCtrl >- gain.gain
-      oscilCtrl >- oscil.frequency
-      envelCtrl >- envel.gain
-
-      oscil >- gain >- envel >- delay
-
-
-      new NodeSource with StartStoppable {
-
-        def connect(sink: NodeSink): Unit = delay.connect(sink)
-
-        def connect(through: NodeThrough): NodeSource = delay.connect(through)
-
-        def start(time: Double): Unit = {
-          oscil.start(0.0)
-          envelCtrl.start(time)
-        }
-
-        def stop(time: Double): Unit = {
-          envelCtrl.stop(time)
-          oscil.stop(time + 3)
-        }
-
-      }
-
-    }
-
-    val gainSeq = Stream.iterate(0.2)(x => x * 0.999)
-    val freqSeq = Stream.iterate(baseFreq)(x => x * 1.12599)
+    val gainSeq = Stream.iterate(0.2)(x => x * 0.6)
+    val freqSeq = Stream.iterate(baseFreq)(x => x * (4.0 / 3.0))
     val delaySeq = Stream.iterate(0.0)(x => x + delayDiff)
+    val masterGain = createMasterGain
 
     val sources = gainSeq.zip(freqSeq).zip(delaySeq)
       .map { case ((g, f), d) => SrcParam(g, f, d) }
-      .map { p => createSource(p) }
-      .take(4)
+      .map { p => createSource(p, attack) }
+      .take(10)
 
     val sink = ctx.createNodeSinkLineOut
 
     sources.foreach { src =>
-      src >- sink
+      src >- masterGain
     }
+
+    masterGain >- sink
 
     def start(time: Double): Unit = {
       sources.foreach { src =>
         src.start(time)
       }
+      masterGain.start(time)
     }
 
     def stop(time: Double): Unit = {
       sources.foreach { src =>
         src.stop(time)
       }
+      masterGain.stop(time)
     }
 
   }
+
+
+  def createMasterGain: NodeThrough with StartStoppable = {
+
+    val gain = ctx.createNodeThroughGain
+    val adsr = ctx.createNodeControlAdsr(0.01, 0.0, 1.0, 2.0)
+
+    adsr >-  gain.gain
+
+    new NodeThroughContainer with StartStoppable {
+
+      def source: NodeSource = gain
+
+      def sink: NodeSink = gain
+
+      def start(time: Double): Unit = adsr.start(time)
+
+      def stop(time: Double): Unit = adsr.stop(time)
+
+    }
+
+  }
+
+  def createSource(param: SrcParam, attack: Double): NodeSource with StartStoppable = {
+
+    val gain = ctx.createNodeThroughGain
+    val gainCtrl = ctx.createNodeControlConstant(param.gainVal)
+
+    val oscil = ctx.createNodeSourceOscil(WaveType_Triangle)
+    val oscilCtrl = ctx.createNodeControlConstant(param.freq)
+
+    val delay = ctx.createNodeThroughDelay
+    val delayCtrl = ctx.createNodeControlConstant(param.delay)
+
+    val envel = ctx.createNodeThroughGain
+    val envelCtrl = ctx.createNodeControlAdsr(attack, 0.0, 1.0, 2.5)
+
+    delayCtrl >- delay.delay
+    gainCtrl >- gain.gain
+    oscilCtrl >- oscil.frequency
+    envelCtrl >- envel.gain
+
+    oscil >- gain >- envel >- delay
+
+
+    new NodeSource with StartStoppable {
+
+      def connect(sink: NodeSink): Unit = delay.connect(sink)
+
+      def connect(through: NodeThrough): NodeSource = delay.connect(through)
+
+      def start(time: Double): Unit = {
+        oscil.start(time)
+        envelCtrl.start(time)
+      }
+
+      def stop(time: Double): Unit = {
+        envelCtrl.stop(time)
+        oscil.stop(time + 10)
+      }
+
+    }
+
+  }
+
 }
