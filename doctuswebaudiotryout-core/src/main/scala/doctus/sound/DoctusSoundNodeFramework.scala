@@ -56,18 +56,6 @@ trait NodeThrough extends NodeSource with NodeSink {
 
 }
 
-trait NodeThroughContainer extends NodeThrough {
-
-  def source: NodeSource
-
-  def sink: NodeSink
-
-  def connect(sink: NodeSink): Unit = source.connect(sink)
-
-  def connect(through: NodeThrough): NodeSource = source.connect(through)
-
-}
-
 /**
   * Frequency filter 
   */
@@ -179,6 +167,28 @@ trait NodeThroughDelay extends NodeThrough {
    * The time the sound signal is delayed in seconds
    */
   def delay: ControlParam
+
+}
+
+trait NodeThroughContainer extends NodeThrough {
+
+  def source: NodeSource
+
+  def sink: NodeSink
+
+  def connect(sink: NodeSink): Unit = source.connect(sink)
+
+  def connect(through: NodeThrough): NodeSource = source.connect(through)
+
+}
+
+trait NodeSourceContainer extends NodeSource {
+
+  def source: NodeSource
+
+  def connect(sink: NodeSink): Unit = source.connect(sink)
+
+  def connect(through: NodeThrough): NodeSource = source.connect(through)
 
 }
 
