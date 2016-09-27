@@ -14,25 +14,13 @@ case class KarplusStrongExperiment(ctx: DoctusSoundAudioContext) extends SoundEx
 
   var instOpt = Option.empty[Instrument]
 
-  val frequencies = Stream.iterate(400.0)(f => f * math.pow(2, 1.0 / 3))
-
-  def frequencyFrom(nineth: Nineth) = nineth match {
-    case N_00 => frequencies(0)
-    case N_01 => frequencies(1)
-    case N_02 => frequencies(2)
-
-    case N_10 => frequencies(3)
-    case N_11 => frequencies(4)
-    case N_12 => frequencies(5)
-
-    case N_20 => frequencies(6)
-    case N_21 => frequencies(7)
-    case N_22 => frequencies(8)
-  }
+  val delayTimes = List(0.0005, 0.001, 0.005)
+  val noiseTypes = List(NoiseType_White, NoiseType_Brown, NoiseType_Pink)
 
   def start(nineth: Nineth): Unit = {
-    val frequency = frequencyFrom(nineth)
-    val inst = Instrument(frequency)
+    val (d, t) = SoundUtil.xyParams(delayTimes, noiseTypes)(nineth)
+
+    val inst = Instrument(d, t)
 
     val now = ctx.currentTime
     inst.start(now)
@@ -44,19 +32,19 @@ case class KarplusStrongExperiment(ctx: DoctusSoundAudioContext) extends SoundEx
     instOpt.foreach(inst => inst.stop(now))
   }
 
-  case class Instrument(frequency: Double) extends StartStoppable {
+  case class Instrument(delayTime: Double, noiseType: NoiseType) extends StartStoppable {
 
-    val burst = createBurst
+    val burst = createBurst(noiseType)
     val sink = ctx.createNodeSinkLineOut
     val masterGain = createGain(1.0)
 
-    /*
-    val delay = createDelay(0.01)
-    val filter = createLowpass(5000)
+    val delay = createDelay(delayTime)
+    val filter = createFilter(5000, -3.0, FilterType_Lowpass)
     val attenuation = createGain(0.99)
-    */
 
     burst >- masterGain >- sink
+    burst >- delay >- filter >- attenuation >- delay
+    attenuation >- masterGain
 
     def start(time: Double): Unit = {
       burst.start(time)
@@ -69,12 +57,14 @@ case class KarplusStrongExperiment(ctx: DoctusSoundAudioContext) extends SoundEx
 
   }
 
-  def createBurst: NodeSource with StartStoppable = {
+  def createBurst(noiseType: NoiseType): NodeSource with StartStoppable = {
 
-    val burst = ctx.createNodeSourceNoise(NoiseType_Pink)
+    println("noise type " + noiseType)
+
+    val burst = ctx.createNodeSourceNoise(noiseType)
     val burstGain = ctx.createNodeThroughGain
 
-    val adsr = ctx.createNodeControlAdsr(0.001, 0.0, 1.0, 0.001)
+    val adsr = ctx.createNodeControlAdsr(0.0001, 0.0, 1.0, 0.0001)
 
     adsr >- burstGain.gain
 
@@ -110,11 +100,14 @@ case class KarplusStrongExperiment(ctx: DoctusSoundAudioContext) extends SoundEx
     gain
   }
 
-  def createLowpass(freq: Double): NodeThrough = {
-    val filter = ctx.createNodeThroughFilter(FilterType_Lowpass)
-    val freqCtr = ctx.createNodeControlConstant(freq)
+  def createFilter(frequency: Double, quality: Double, filterType: FilterType): NodeThroughFilter = {
 
-    freqCtr >- filter.frequency
+    val filter = ctx.createNodeThroughFilter(filterType)
+    val ctrlFreq = ctx.createNodeControlConstant(frequency)
+    val ctrlQ = ctx.createNodeControlConstant(quality)
+
+    ctrlFreq >- filter.frequency
+    ctrlQ >- filter.quality
 
     filter
   }
@@ -123,7 +116,7 @@ case class KarplusStrongExperiment(ctx: DoctusSoundAudioContext) extends SoundEx
     val delay = ctx.createNodeThroughDelay
     val timeCtrl = ctx.createNodeControlConstant(time)
 
-    timeCtrl -> delay.delay
+    timeCtrl >- delay.delay
 
     delay
   }
