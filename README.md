@@ -24,7 +24,6 @@ Trying out the components of the webaudio api and how they work together
 
 
 #### Ideas
-* [Karplus-Strong-Algorithmus](https://de.wikipedia.org/wiki/Karplus-Strong-Algorithmus)
 * [Modal Scnthesis](https://ccrma.stanford.edu/~bilbao/booktop/node14.html)
 * [Digital waveguide synthesis](https://en.wikipedia.org/wiki/Digital_waveguide_synthesis)
 * Tryout some modulated delay. Do this differently on the left and right output to widen the sound.
@@ -33,6 +32,8 @@ Trying out the components of the webaudio api and how they work together
 
 
 #### Implemented Ideas
+* [Karplus-Strong-Algorithmus](https://de.wikipedia.org/wiki/Karplus-Strong-Algorithmus)
+* Added some wha wha effect
 * [Ring modulation synthesi](https://en.wikibooks.org/wiki/Sound_Synthesis_Theory/Modulation_Synthesis)
 * Make an Oscilator with a square wave. Filter works with square wave
 * FM-Synth
