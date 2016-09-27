@@ -10,7 +10,7 @@ import scala.util.Random
 /**
   * Sound using a reusable ADSR Curve
   */
-case class AdsrTryout(ctx: DoctusSoundAudioContext) extends SoundExperiment {
+case class AdsrExperiment(ctx: DoctusSoundAudioContext) extends SoundExperiment {
 
   def title = "ADSR"
 
