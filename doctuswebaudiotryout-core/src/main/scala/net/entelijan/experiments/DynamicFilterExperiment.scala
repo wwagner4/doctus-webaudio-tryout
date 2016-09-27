@@ -8,7 +8,7 @@ import net.entelijan.{Nineth, SoundExperiment, SoundUtil}
 /**
   * A Filter that changes its cutoff frequency controlled by an ADSR envelope
   */
-case class FilterTryout(ctx: DoctusSoundAudioContext) extends SoundExperiment {
+case class DynamicFilterExperiment(ctx: DoctusSoundAudioContext) extends SoundExperiment {
 
   var inst = Option.empty[Inst]
 
