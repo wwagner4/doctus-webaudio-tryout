@@ -29,26 +29,15 @@ case class ModalSynthesisExperiment(ctx: DoctusSoundAudioContext) extends SoundE
     instOpt.foreach(inst => inst.stop(now))
   }
 
-  val freqFactors = List(2.0, math.pow(1.99, 1.0 / 10), 3.0 / 4.0)
+  val freqFactors = List(2.0, math.pow(2, 1.0 / 10), 3.0 / 4.0)
   val freqs = List(300.0, 400.0, 600.0)
+
 
   case class Instrument(nineth: Nineth) extends StartStoppable {
 
-    def ranAmpl = {
-      0.1 + ran.nextDouble() * 1.4
-    }
-
-    def ranlifetime = {
-      0.1 + ran.nextDouble() * 1.5
-    }
-
-    def ranFreqDetune = {
-      0.95 + ran.nextDouble() * 0.1
-    }
-
     val (freq, fact) = SoundUtil.xyParams(freqs, freqFactors)(nineth)
 
-    val freqSeq = Stream.iterate(freq)(f => (f * fact) * ranFreqDetune).take(5)
+    val freqSeq = Stream.iterate(freq)(f => (f * fact) * ranFreqDetune).take(6)
 
     val modes = freqSeq.map(f => Mode(f, ranAmpl, ranlifetime))
 
@@ -66,11 +55,14 @@ case class ModalSynthesisExperiment(ctx: DoctusSoundAudioContext) extends SoundE
     def stop(time: Double): Unit = {
       // Nothing to do
     }
+
+    def ranAmpl = 0.1 + ran.nextDouble() * 1.4
+    def ranlifetime = 0.1 + ran.nextDouble() * 1.0
+    def ranFreqDetune = 0.95 + ran.nextDouble() * 0.1
+
   }
 
   case class Mode(freq: Double, ampl: Double, lifetime: Double) extends NodeSourceContainer with StartStoppable {
-
-    println("mode f:%.2f a:%.2f l:%.2f" format(freq, ampl, lifetime))
 
     val attack = 0.001
     val maxLifetime = 5.0 // seconds
