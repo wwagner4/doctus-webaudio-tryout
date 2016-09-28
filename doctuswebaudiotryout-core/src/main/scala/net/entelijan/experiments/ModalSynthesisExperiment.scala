@@ -43,20 +43,30 @@ case class ModalSynthesisExperiment(ctx: DoctusSoundAudioContext) extends SoundE
 
   case class Mode(freq: Double, ampl: Double, lifetime: Double) extends NodeSourceContainer with StartStoppable {
 
-    val oscil = ctx.createNodeSourceOscil(WaveType_Sine)
+    val attack = 0.001
+    val maxLifetime = 5.0 // seconds
 
+    val oscil = ctx.createNodeSourceOscil(WaveType_Sine)
+    val gain = ctx.createNodeThroughGain
+
+    val decay = ctx.createNodeControlAdsr(attack, 0.0, 1.0, lifetime)
+
+    decay >- gain.gain
+
+    oscil >- gain
 
     def start(time: Double): Unit = {
-      println("stared mode at %.2f %s" format (time, this))
       oscil.start(time)
-      oscil.stop(time + 1.5)
+      decay.start(time)
+      decay.stop(time + attack + 0.0001)
+      oscil.stop(time + maxLifetime)
     }
 
     def stop(time: Double): Unit = {
        // Nothing to do here
     }
 
-    def source: NodeSource = oscil
+    def source: NodeSource = gain
 
   }
 
