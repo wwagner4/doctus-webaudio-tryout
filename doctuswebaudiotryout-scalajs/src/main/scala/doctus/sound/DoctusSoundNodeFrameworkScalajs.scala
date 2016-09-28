@@ -338,7 +338,7 @@ case class DoctusSoundAudioContextScalajs(waCtx: AudioContext) extends DoctusSou
     NodeControlConstantScalajs(value)(waCtx)
   }
 
-  def createNodeControlAdsr(attack: Double, decay: Double, sustain: Double, release: Double, gain: Double): NodeControlEnvelope = {
+  def createNodeControlAdsr(attack: Double, decay: Double, sustain: Double, release: Double, gain: Double, trend: Trend): NodeControlEnvelope = {
     NodeControlAdsrScalajs(attack, decay, sustain, release, gain)(waCtx)
   }
 

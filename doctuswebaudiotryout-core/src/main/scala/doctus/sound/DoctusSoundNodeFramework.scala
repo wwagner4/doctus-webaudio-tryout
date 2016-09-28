@@ -23,6 +23,10 @@ case object FilterType_Lowpass extends FilterType
 case object FilterType_Highpass extends FilterType
 case object FilterType_Bandpass extends FilterType
 
+sealed trait Trend
+case object Trend_Linear extends Trend
+case class Trend_Exponential(lifetime: Double) extends Trend
+
 /**
   * Creates a sound signal
   * Examples: Sine generator, ...
@@ -170,6 +174,12 @@ trait NodeThroughDelay extends NodeThrough {
 
 }
 
+/**
+  * Interface for implementing reusable through nodes.
+  *
+  * Allows you to define the input (sink) and output (source) of
+  * your through node.
+  */
 trait NodeThroughContainer extends NodeThrough {
 
   def source: NodeSource
@@ -182,6 +192,12 @@ trait NodeThroughContainer extends NodeThrough {
 
 }
 
+/**
+  * Interface for implementing reusable source nodes.
+  *
+  * Allows you to define the output (source) of
+  * your source node.
+  */
 trait NodeSourceContainer extends NodeSource {
 
   def source: NodeSource
@@ -252,7 +268,7 @@ trait DoctusSoundAudioContext {
     * @param release time in seconds
     * @return an new ADSR controller
     */
-  def createNodeControlAdsr(attack: Double, decay: Double, sustain: Double, release: Double, gain: Double = 1.0): NodeControlEnvelope
+  def createNodeControlAdsr(attack: Double, decay: Double, sustain: Double, release: Double, gain: Double = 1.0, trend: Trend = Trend_Linear): NodeControlEnvelope
 
   /**
     * Low frequency oscillator

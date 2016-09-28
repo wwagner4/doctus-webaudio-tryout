@@ -6,7 +6,7 @@ import net.entelijan.{Nineth, SoundExperiment}
 /**
   * Creates some sounds using modes
   */
-case class ModalSynthesisExperiment(ctx: DoctusSoundAudioContext) extends SoundExperiment{
+case class ModalSynthesisExperiment(ctx: DoctusSoundAudioContext) extends SoundExperiment {
 
   def title: String = "modal synthesis"
 
@@ -25,7 +25,7 @@ case class ModalSynthesisExperiment(ctx: DoctusSoundAudioContext) extends SoundE
     instOpt.foreach(inst => inst.stop(now))
   }
 
-  case class Instrument(frequency: Double, lifetime: Double) extends  StartStoppable {
+  case class Instrument(frequency: Double, lifetime: Double) extends StartStoppable {
 
     val mode = Mode(frequency, 1.0, lifetime)
     val sink = ctx.createNodeSinkLineOut
@@ -49,7 +49,7 @@ case class ModalSynthesisExperiment(ctx: DoctusSoundAudioContext) extends SoundE
     val oscil = ctx.createNodeSourceOscil(WaveType_Sine)
     val gain = ctx.createNodeThroughGain
 
-    val decay = ctx.createNodeControlAdsr(attack, 0.0, 1.0, lifetime)
+    val decay = ctx.createNodeControlAdsr(attack, 0.0, 1.0, lifetime, trend = Trend_Exponential(lifetime))
 
     decay >- gain.gain
 
@@ -63,7 +63,7 @@ case class ModalSynthesisExperiment(ctx: DoctusSoundAudioContext) extends SoundE
     }
 
     def stop(time: Double): Unit = {
-       // Nothing to do here
+      // Nothing to do here
     }
 
     def source: NodeSource = gain
