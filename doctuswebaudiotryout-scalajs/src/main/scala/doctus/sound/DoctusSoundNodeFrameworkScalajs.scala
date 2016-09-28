@@ -240,7 +240,7 @@ case class NodeControlConstantScalajs(value: Double)(waCtx: AudioContext)
 
 }
 
-case class NodeControlAdsrScalajs(attack: Double, decay: Double, sustain: Double, release: Double, gain: Double)
+case class NodeControlAdsrScalajs(attack: Double, decay: Double, sustain: Double, release: Double, gain: Double, trend: Trend)
                                  (waCtx: AudioContext)
   extends NodeControlEnvelope
     with WebAudioParamHolder with ParamConnectable {
@@ -264,7 +264,13 @@ case class NodeControlAdsrScalajs(attack: Double, decay: Double, sustain: Double
       val diff = time - now
       if (diff <= 0.0) p.cancelScheduledValues(0.0)
       else p.cancelScheduledValues(time)
-      p.linearRampToValueAtTime(0.0, time + release)
+      trend match {
+        case Trend_Linear =>
+          p.linearRampToValueAtTime(0.0, time + release)
+        case Trend_Exponential(lifetime) =>
+          p.setTargetAtTime(0.0, time + release, lifetime)
+      }
+
     }
   }
 
@@ -338,8 +344,8 @@ case class DoctusSoundAudioContextScalajs(waCtx: AudioContext) extends DoctusSou
     NodeControlConstantScalajs(value)(waCtx)
   }
 
-  def createNodeControlAdsr(attack: Double, decay: Double, sustain: Double, release: Double, gain: Double): NodeControlEnvelope = {
-    NodeControlAdsrScalajs(attack, decay, sustain, release, gain)(waCtx)
+  def createNodeControlAdsr(attack: Double, decay: Double, sustain: Double, release: Double, gain: Double, trend: Trend): NodeControlEnvelope = {
+    NodeControlAdsrScalajs(attack, decay, sustain, release, gain, trend)(waCtx)
   }
 
   def createNodeControlLfo(waveType: WaveType): NodeControlLfo = {

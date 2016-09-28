@@ -20,6 +20,7 @@ case class SoundExperimentManager(soundContext: DoctusSoundAudioContext) {
   lazy val fmSynth = FmSynthExperiment(soundContext)
   lazy val ringModulation = RingModulationExperiment(soundContext)
   lazy val karplusStrong = KarplusStrongExperiment(soundContext)
+  lazy val modalSynthesis = ModalSynthesisExperiment(soundContext)
 
   def experiment: Tile => SoundExperiment = {
     case Tile(0, 0, _, _) => tinnitus
@@ -36,6 +37,11 @@ case class SoundExperimentManager(soundContext: DoctusSoundAudioContext) {
     case Tile(2, 1, _, _) => ringModulation
     case Tile(2, 2, _, _) => karplusStrong
     case Tile(2, 3, _, _) => dynamicFilter
+
+    case Tile(3, 0, _, _) => modalSynthesis
+    case Tile(3, 1, _, _) => EmptySoundExperiment
+    case Tile(3, 2, _, _) => EmptySoundExperiment
+    case Tile(3, 3, _, _) => EmptySoundExperiment
 
     case _ => EmptySoundExperiment
 
