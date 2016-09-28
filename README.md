@@ -24,7 +24,7 @@ Trying out the components of the webaudio api and how they work together
 
 
 #### Ideas
-* [Modal Scnthesis](https://ccrma.stanford.edu/~bilbao/booktop/node14.html)
+* [Modal Synthesis](https://ccrma.stanford.edu/~bilbao/booktop/node14.html)
 * [Digital waveguide synthesis](https://en.wikipedia.org/wiki/Digital_waveguide_synthesis)
 * Tryout some modulated delay. Do this differently on the left and right output to widen the sound.
 * Make some waveforms using AudioBuffers. (shall we really implement waveforms)
