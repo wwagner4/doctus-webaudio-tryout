@@ -46,6 +46,11 @@ Trying out the components of the webaudio api and how they work together
 * Make a reusable noise AudioNode. 'noise'
 * Create some kind of 'Tremolo Controller'. 'noise's
 
+#### Sound synthesis libraries
+* JavaSound, [Minim](http://code.compartmental.net/tools/minim/)
+* Sound synthesis toolkit [STK](https://ccrma.stanford.edu/software/stk/index.html)
+* [Processing](https://github.com/processing/processing-sound), [Methcla](http://methc.la/)
+
 #### TODOs
 * Check why noise has delay on portable devices
 * Fix the 'mouse leave canvas' bug in doctus.
