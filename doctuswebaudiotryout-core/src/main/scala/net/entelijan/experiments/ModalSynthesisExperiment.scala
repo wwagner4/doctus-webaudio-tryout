@@ -1,6 +1,6 @@
 package net.entelijan.experiments
 
-import doctus.sound.{DoctusSoundAudioContext, StartStoppable}
+import doctus.sound._
 import net.entelijan.{Nineth, SoundExperiment}
 
 /**
@@ -27,12 +27,37 @@ case class ModalSynthesisExperiment(ctx: DoctusSoundAudioContext) extends SoundE
 
   case class Instrument(frequency: Double, lifetime: Double) extends  StartStoppable {
 
+    val mode = Mode(frequency, 1.0, lifetime)
+    val sink = ctx.createNodeSinkLineOut
+
+    mode >- sink
+
     def start(time: Double): Unit = {
-      println("starting freq:%.2f lifet:%.2f" format(frequency, lifetime))
+      mode.start(time)
     }
 
     def stop(time: Double): Unit = {
-      println("stopped")
+      // Nothing to do
     }
   }
+
+  case class Mode(freq: Double, ampl: Double, lifetime: Double) extends NodeSourceContainer with StartStoppable {
+
+    val oscil = ctx.createNodeSourceOscil(WaveType_Sine)
+
+
+    def start(time: Double): Unit = {
+      println("stared mode at %.2f %s" format (time, this))
+      oscil.start(time)
+      oscil.stop(time + 1.5)
+    }
+
+    def stop(time: Double): Unit = {
+       // Nothing to do here
+    }
+
+    def source: NodeSource = oscil
+
+  }
+
 }
