@@ -13,7 +13,7 @@ case class ModalSynthesisExperiment(ctx: DoctusSoundAudioContext) extends SoundE
   var instOpt = Option.empty[Instrument]
 
   def start(nineth: Nineth): Unit = {
-    val inst = Instrument(444, 1)
+    val inst = Instrument(444, 0.1)
     val now = ctx.currentTime
     inst.start(now)
     instOpt = Some(inst)
