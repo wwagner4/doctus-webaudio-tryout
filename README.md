@@ -49,7 +49,7 @@ Trying out the components of the webaudio api and how they work together
 #### Sound synthesis libraries
 * JavaSound, [Minim](http://code.compartmental.net/tools/minim/)
 * Sound synthesis toolkit [STK](https://ccrma.stanford.edu/software/stk/index.html)
-* [Processing](https://github.com/processing/processing-sound), [Methcla](http://methc.la/)
+* [Processing](https://github.com/processing/processing-sound), [methcla](http://methc.la/)[methcla-plugins](https://github.com/wirsing/methcla_plugins)
 
 #### TODOs
 * Check why noise has delay on portable devices
