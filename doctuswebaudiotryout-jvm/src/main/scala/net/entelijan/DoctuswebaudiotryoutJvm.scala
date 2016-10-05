@@ -39,7 +39,7 @@ object DoctuswebaudiotryoutJvm extends App {
       canvasFx.widthProperty().bind(scene.widthProperty())
       canvasFx.heightProperty().bind(scene.heightProperty())
 
-      val ctx = new DoctusSoundAudioContextJvm {}
+      val ctx = new DoctusSoundAudioContextJvmMinim {}
 
       // Common to all platforms
       val templ = DoctuswebaudiotryoutTemplate(canvas, ctx)

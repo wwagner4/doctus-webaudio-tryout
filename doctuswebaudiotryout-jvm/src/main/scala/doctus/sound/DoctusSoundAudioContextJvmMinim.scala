@@ -4,7 +4,7 @@ package doctus.sound
  * Jvm implementation of the DoctusSoundAudioContext
  */
 //noinspection NotImplementedCode
-case class DoctusSoundAudioContextJvm() extends DoctusSoundAudioContext {
+case class DoctusSoundAudioContextJvmMinim() extends DoctusSoundAudioContext {
 
   def createNodeSinkLineOut: NodeSink = ???
 
