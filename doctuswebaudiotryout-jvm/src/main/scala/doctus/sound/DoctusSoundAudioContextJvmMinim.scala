@@ -1,12 +1,26 @@
 package doctus.sound
 
+import java.io.{File, FileInputStream, InputStream}
+
+import ddf.minim.Minim
+import ddf.minim.javasound.JSMinim
+import ddf.minim.spi.MinimServiceProvider
+
+
 /**
- * Jvm implementation of the DoctusSoundAudioContext
- */
-//noinspection NotImplementedCode
+  * Jvm implementation of the DoctusSoundAudioContext
+  */
 case class DoctusSoundAudioContextJvmMinim() extends DoctusSoundAudioContext {
 
-  def createNodeSinkLineOut: NodeSink = ???
+  private val minim = {
+    val fileLoader = FileLoaderUserHome()
+    val serviceProvider = new JSMinim(fileLoader)
+    new Minim(serviceProvider)
+  }
+
+  def createNodeSinkLineOut: NodeSink = {
+    ???
+  }
 
   def createNodeSourceOscil(waveType: WaveType): NodeSourceOscil = ???
 
@@ -31,3 +45,24 @@ case class DoctusSoundAudioContextJvmMinim() extends DoctusSoundAudioContext {
   def sampleRate: Double = ???
 
 }
+
+case class FileLoaderUserHome() {
+
+  def sketchPath(fileName: String): String = {
+    val file = getCreateFile(fileName)
+    file.getAbsolutePath
+  }
+
+  def createInput(fileName: String): InputStream = {
+    new FileInputStream(fileName)
+  }
+
+  private def getCreateFile(fileName: String): File = {
+    val home = new File(System.getProperty("user.home"))
+    val outDir = new File(home, "minim_out")
+    outDir.mkdirs()
+    new File(outDir, fileName)
+  }
+
+}
+
