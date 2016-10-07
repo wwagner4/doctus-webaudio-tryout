@@ -360,6 +360,9 @@ case class DoctusSoundAudioContextScalajs(waCtx: AudioContext) extends DoctusSou
 
   def sampleRate: Double = waCtx.sampleRate
 
+  def terminate: Unit = {
+    // Nothing to do here
+  }
 }
 
 trait OscilUtil {

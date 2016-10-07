@@ -20,6 +20,8 @@ object DoctuswebaudiotryoutJvm extends App {
 
   class MyApp extends Application {
 
+    var ctxOpt = Option.empty[DoctusSoundAudioContextJvmMinim]
+
     override def start(stage: Stage) {
 
       val width = 700
@@ -40,6 +42,7 @@ object DoctuswebaudiotryoutJvm extends App {
       canvasFx.heightProperty().bind(scene.heightProperty())
 
       val ctx = new DoctusSoundAudioContextJvmMinim {}
+      ctxOpt = Some(ctx)
 
       // Common to all platforms
       val templ = DoctuswebaudiotryoutTemplate(canvas, ctx)
@@ -54,9 +57,13 @@ object DoctuswebaudiotryoutJvm extends App {
         }
 
       // Find a better solution to exit
-      stage.setOnCloseRequest(handler(e => System.exit(0)))
+      stage.setOnCloseRequest(handler { e =>
+        ctxOpt.foreach(ctx => ctx.terminate)
+        System.exit(0)
+      })
 
     }
+
   }
 
 }

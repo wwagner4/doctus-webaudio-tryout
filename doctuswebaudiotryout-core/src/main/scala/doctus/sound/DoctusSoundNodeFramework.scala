@@ -288,5 +288,13 @@ trait DoctusSoundAudioContext {
     */
   def sampleRate: Double
 
+  /**
+    * Should be called from the implementing system when
+    * the context is terminated.
+    *
+    * Releases all previously requested resources
+    */
+  def terminate: Unit
+
 }
 

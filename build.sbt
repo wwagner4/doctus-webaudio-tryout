@@ -26,6 +26,7 @@ lazy val jvmSettings =
     Seq(
       libraryDependencies += "net.entelijan" %% "doctus-jvm" % doctusVersion,
       libraryDependencies += "net.entelijan" % "minim" % "1.0.0",
+      libraryDependencies += "com.typesafe.akka" % "akka-actor_2.11" % "2.4.11",
       libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.6" % "test",
       fork := true,
       testFrameworks += new TestFramework("utest.runner.Framework"))

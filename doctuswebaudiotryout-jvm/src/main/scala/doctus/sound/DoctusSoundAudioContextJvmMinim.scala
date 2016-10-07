@@ -2,6 +2,8 @@ package doctus.sound
 
 import java.io.{File, FileInputStream, InputStream}
 
+import akka.actor.Actor.Receive
+import akka.actor.{Actor, ActorSystem, Props}
 import ddf.minim.javasound.JSMinim
 import ddf.minim.ugens._
 import ddf.minim.{AudioOutput, Minim, UGen}
@@ -12,11 +14,18 @@ import ddf.minim.{AudioOutput, Minim, UGen}
   */
 case class DoctusSoundAudioContextJvmMinim() extends DoctusSoundAudioContext {
 
+
   private val minim = {
     val fileLoader = FileLoaderUserHome()
     val serviceProvider = new JSMinim(fileLoader)
     new Minim(serviceProvider)
   }
+
+  private val sys = ActorSystem.create()
+
+  val musicActor = sys.actorOf(MusicActor.props)
+
+
 
   private val startTime = System.nanoTime()
 
@@ -54,6 +63,9 @@ case class DoctusSoundAudioContextJvmMinim() extends DoctusSoundAudioContext {
 
   def sampleRate: Double = ???
 
+  def terminate: Unit = {
+    sys.terminate()
+  }
 }
 
 case class NodeSinkJvmMinim(minim: Minim) extends NodeSink with AudioOutputAware {
@@ -205,4 +217,21 @@ case class FileLoaderUserHome() {
   }
 
 }
+
+object MusicActor {
+
+  def props: Props = Props[MusicActor]
+
+}
+
+class MusicActor extends Actor {
+
+  def receive: Receive = {
+    case message: Any =>
+      println(s"Received msg $message => unhandled")
+      unhandled(message)
+  }
+}
+
+
 
