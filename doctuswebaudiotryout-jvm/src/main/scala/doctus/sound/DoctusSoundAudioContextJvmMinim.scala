@@ -218,6 +218,16 @@ case class FileLoaderUserHome() {
 
 }
 
+trait TimeBasedEvent {
+
+  def time: Long
+
+}
+
+// Not serializable. Though the best solution (eventually)
+// as long as we stay within one VM
+case class MusicEvent(time: Long, f: () => Unit) extends TimeBasedEvent
+
 object MusicActor {
 
   def props: Props = Props[MusicActor]
@@ -231,6 +241,16 @@ class MusicActor extends Actor {
       println(s"Received msg $message => unhandled")
       unhandled(message)
   }
+}
+
+case class TimeBasedEventHolderResult(nextHolder: TimeBasedEventHolder, events: List[TimeBasedEvent])
+
+class TimeBasedEventHolder {
+
+  def detectEvents: TimeBasedEventHolderResult = ???
+
+  def addEvent(event: TimeBasedEvent): Unit = ???
+
 }
 
 
