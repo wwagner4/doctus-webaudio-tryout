@@ -21,13 +21,19 @@ trait UGenAware {
 
 }
 
+trait UGenInputAware {
+
+  def uGenInput: UGen#UGenInput
+
+}
+
 trait AudioOutputAware {
 
   def audioOutput: AudioOutput
 
 }
 
-abstract class ControlParamJvmMinimAbstract extends ControlParam with UGenAware {
+abstract class ControlParamJvmMinimAbstract extends ControlParam with UGenInputAware {
 
   def name: String
 
@@ -122,7 +128,7 @@ case class NodeThroughGainJvmMinim(ctx: MinimContext) extends NodeThroughGain wi
 
     def name: String = "NodeThroughGainJvmMinim::gain"
 
-    def uGen: UGen = minimGain
+    def uGenInput = minimGain.gain
   }
 
   def connect(sink: NodeSink): Unit = {
@@ -145,7 +151,7 @@ case class NodeControlConstantJvmMinim(value: Double)(ctx: MinimContext) extends
 
   def connect(param: ControlParam): Unit = {
     param match {
-      case p: UGenAware => minimConstant.patch(p.uGen)
+      case p: UGenInputAware => minimConstant.patch(p.uGenInput)
       case _ => throw new IllegalStateException(
         "Cannot connect %s to parameter %s. %s is not 'UGenAware'" format(this, param, param))
     }
@@ -173,7 +179,7 @@ case class NodeSourceOscilJvmMinim(waveType: WaveType)(ctx: MinimContext) extend
 
     def name: String = "NodeSourceOscilJvmMinim::frequency"
 
-    def uGen: UGen = minimOscil
+    def uGenInput = minimOscil.frequency
   }
 
   def start(time: Double): Unit = {
@@ -209,6 +215,7 @@ case class NodeControlAdsrJvmMinim(attack: Double, decay: Double, sustain: Doubl
 
   def start(time: Double): Unit = {
     val func = () => {
+      println("ADSR noteOn")
       minimAdsr.noteOn()
     }
     ctx.tell(MusicEvent(time, func))
@@ -216,6 +223,7 @@ case class NodeControlAdsrJvmMinim(attack: Double, decay: Double, sustain: Doubl
 
   def stop(time: Double): Unit = {
     val func = () => {
+      println("ADSR noteOff")
       minimAdsr.noteOff()
     }
     ctx.tell(MusicEvent(time, func))
@@ -223,8 +231,9 @@ case class NodeControlAdsrJvmMinim(attack: Double, decay: Double, sustain: Doubl
 
   def connect(param: ControlParam): Unit = {
     param match {
-      case p: UGenAware =>
-        minimAdsr.patch(p.uGen)
+      case p: UGenInputAware =>
+        println(s"connected ADSR $minimAdsr to ${p.uGenInput}")
+        minimAdsr.patch(p.uGenInput)
         ()
       case _ =>
         throw new IllegalArgumentException(
