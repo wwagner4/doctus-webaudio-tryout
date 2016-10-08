@@ -7,6 +7,8 @@ import ddf.minim.javasound.JSMinim
 import ddf.minim.ugens._
 import ddf.minim.{AudioOutput, Minim, UGen}
 
+import scala.concurrent.duration.FiniteDuration
+
 
 trait MinimContext {
 
@@ -40,6 +42,7 @@ abstract class ControlParamJvmMinimAbstract extends ControlParam with UGenAware 
   */
 case class DoctusSoundAudioContextJvmMinim() extends DoctusSoundAudioContext {
 
+  import scala.concurrent.duration._
 
   private val _minim = {
     val fileLoader = FileLoaderUserHome()
@@ -51,14 +54,15 @@ case class DoctusSoundAudioContextJvmMinim() extends DoctusSoundAudioContext {
 
   val _musicActor = sys.actorOf(MusicActor.props)
 
+  sys.scheduler.schedule(0 seconds, 8567 microseconds)(() => _musicActor ! TimeEvent(currentTime))(sys.dispatcher)
+
   val ctx = new MinimContext {
+
     def tell(message: Any): Unit = _musicActor ! message
 
     def minim: Minim = _minim
 
   }
-
-
 
   private val startTime = System.nanoTime()
 
@@ -175,7 +179,12 @@ case class NodeSourceOscilJvmMinim(waveType: WaveType)(ctx: MinimContext) extend
     patchable.foreach(ugen => minimOscil.patch(ugen))
   }
 
-  def stop(time: Double): Unit = ???
+  def stop(time: Double): Unit = {
+    // In minim unpatching an oscillator means to stop it
+    patchable.foreach(ugen => minimOscil.unpatch(ugen))
+    // Prevent restart of the oscillator
+    patchable = Option.empty[UGen]
+  }
 
   def connect(sink: NodeSink): Unit = ???
 
@@ -196,9 +205,19 @@ case class NodeControlAdsrJvmMinim(attack: Double, decay: Double, sustain: Doubl
 
   private val minimAdsr = new ADSR(gain.toFloat, attack.toFloat, decay.toFloat, sustain.toFloat, release.toFloat)
 
-  def start(time: Double): Unit = ???
+  def start(time: Double): Unit = {
+    val func = () => {
+      minimAdsr.noteOn()
+    }
+    ctx.tell(MusicEvent(time, func))
+  }
 
-  def stop(time: Double): Unit = ???
+  def stop(time: Double): Unit = {
+    val func = () => {
+      minimAdsr.noteOff()
+    }
+    ctx.tell(MusicEvent(time, func))
+  }
 
   def connect(param: ControlParam): Unit = {
     param match {
@@ -236,6 +255,8 @@ case class FileLoaderUserHome() {
 // as long as we stay within one VM
 case class MusicEvent(executionTime: Double, data: () => Unit) extends TimeBasedEvent[() => Unit]
 
+case class TimeEvent(time: Double)
+
 object MusicActor {
 
   def props: Props = Props[MusicActor]
@@ -244,13 +265,16 @@ object MusicActor {
 
 class MusicActor extends Actor {
 
-  val eventHolder = TimeBasedEventHolder.empty[() => Unit]
+  var eventHolder = TimeBasedEventHolder.empty[() => Unit]
 
   def receive: Receive = {
     case musicEvent: MusicEvent =>
       eventHolder.addEvent(musicEvent)
+    case TimeEvent(time) =>
+      val r = eventHolder.detectEvents(time)
+      r.events.foreach(evt => evt.data())
+      eventHolder = r.nextHolder
     case message: Any =>
-      println(s"Received msg $message => unhandled")
       unhandled(message)
   }
 }
@@ -266,7 +290,7 @@ case class TimeBasedEventHolderResult[T](nextHolder: TimeBasedEventHolder[T], ev
 
 object TimeBasedEventHolder {
 
-  def empty[T] = TimeBasedEventHolderImpl[T](List.empty[TimeBasedEvent[T]])
+  def empty[T]: TimeBasedEventHolder[T] = TimeBasedEventHolderImpl[T](List.empty[TimeBasedEvent[T]])
 
   case class TimeBasedEventHolderImpl[T](initialEvents: List[TimeBasedEvent[T]]) extends TimeBasedEventHolder[T] {
 
