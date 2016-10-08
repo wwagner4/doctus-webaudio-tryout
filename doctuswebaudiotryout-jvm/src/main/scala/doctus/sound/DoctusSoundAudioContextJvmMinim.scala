@@ -246,10 +246,13 @@ class MusicActor extends Actor {
 
 case class TimeBasedEventHolderResult[T](nextHolder: TimeBasedEventHolder[T], events: List[TimeBasedEvent[T]])
 
-/**
-  * Manages time based events
-  */
-class TimeBasedEventHolder[T] {
+object TimeBasedEventHolder {
+
+  def empty[T] = TimeBasedEventHolderImpl[T]()
+
+}
+
+trait TimeBasedEventHolder[T] {
 
   /**
     * Detects all events with 'executionTime' before or equal to 'time'
@@ -257,12 +260,27 @@ class TimeBasedEventHolder[T] {
     * @param time defines which events have to be executed
     * @return The events and a new instance of the holder
     */
-  def detectEvents(time: Long): TimeBasedEventHolderResult[T] = ???
+  def detectEvents(time: Long): TimeBasedEventHolderResult[T]
 
   /**
     * @param event that will be added to the holder
     */
-  def addEvent(event: TimeBasedEvent[T]): Unit = ???
+  def addEvent(event: TimeBasedEvent[T]): Unit
+
+}
+
+case class TimeBasedEventHolderImpl[T]() extends TimeBasedEventHolder[T] {
+
+  var events = List.empty[TimeBasedEvent[T]]
+
+  def detectEvents(time: Long): TimeBasedEventHolderResult[T] = {
+    val es = events.filter{e => e.executionTime <= time}.sortBy(e => e.executionTime)
+    TimeBasedEventHolderResult(this, es)
+  }
+
+  def addEvent(event: TimeBasedEvent[T]): Unit = {
+    events = event :: events
+  }
 
 }
 
