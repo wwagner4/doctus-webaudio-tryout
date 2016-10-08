@@ -218,15 +218,16 @@ case class FileLoaderUserHome() {
 
 }
 
-trait TimeBasedEvent {
+trait TimeBasedEvent[T] {
 
-  def time: Long
+  def executionTime: Long
+  def data: T
 
 }
 
 // Not serializable. Though the best solution (eventually)
 // as long as we stay within one VM
-case class MusicEvent(time: Long, f: () => Unit) extends TimeBasedEvent
+case class MusicEvent(executionTime: Long, data: () => Unit) extends TimeBasedEvent[() => Unit]
 
 object MusicActor {
 
@@ -243,13 +244,25 @@ class MusicActor extends Actor {
   }
 }
 
-case class TimeBasedEventHolderResult(nextHolder: TimeBasedEventHolder, events: List[TimeBasedEvent])
+case class TimeBasedEventHolderResult[T](nextHolder: TimeBasedEventHolder[T], events: List[TimeBasedEvent[T]])
 
-class TimeBasedEventHolder {
+/**
+  * Manages time based events
+  */
+class TimeBasedEventHolder[T] {
 
-  def detectEvents: TimeBasedEventHolderResult = ???
+  /**
+    * Detects all events with 'executionTime' before or equal to 'time'
+    * These events will be returned and removed from the holder
+    * @param time defines which events have to be executed
+    * @return The events and a new instance of the holder
+    */
+  def detectEvents(time: Long): TimeBasedEventHolderResult[T] = ???
 
-  def addEvent(event: TimeBasedEvent): Unit = ???
+  /**
+    * @param event that will be added to the holder
+    */
+  def addEvent(event: TimeBasedEvent[T]): Unit = ???
 
 }
 

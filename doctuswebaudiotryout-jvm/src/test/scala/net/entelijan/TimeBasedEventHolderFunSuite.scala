@@ -1,5 +1,6 @@
 package net.entelijan
 
+import doctus.sound.{TimeBasedEvent, TimeBasedEventHolder}
 import org.scalatest.FunSuite
 
 /**
@@ -7,28 +8,70 @@ import org.scalatest.FunSuite
   */
 class TimeBasedEventHolderFunSuite extends FunSuite {
 
+  case class TestEvent(executionTime: Long, data: String) extends TimeBasedEvent[String] {}
+
   test("Empty holder returns empty list") {
-    ???
+    val eh = new TimeBasedEventHolder
+    val r = eh.detectEvents(0)
+
+    assert(r.events.isEmpty === true)
   }
 
   test("Adding one event to an empty holder returns list with this element when time is equal to event time") {
-    ???
+    val eh = new TimeBasedEventHolder[String]
+    eh.addEvent(TestEvent(1, "A"))
+    val r = eh.detectEvents(1)
+    assert(r.events(0).data === "A")
   }
 
   test("Adding one event to an empty holder returns list with this element when time is greater than event time") {
-    ???
+    val eh = new TimeBasedEventHolder[String]
+    eh.addEvent(TestEvent(1, "A"))
+    val r = eh.detectEvents(1)
+    assert(r.events(0).data === "A")
   }
 
   test("Holder with multiple events. Detect none of the events") {
-    ???
+    val eh = new TimeBasedEventHolder[String]
+    eh.addEvent(TestEvent(10, "A"))
+    eh.addEvent(TestEvent(20, "B"))
+    eh.addEvent(TestEvent(30, "C"))
+    val r = eh.detectEvents(9)
+    assert(r.events.isEmpty === true)
   }
 
   test("Holder with multiple events. Detect some of the events") {
-    ???
+    val eh = new TimeBasedEventHolder[String]
+    eh.addEvent(TestEvent(10, "A"))
+    eh.addEvent(TestEvent(20, "B"))
+    eh.addEvent(TestEvent(30, "C"))
+    val r = eh.detectEvents(20)
+    assert(r.events.size === 2)
+    assert(r.events(0).data === "A")
+    assert(r.events(1).data === "B")
+  }
+
+  test("Holder with multiple events added in reverse order. Detect some of the events") {
+    val eh = new TimeBasedEventHolder[String]
+    eh.addEvent(TestEvent(30, "C"))
+    eh.addEvent(TestEvent(20, "B"))
+    eh.addEvent(TestEvent(10, "A"))
+    val r = eh.detectEvents(20)
+    assert(r.events.size === 2)
+    assert(r.events(0).data === "A")
+    assert(r.events(1).data === "B")
   }
 
   test("Holder with multiple events. Detect all of the events") {
-    ???
+    val eh = new TimeBasedEventHolder[String]
+    eh.addEvent(TestEvent(10, "A"))
+    eh.addEvent(TestEvent(20, "B"))
+    eh.addEvent(TestEvent(30, "C"))
+    val r = eh.detectEvents(50)
+    assert(r.events.size === 3)
+    assert(r.events(0).data === "A")
+    assert(r.events(1).data === "B")
+    assert(r.events(2).data === "C")
   }
 
 }
