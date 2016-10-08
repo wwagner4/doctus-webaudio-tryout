@@ -248,8 +248,23 @@ case class TimeBasedEventHolderResult[T](nextHolder: TimeBasedEventHolder[T], ev
 
 object TimeBasedEventHolder {
 
-  def empty[T] = TimeBasedEventHolderImpl[T]()
+  def empty[T] = TimeBasedEventHolderImpl[T](List.empty[TimeBasedEvent[T]])
 
+  case class TimeBasedEventHolderImpl[T](initialEvents: List[TimeBasedEvent[T]]) extends TimeBasedEventHolder[T] {
+
+    var events = initialEvents
+
+    def detectEvents(time: Long): TimeBasedEventHolderResult[T] = {
+      val resultEvents = events.filter{e => e.executionTime <= time}.sortBy(e => e.executionTime)
+      val restEvents = events.diff(resultEvents)
+      TimeBasedEventHolderResult(TimeBasedEventHolderImpl(restEvents), resultEvents)
+    }
+
+    def addEvent(event: TimeBasedEvent[T]): Unit = {
+      events = event :: events
+    }
+
+  }
 }
 
 trait TimeBasedEventHolder[T] {
@@ -269,20 +284,6 @@ trait TimeBasedEventHolder[T] {
 
 }
 
-case class TimeBasedEventHolderImpl[T]() extends TimeBasedEventHolder[T] {
-
-  var events = List.empty[TimeBasedEvent[T]]
-
-  def detectEvents(time: Long): TimeBasedEventHolderResult[T] = {
-    val es = events.filter{e => e.executionTime <= time}.sortBy(e => e.executionTime)
-    TimeBasedEventHolderResult(this, es)
-  }
-
-  def addEvent(event: TimeBasedEvent[T]): Unit = {
-    events = event :: events
-  }
-
-}
 
 
 
