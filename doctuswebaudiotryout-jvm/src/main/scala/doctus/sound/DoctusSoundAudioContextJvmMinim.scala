@@ -7,9 +7,6 @@ import ddf.minim.javasound.JSMinim
 import ddf.minim.ugens._
 import ddf.minim.{AudioOutput, Minim, UGen}
 
-import scala.concurrent.duration.FiniteDuration
-
-
 trait MinimContext {
 
   def minim: Minim
@@ -50,11 +47,16 @@ case class DoctusSoundAudioContextJvmMinim() extends DoctusSoundAudioContext {
     new Minim(serviceProvider)
   }
 
-  private val sys = ActorSystem.create()
+  val sys = ActorSystem.create()
 
   val _musicActor = sys.actorOf(MusicActor.props)
 
-  sys.scheduler.schedule(0 seconds, 8567 microseconds)(() => _musicActor ! TimeEvent(currentTime))(sys.dispatcher)
+  val funcCreateTimeEvent = () => {
+    val timeEvent = TimeEvent(currentTime)
+    _musicActor ! timeEvent
+  }
+
+  sys.scheduler.schedule(0.second, 8000.microseconds)(funcCreateTimeEvent())(sys.dispatcher)
 
   val ctx = new MinimContext {
 
@@ -226,7 +228,7 @@ case class NodeControlAdsrJvmMinim(attack: Double, decay: Double, sustain: Doubl
         ()
       case _ =>
         throw new IllegalArgumentException(
-        s"cannot connect $this to $param. $param is not 'UGenAware'")
+          s"cannot connect $this to $param. $param is not 'UGenAware'")
     }
   }
 }
@@ -282,6 +284,7 @@ class MusicActor extends Actor {
 trait TimeBasedEvent[T] {
 
   def executionTime: Double
+
   def data: T
 
 }
@@ -297,7 +300,7 @@ object TimeBasedEventHolder {
     var events = initialEvents
 
     def detectEvents(time: Double): TimeBasedEventHolderResult[T] = {
-      val resultEvents = events.filter{e => e.executionTime <= time}.sortBy(e => e.executionTime)
+      val resultEvents = events.filter { e => e.executionTime <= time }.sortBy(e => e.executionTime)
       val restEvents = events.diff(resultEvents)
       TimeBasedEventHolderResult(TimeBasedEventHolderImpl(restEvents), resultEvents)
     }
@@ -307,6 +310,7 @@ object TimeBasedEventHolder {
     }
 
   }
+
 }
 
 trait TimeBasedEventHolder[T] {
@@ -314,6 +318,7 @@ trait TimeBasedEventHolder[T] {
   /**
     * Detects all events with 'executionTime' before or equal to 'time'
     * These events will be returned and removed from the holder
+    *
     * @param time defines which events have to be executed
     * @return The events and a new instance of the holder
     */
