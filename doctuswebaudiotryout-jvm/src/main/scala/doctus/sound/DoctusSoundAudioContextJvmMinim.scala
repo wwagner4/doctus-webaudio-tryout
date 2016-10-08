@@ -2,12 +2,38 @@ package doctus.sound
 
 import java.io.{File, FileInputStream, InputStream}
 
-import akka.actor.Actor.Receive
 import akka.actor.{Actor, ActorSystem, Props}
 import ddf.minim.javasound.JSMinim
 import ddf.minim.ugens._
 import ddf.minim.{AudioOutput, Minim, UGen}
 
+
+trait MinimContext {
+
+  def minim: Minim
+
+  def tell(message: Any): Unit
+
+}
+
+trait UGenAware {
+
+  def uGen: UGen
+
+}
+
+trait AudioOutputAware {
+
+  def audioOutput: AudioOutput
+
+}
+
+abstract class ControlParamJvmMinimAbstract extends ControlParam with UGenAware {
+
+  def name: String
+
+  override def toString: String = "ControlParamJvmMinimAbstract: " + name
+}
 
 /**
   * Jvm implementation of the DoctusSoundAudioContext
@@ -15,7 +41,7 @@ import ddf.minim.{AudioOutput, Minim, UGen}
 case class DoctusSoundAudioContextJvmMinim() extends DoctusSoundAudioContext {
 
 
-  private val minim = {
+  private val _minim = {
     val fileLoader = FileLoaderUserHome()
     val serviceProvider = new JSMinim(fileLoader)
     new Minim(serviceProvider)
@@ -23,24 +49,31 @@ case class DoctusSoundAudioContextJvmMinim() extends DoctusSoundAudioContext {
 
   private val sys = ActorSystem.create()
 
-  val musicActor = sys.actorOf(MusicActor.props)
+  val _musicActor = sys.actorOf(MusicActor.props)
+
+  val ctx = new MinimContext {
+    def tell(message: Any): Unit = _musicActor ! message
+
+    def minim: Minim = _minim
+
+  }
 
 
 
   private val startTime = System.nanoTime()
 
   def createNodeSinkLineOut: NodeSink = {
-    NodeSinkJvmMinim(minim)
+    NodeSinkJvmMinim(ctx)
   }
 
   def createNodeSourceOscil(waveType: WaveType): NodeSourceOscil = {
-    NodeSourceOscilJvmMinim(waveType)(minim)
+    NodeSourceOscilJvmMinim(waveType)(ctx)
   }
 
   def createNodeSourceNoise(noiseType: NoiseType): NodeSourceNoise = ???
 
   def createNodeThroughGain: NodeThroughGain = {
-    NodeThroughGainJvmMinim(minim)
+    NodeThroughGainJvmMinim(ctx)
   }
 
   def createNodeThroughFilter(filterType: FilterType): NodeThroughFilter = ???
@@ -50,11 +83,11 @@ case class DoctusSoundAudioContextJvmMinim() extends DoctusSoundAudioContext {
   def createNodeThroughDelay: NodeThroughDelay = ???
 
   def createNodeControlConstant(value: Double): NodeControl = {
-    NodeControlConstantJvmMinim(value)(minim)
+    NodeControlConstantJvmMinim(value)(ctx)
   }
 
   def createNodeControlAdsr(attack: Double, decay: Double, sustain: Double, release: Double, gain: Double, trend: Trend): NodeControlEnvelope = {
-    NodeControlAdsrJvmMinim(attack, decay, sustain, release, gain, trend)(minim)
+    NodeControlAdsrJvmMinim(attack, decay, sustain, release, gain, trend)(ctx)
   }
 
   def createNodeControlLfo(waveType: WaveType): NodeControlLfo = ???
@@ -68,14 +101,14 @@ case class DoctusSoundAudioContextJvmMinim() extends DoctusSoundAudioContext {
   }
 }
 
-case class NodeSinkJvmMinim(minim: Minim) extends NodeSink with AudioOutputAware {
+case class NodeSinkJvmMinim(ctx: MinimContext) extends NodeSink with AudioOutputAware {
 
-  val minimSink = minim.getLineOut
+  val minimSink = ctx.minim.getLineOut
 
   def audioOutput: AudioOutput = minimSink
 }
 
-case class NodeThroughGainJvmMinim(minim: Minim) extends NodeThroughGain with UGenAware {
+case class NodeThroughGainJvmMinim(ctx: MinimContext) extends NodeThroughGain with UGenAware {
 
   private val minimGain = new Gain()
 
@@ -100,7 +133,7 @@ case class NodeThroughGainJvmMinim(minim: Minim) extends NodeThroughGain with UG
   def uGen: UGen = minimGain
 }
 
-case class NodeControlConstantJvmMinim(value: Double)(minim: Minim) extends NodeControl with UGenAware {
+case class NodeControlConstantJvmMinim(value: Double)(ctx: MinimContext) extends NodeControl with UGenAware {
 
   val minimConstant = new Constant(value.toFloat)
 
@@ -115,26 +148,7 @@ case class NodeControlConstantJvmMinim(value: Double)(minim: Minim) extends Node
   def uGen: UGen = minimConstant
 }
 
-trait UGenAware {
-
-  def uGen: UGen
-
-}
-
-trait AudioOutputAware {
-
-  def audioOutput: AudioOutput
-
-}
-
-abstract class ControlParamJvmMinimAbstract extends ControlParam with UGenAware {
-
-  def name: String
-
-  override def toString: String = "ControlParamJvmMinimAbstract: " + name
-}
-
-case class NodeSourceOscilJvmMinim(waveType: WaveType)(minim: Minim) extends NodeSourceOscil {
+case class NodeSourceOscilJvmMinim(waveType: WaveType)(ctx: MinimContext) extends NodeSourceOscil {
 
   private val freq = 440f
   private val ampl = 1.0f
@@ -178,7 +192,7 @@ case class NodeSourceOscilJvmMinim(waveType: WaveType)(minim: Minim) extends Nod
 }
 
 case class NodeControlAdsrJvmMinim(attack: Double, decay: Double, sustain: Double, release: Double, gain: Double, trend: Trend)
-                                  (minim: Minim) extends NodeControlEnvelope {
+                                  (ctx: MinimContext) extends NodeControlEnvelope {
 
   private val minimAdsr = new ADSR(gain.toFloat, attack.toFloat, decay.toFloat, sustain.toFloat, release.toFloat)
 
@@ -218,16 +232,9 @@ case class FileLoaderUserHome() {
 
 }
 
-trait TimeBasedEvent[T] {
-
-  def executionTime: Long
-  def data: T
-
-}
-
 // Not serializable. Though the best solution (eventually)
 // as long as we stay within one VM
-case class MusicEvent(executionTime: Long, data: () => Unit) extends TimeBasedEvent[() => Unit]
+case class MusicEvent(executionTime: Double, data: () => Unit) extends TimeBasedEvent[() => Unit]
 
 object MusicActor {
 
@@ -237,11 +244,22 @@ object MusicActor {
 
 class MusicActor extends Actor {
 
+  val eventHolder = TimeBasedEventHolder.empty[() => Unit]
+
   def receive: Receive = {
+    case musicEvent: MusicEvent =>
+      eventHolder.addEvent(musicEvent)
     case message: Any =>
       println(s"Received msg $message => unhandled")
       unhandled(message)
   }
+}
+
+trait TimeBasedEvent[T] {
+
+  def executionTime: Double
+  def data: T
+
 }
 
 case class TimeBasedEventHolderResult[T](nextHolder: TimeBasedEventHolder[T], events: List[TimeBasedEvent[T]])
@@ -254,7 +272,7 @@ object TimeBasedEventHolder {
 
     var events = initialEvents
 
-    def detectEvents(time: Long): TimeBasedEventHolderResult[T] = {
+    def detectEvents(time: Double): TimeBasedEventHolderResult[T] = {
       val resultEvents = events.filter{e => e.executionTime <= time}.sortBy(e => e.executionTime)
       val restEvents = events.diff(resultEvents)
       TimeBasedEventHolderResult(TimeBasedEventHolderImpl(restEvents), resultEvents)
@@ -275,7 +293,7 @@ trait TimeBasedEventHolder[T] {
     * @param time defines which events have to be executed
     * @return The events and a new instance of the holder
     */
-  def detectEvents(time: Long): TimeBasedEventHolderResult[T]
+  def detectEvents(time: Double): TimeBasedEventHolderResult[T]
 
   /**
     * @param event that will be added to the holder
