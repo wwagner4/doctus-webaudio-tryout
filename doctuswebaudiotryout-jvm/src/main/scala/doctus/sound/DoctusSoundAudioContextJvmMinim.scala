@@ -104,7 +104,7 @@ case class DoctusSoundAudioContextJvmMinim() extends DoctusSoundAudioContext {
 
   def createNodeControlLfo(waveType: WaveType): NodeControlLfo = ???
 
-  def currentTime: Double = (System.nanoTime() - startTime) / 1000000000.0
+  def currentTime: Double = (System.nanoTime() - startTime) / 1.0e9
 
   def sampleRate: Double = ???
 
@@ -135,10 +135,10 @@ case class NodeThroughGainJvmMinim(ctx: MinimContext) extends NodeThroughGain wi
   def connect(sink: NodeSink): Unit = {
     sink match {
       case s: UGenAware =>
-        println(s"connecting GAIN $minimGain to UGen ${s.uGen}")
+        println(s"connecting GAIN $minimGain to UGen ${s.uGen} ($sink)")
         minimGain.patch(s.uGen)
       case s: AudioOutputAware =>
-        println(s"connecting GAIN $minimGain to AudioOutput ${s.audioOutput}")
+        println(s"connecting GAIN $minimGain to AudioOutput ${s.audioOutput} ($sink)")
         minimGain.patch(s.audioOutput)
       case _ => throw new IllegalArgumentException(
         s"cannot connect $this to $sink. $sink is not 'UGenAware'")
@@ -157,7 +157,7 @@ case class NodeControlConstantJvmMinim(value: Double)(ctx: MinimContext) extends
   def connect(param: ControlParam): Unit = {
     param match {
       case p: UGenInputAware =>
-        println(s"connecting CONSTANT $minimConstant to UGenInput ${p.uGenInput}")
+        println(s"connecting CONSTANT $minimConstant to UGenInput ${p.uGenInput} ($param)")
         minimConstant.patch(p.uGenInput)
       case _ => throw new IllegalStateException(
         "Cannot connect %s to parameter %s. %s is not 'UGenAware'" format(this, param, param))
@@ -218,7 +218,7 @@ case class NodeSourceOscilJvmMinim(waveType: WaveType)(ctx: MinimContext) extend
   def connect(through: NodeThrough): NodeSource = {
     through match {
       case t: UGenAware =>
-        println(s"Preparing to connect OSCIL $minimOscil to UGen ${t.uGen} <- stored in option")
+        println(s"Preparing to connect OSCIL $minimOscil to UGen ${t.uGen} ($through) <- stored in option")
         patchable = Some(t.uGen)
         through
       case _ =>
@@ -256,7 +256,7 @@ case class NodeControlAdsrJvmMinim(attack: Double, decay: Double, sustain: Doubl
   def connect(param: ControlParam): Unit = {
     param match {
       case p: UGenInputAware =>
-        println(s"connecting ADSR $minimAdsr to ${p.uGenInput}")
+        println(s"connecting ADSR $minimAdsr to ${p.uGenInput} ($param)")
         minimAdsr.patch(p.uGenInput)
         ()
       case _ =>
@@ -332,6 +332,7 @@ object TimeBasedEventHolder {
 
     var events = initialEvents
 
+    // TODO. Performance tuning: Keep the events ordered by execution time
     def detectEvents(time: Double): TimeBasedEventHolderResult[T] = {
       val resultEvents = events.filter { e => e.executionTime <= time }.sortBy(e => e.executionTime)
       val restEvents = events.diff(resultEvents)
