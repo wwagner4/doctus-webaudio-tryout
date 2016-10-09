@@ -109,6 +109,7 @@ case class DoctusSoundAudioContextJvmMinim() extends DoctusSoundAudioContext {
   def sampleRate: Double = ???
 
   def terminate: Unit = {
+    println(f"terminating at $currentTime%.2f")
     sys.terminate()
   }
 }
@@ -133,8 +134,12 @@ case class NodeThroughGainJvmMinim(ctx: MinimContext) extends NodeThroughGain wi
 
   def connect(sink: NodeSink): Unit = {
     sink match {
-      case s: UGenAware => minimGain.patch(s.uGen)
-      case s: AudioOutputAware => minimGain.patch(s.audioOutput)
+      case s: UGenAware =>
+        println(s"connecting GAIN $minimGain to UGen ${s.uGen}")
+        minimGain.patch(s.uGen)
+      case s: AudioOutputAware =>
+        println(s"connecting GAIN $minimGain to AudioOutput ${s.audioOutput}")
+        minimGain.patch(s.audioOutput)
       case _ => throw new IllegalArgumentException(
         s"cannot connect $this to $sink. $sink is not 'UGenAware'")
     }
@@ -151,7 +156,9 @@ case class NodeControlConstantJvmMinim(value: Double)(ctx: MinimContext) extends
 
   def connect(param: ControlParam): Unit = {
     param match {
-      case p: UGenInputAware => minimConstant.patch(p.uGenInput)
+      case p: UGenInputAware =>
+        println(s"connecting CONSTANT $minimConstant to UGenInput ${p.uGenInput}")
+        minimConstant.patch(p.uGenInput)
       case _ => throw new IllegalStateException(
         "Cannot connect %s to parameter %s. %s is not 'UGenAware'" format(this, param, param))
     }
@@ -183,15 +190,27 @@ case class NodeSourceOscilJvmMinim(waveType: WaveType)(ctx: MinimContext) extend
   }
 
   def start(time: Double): Unit = {
-    // In minim patching an oscillator means to start it
-    patchable.foreach(ugen => minimOscil.patch(ugen))
+    val f = () => {
+      // In minim patching an oscillator means to start it
+      println(f"Starting (connecting) OSCIL $minimOscil to uGen $patchable at $time%.2f")
+      patchable.foreach(ugen => minimOscil.patch(ugen))
+    }
+    val me = MusicEvent(time, f)
+    println(s"Telling MUSICEVENT $me oscil.patch(ugen)")
+    ctx.tell(me)
   }
 
   def stop(time: Double): Unit = {
-    // In minim unpatching an oscillator means to stop it
-    patchable.foreach(ugen => minimOscil.unpatch(ugen))
-    // Prevent restart of the oscillator
-    patchable = Option.empty[UGen]
+    val f = () => {
+      // In minim unpatching an oscillator means to stop it
+      println(f"Stopping (unconnecting) OSCIL $minimOscil from uGen $patchable at $time%.2f")
+      patchable.foreach(ugen => minimOscil.unpatch(ugen))
+      // Prevent restart of the oscillator
+      patchable = Option.empty[UGen]
+    }
+    val me = MusicEvent(time, f)
+    println(s"Telling MUSICEVENT $me oscil.unpatch(ugen)")
+    ctx.tell(me)
   }
 
   def connect(sink: NodeSink): Unit = ???
@@ -199,6 +218,7 @@ case class NodeSourceOscilJvmMinim(waveType: WaveType)(ctx: MinimContext) extend
   def connect(through: NodeThrough): NodeSource = {
     through match {
       case t: UGenAware =>
+        println(s"Preparing to connect OSCIL $minimOscil to UGen ${t.uGen} <- stored in option")
         patchable = Some(t.uGen)
         through
       case _ =>
@@ -215,24 +235,28 @@ case class NodeControlAdsrJvmMinim(attack: Double, decay: Double, sustain: Doubl
 
   def start(time: Double): Unit = {
     val func = () => {
-      println("ADSR noteOn")
+      println(f"ADSR noteOn at $time%.2f")
       minimAdsr.noteOn()
     }
-    ctx.tell(MusicEvent(time, func))
+    val me = MusicEvent(time, func)
+    println(s"Telling MUSICEVENT $me adsr.noteOn()")
+    ctx.tell(me)
   }
 
   def stop(time: Double): Unit = {
     val func = () => {
-      println("ADSR noteOff")
+      println(f"ADSR noteOff at $time%.2f")
       minimAdsr.noteOff()
     }
-    ctx.tell(MusicEvent(time, func))
+    val me = MusicEvent(time, func)
+    println(s"Telling MUSICEVENT $me adsr.noteOff()")
+    ctx.tell(me)
   }
 
   def connect(param: ControlParam): Unit = {
     param match {
       case p: UGenInputAware =>
-        println(s"connected ADSR $minimAdsr to ${p.uGenInput}")
+        println(s"connecting ADSR $minimAdsr to ${p.uGenInput}")
         minimAdsr.patch(p.uGenInput)
         ()
       case _ =>
