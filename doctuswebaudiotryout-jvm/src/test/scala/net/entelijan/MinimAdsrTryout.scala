@@ -2,8 +2,8 @@ package net.entelijan
 
 import ddf.minim.Minim
 import ddf.minim.javasound.JSMinim
-import ddf.minim.ugens.{Oscil, Waves}
-import doctus.sound.{FileLoaderUserHome}
+import ddf.minim.ugens.{ADSR, Gain, Oscil, Waves}
+import doctus.sound.FileLoaderUserHome
 
 /**
   * Tryout the usage of minim
@@ -17,18 +17,30 @@ object MinimAdsrTryout extends App{
     val serviceProvider = new JSMinim(fileLoader)
     new Minim(serviceProvider)
   }
-  println("created minim")
+  println("--- created minim")
 
   val oscil = new Oscil(500f, 1.0f, Waves.SINE)
-  println("created Oscil")
+  oscil.printInputs()
+  println("--- created Oscil")
+
+  val gain = new Gain(0.0f)
+  gain.printInputs()
+  println("--- created Gain")
+
+  val adsr = new ADSR(1.0f, 1.0f, 1.0f, 0.2f, 2.0f)
+  gain.printInputs()
+  println("--- created ADSR")
 
   val lineOut =  minim.getLineOut()
   lineOut.printControls()
-  println("created lineOut")
+  println("--- created lineOut")
 
   pause(1.0)
-  oscil.patch(lineOut)
-  println("patched oscil to lineOut")
+  adsr.patch(gain.gain)
+
+  oscil.patch(gain)
+  gain.patch(lineOut)
+  println("patched oscil via gain to lineOut")
 
   pause(2.0)
 
