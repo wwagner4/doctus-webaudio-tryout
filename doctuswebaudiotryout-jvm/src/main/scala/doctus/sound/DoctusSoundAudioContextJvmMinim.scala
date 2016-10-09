@@ -111,6 +111,7 @@ case class DoctusSoundAudioContextJvmMinim() extends DoctusSoundAudioContext {
   def terminate: Unit = {
     println(f"terminating at $currentTime%.2f")
     sys.terminate()
+    _minim.dispose()
   }
 }
 
