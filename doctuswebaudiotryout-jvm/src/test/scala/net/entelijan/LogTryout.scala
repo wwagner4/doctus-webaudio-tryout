@@ -8,8 +8,8 @@ import java.text.DecimalFormat
 object LogTryout extends App {
 
   val t = 3.0
-  val start = 5.0
-  val stop = -1.0
+  val start = 2.0
+  val stop = 10.0
 
 
   val f = FunctionFactory.lin(start, stop, t)
@@ -36,7 +36,7 @@ object FunctionFactory {
   def lin(start: Double, stop: Double, time: Double): Double => Double = {
 
     x => {
-      if (x < time) start
+      if (x < time) start + (stop - start) / time * x
       else stop
     }
 
