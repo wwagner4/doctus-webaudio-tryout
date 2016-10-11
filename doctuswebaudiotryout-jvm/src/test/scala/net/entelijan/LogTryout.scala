@@ -20,24 +20,24 @@ object LogTryout extends App {
 
 object FunctionFactory {
 
-  def log(start: Double, stop: Double, time: Double): Double => Double = {
+  def log(from: Double, to: Double, time: Double): Double => Double = {
 
-    val rest = math.abs(start - stop) / 2000.0
+    val rest = math.abs(from - to) / 2000.0
     val a = math.pow(math.E, -math.log(rest) / time)
-    val d = start - stop
+    val d = from - to
 
     x => {
-      if (x < time) d * math.pow(a, -x) - x * rest / time + stop
-      else stop
+      if (x < time) d * math.pow(a, -x) - x * rest / time + to
+      else to
     }
 
   }
 
-  def lin(start: Double, stop: Double, time: Double): Double => Double = {
+  def lin(from: Double, to: Double, time: Double): Double => Double = {
 
     x => {
-      if (x < time) start + (stop - start) / time * x
-      else stop
+      if (x < time) from + (to - from) / time * x
+      else to
     }
 
   }
