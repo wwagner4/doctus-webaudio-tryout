@@ -13,7 +13,7 @@ object BehaviourTryout extends App {
 
   val behave = sys.actorOf(behaveProps)
 
-  for (i <- (1 to 10)) behave ! f"--$i%04d--"
+  for (i <- 1 to 10) behave ! f"--$i%04d--"
 
   sys.terminate()
 }
