@@ -366,6 +366,29 @@ trait TimeBasedEventHolder[T] {
 
 }
 
+object TransitionFunctionFactory {
 
+  def log(from: Double, to: Double, time: Double): Double => Double = {
+
+    val rest = math.abs(from - to) / 2000.0
+    val a = math.pow(math.E, -math.log(rest) / time)
+    val d = from - to
+
+    x => {
+      if (x < time) d * math.pow(a, -x) - x * rest / time + to
+      else to
+    }
+
+  }
+
+  def lin(from: Double, to: Double, time: Double): Double => Double = {
+
+    x => {
+      if (x < time) from + (to - from) / time * x
+      else to
+    }
+
+  }
+}
 
 
