@@ -1,8 +1,5 @@
 package net.entelijan
 
-import java.util.Date
-
-import akka.actor.Actor.Receive
 import akka.actor.{Actor, ActorSystem, Props}
 
 /**
@@ -16,21 +13,34 @@ object BehaviourTryout extends App {
 
   val behave = sys.actorOf(behaveProps)
 
-  for (_ <- (1 to 10)) behave ! "HALLO"
+  for (i <- (1 to 10)) behave ! f"--$i%04d--"
 
   sys.terminate()
 }
 
 class Behave extends Actor {
+  import context._
 
   var strCount = 0
 
-  override def receive: Receive = {
+  def receive: Receive = {
     case str: String =>
       strCount += 1
-      println(s"received a string '$str' $strCount")
+      if (strCount > 2) become(fastCount)
+      println(s"[receive] received a string '$str' $strCount")
     case msg: Any =>
-      println(s"unhandled '$msg'")
+      println(s"[receive] unhandled '$msg'")
+      this.unhandled(msg)
+
+  }
+
+  def fastCount: Receive = {
+    case str: String =>
+      strCount += 10
+      if (strCount > 40) become(receive)
+      println(s"[fast Count] received a string '$str' $strCount")
+    case msg: Any =>
+      println(s"[fast Count] unhandled '$msg'")
       this.unhandled(msg)
 
   }
