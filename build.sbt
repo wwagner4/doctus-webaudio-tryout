@@ -24,7 +24,8 @@ lazy val coreSettings =
 lazy val jvmSettings =
   commonSettings ++
     Seq(
-      libraryDependencies += "net.entelijan" %% "doctus-jvm" % doctusVersion,
+	  resolvers += "bintray" at "http://dl.bintray.com/wwagner4/maven",
+	  libraryDependencies += "net.entelijan" %% "doctus-jvm" % doctusVersion,
       libraryDependencies += "net.entelijan" % "minim" % "1.0.0",
       libraryDependencies += "com.typesafe.akka" % "akka-actor_2.11" % "2.4.11",
       libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.6" % "test",
