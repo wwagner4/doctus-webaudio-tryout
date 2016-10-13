@@ -13,6 +13,9 @@
         <copy todir="staging">
             <fileset dir="doctuswebaudiotryout-scalajs">
                 <include name="index.html"/>
+                <include name="*.eot"/>
+                <include name="*.ttf"/>
+                <include name="*.woff"/>
             </fileset>
         </copy>
         <replace file="staging/index.html"
