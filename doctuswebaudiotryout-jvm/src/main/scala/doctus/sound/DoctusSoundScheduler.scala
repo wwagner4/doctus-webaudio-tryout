@@ -10,14 +10,11 @@ import java.util.concurrent.{ Executors, ScheduledExecutorService, TimeUnit }
 class DoctusSoundScheduler extends AbstractSchedulerBase {
 
   def maxFrequency(): Double = 1000
-  var cancelled = false;
 
   def schedule(initialDelay: FiniteDuration, interval: FiniteDuration, runnable: Runnable)(implicit executor: ExecutionContext): Cancellable = {
-
+    var cancelled = false;
     val scheduler: ScheduledExecutorService = Executors.newScheduledThreadPool(1)
-    
     val future = scheduler.scheduleAtFixedRate(runnable, initialDelay.toMicros, interval.toMicros, TimeUnit.MICROSECONDS)
-
     new Cancellable {
 
       def cancel(): Boolean = {
@@ -31,10 +28,9 @@ class DoctusSoundScheduler extends AbstractSchedulerBase {
   }
 
   def scheduleOnce(delay: FiniteDuration, runnable: Runnable)(implicit executor: ExecutionContext): Cancellable = {
+    var cancelled = false;
     val scheduler: ScheduledExecutorService = Executors.newScheduledThreadPool(1)
-    
     val future = scheduler.schedule(runnable, delay.toMicros, TimeUnit.MICROSECONDS)
-
     new Cancellable {
 
       def cancel(): Boolean = {

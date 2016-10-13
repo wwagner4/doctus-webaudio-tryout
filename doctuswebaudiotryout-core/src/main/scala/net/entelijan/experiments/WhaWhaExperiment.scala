@@ -38,7 +38,7 @@ case class WhaWhaExperiment(ctx: DoctusSoundAudioContext) extends SoundExperimen
     val oscil = createOscil(freq)
 
     val gainAdsr = ctx.createNodeThroughGain
-    val gainAdsrCtrl = ctx.createNodeControlAdsr(0.001, 0.1, 0.9, 0.5)
+    val gainAdsrCtrl = ctx.createNodeControlAdsr(0.001, 0.1, 0.9, 0.5, 0.5)
 
     val filter = createWhaWhaFilter(freq, whaWhaFreq)
 

@@ -41,7 +41,7 @@ case class ModalSynthesisExperiment(ctx: DoctusSoundAudioContext) extends SoundE
 
     val modes = freqSeq.map(f => Mode(f, ranAmpl, ranlifetime))
 
-    val masterGain = gain(0.3)
+    val masterGain = gain(0.1)
 
     val sink = ctx.createNodeSinkLineOut
 
