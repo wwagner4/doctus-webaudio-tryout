@@ -229,44 +229,6 @@ case class NodeSourceOscilJvmMinim(waveType: WaveType)(ctx: MinimContext) extend
   }
 }
 
-case class NodeControlAdsrJvmMinim(attack: Double, decay: Double, sustain: Double, release: Double, gain: Double, trend: Trend)
-                                  (ctx: MinimContext) extends NodeControlEnvelope {
-
-  private val minimAdsr = new ADSR(gain.toFloat, attack.toFloat, decay.toFloat, sustain.toFloat, release.toFloat)
-
-  def start(time: Double): Unit = {
-    val func = () => {
-      println(f"ADSR noteOn at $time%.2f")
-      minimAdsr.noteOn()
-    }
-    val me = MusicEvent(time, func)
-    println(s"Telling MUSICEVENT $me adsr.noteOn()")
-    ctx.tell(me)
-  }
-
-  def stop(time: Double): Unit = {
-    val func = () => {
-      println(f"ADSR noteOff at $time%.2f")
-      minimAdsr.noteOff()
-    }
-    val me = MusicEvent(time, func)
-    println(s"Telling MUSICEVENT $me adsr.noteOff()")
-    ctx.tell(me)
-  }
-
-  def connect(param: ControlParam): Unit = {
-    param match {
-      case p: UGenInputAware =>
-        println(s"connecting ADSR $minimAdsr to ${p.uGenInput} ($param)")
-        minimAdsr.patch(p.uGenInput)
-        ()
-      case _ =>
-        throw new IllegalArgumentException(
-          s"cannot connect $this to $param. $param is not 'UGenAware'")
-    }
-  }
-}
-
 case class FileLoaderUserHome() {
 
   def sketchPath(fileName: String): String = {
