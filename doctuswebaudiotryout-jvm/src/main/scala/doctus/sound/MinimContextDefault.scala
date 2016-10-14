@@ -30,7 +30,7 @@ case class MinimContextDefault() extends MinimContext  {
     _musicActor ! timeEvent
   }
 
-  sys.scheduler.schedule(0.second, 8000.microseconds)(funcCreateTimeEvent())(sys.dispatcher)
+  sys.scheduler.schedule(0.second, 7812.micro)(funcCreateTimeEvent())(sys.dispatcher)
 
   def tell(message: Any): Unit = _musicActor ! message
 
