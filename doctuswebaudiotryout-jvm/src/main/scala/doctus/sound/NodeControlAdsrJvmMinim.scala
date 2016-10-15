@@ -126,10 +126,10 @@ class AdsrActor(const: Constant) extends Actor {
 
 object DbCalc {
 
-  private val  a = 1.122
-  private val lna = math.log(a)
+  private val  a = 1.122f
+  private val lna = math.log(a).toFloat
 
-  def lin2db(linval: Double): Double = math.log(linval) / lna
-  def db2lin(dbval: Double): Double = math.pow(a, dbval)
+  def lin2db(linval: Float): Float = math.log(linval).toFloat / lna
+  def db2lin(dbval: Float): Float = math.pow(a, dbval).toFloat
 
 }
