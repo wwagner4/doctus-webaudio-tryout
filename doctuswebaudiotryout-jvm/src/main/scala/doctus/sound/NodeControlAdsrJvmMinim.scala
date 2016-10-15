@@ -10,10 +10,10 @@ case class NodeControlAdsrJvmMinim(attack: Double, decay: Double, sustain: Doubl
 
   private val minimConst = new Constant(-60f)
 
-  var adsrActorOpt = Option.empty[ActorRef]
+  var adsrActor: ActorRef = ctx.actorSystem.actorOf(AdsrActor.props(minimConst))
 
   val f = () => {
-    adsrActorOpt.foreach(r => r ! AdsrTimeEvent(ctx.currentTime))
+    adsrActor ! AdsrTimeEvent(ctx.currentTime)
   }
 
   val scheduler = ctx.actorSystem.scheduler.schedule(0.second, 7812.micro)(f())(ctx.actorSystem.dispatcher)
@@ -21,8 +21,7 @@ case class NodeControlAdsrJvmMinim(attack: Double, decay: Double, sustain: Doubl
   def start(time: Double): Unit = {
     val func = () => {
       println(f"ADSR started at $time%.2f")
-      adsrActorOpt = Some(ctx.actorSystem.actorOf(AdsrActor.props(minimConst)))
-      ()
+      adsrActor ! AdsrStartEvent
     }
     val me = MusicEvent(time, func)
     println(s"Telling MUSICEVENT $me adsr start")
@@ -32,7 +31,7 @@ case class NodeControlAdsrJvmMinim(attack: Double, decay: Double, sustain: Doubl
   def stop(time: Double): Unit = {
     val func = () => {
       println(f"ADSR stopped at $time%.2f")
-      adsrActorOpt.foreach(r => r ! AdsrStopEvent)
+      adsrActor ! AdsrStopEvent
     }
     val me = MusicEvent(time, func)
     println(s"Telling MUSICEVENT $me adsr stop")
@@ -54,6 +53,8 @@ case class NodeControlAdsrJvmMinim(attack: Double, decay: Double, sustain: Doubl
 
 case class AdsrTimeEvent(time: Double)
 
+case object AdsrStartEvent
+
 case object AdsrStopEvent
 
 object AdsrActor {
@@ -71,25 +72,64 @@ class AdsrActor(const: Constant) extends Actor {
   def receive: Receive = {
 
     case AdsrTimeEvent(time) =>
-      value += 0.1f
-      const.setConstant(value)
-//      println(s"received ADSR time event $time")
+      // Nothing to do here
 
     case AdsrStopEvent =>
       println(s"received ADSR stop event $const")
-      context.become(stopped)
+      context.become(stopping)
+
+    case AdsrStartEvent =>
+      println(s"received ADSR stop event $const")
+      context.become(starting)
 
     case msg: Any => {
       println(s"AdsrActor $msg")
       this.unhandled(msg)
     }
   }
-  def stopped: Receive = {
+
+  def starting: Receive = {
+    case AdsrTimeEvent(time) =>
+      value += 0.1f
+      const.setConstant(value)
+      if (value >= 0.0) context.become(receive)
+
+    case AdsrStopEvent =>
+      println(s"received ADSR stop event $const")
+      context.become(stopping)
+
     case msg: Any => {
-      println(s"Stopped AdsrActor $msg $value")
+      println(s"AdsrActor STARTING $msg")
       this.unhandled(msg)
     }
 
   }
+
+  def stopping: Receive = {
+    case AdsrTimeEvent(time) =>
+      value -= 0.1f
+      const.setConstant(value)
+      if (value <= -60) context.become(receive)
+
+    case AdsrStartEvent =>
+      println(s"received ADSR stop event $const")
+      context.become(starting)
+
+    case msg: Any => {
+      println(s"AdsrActor STARTING $msg")
+      this.unhandled(msg)
+    }
+
+  }
+
 }
 
+object DbCalc {
+
+  private val  a = 1.122
+  private val lna = math.log(a)
+
+  def lin2db(linval: Double): Double = math.log(linval) / lna
+  def db2lin(dbval: Double): Double = math.pow(a, dbval)
+
+}
