@@ -28,6 +28,10 @@ case class NodeControlAdsrJvmMinim(attack: Double, decay: Double, sustain: Doubl
 
   val scheduler = ctx.actorSystem.scheduler.schedule(0.second, AdsrConstants.rate)(f())(ctx.actorSystem.dispatcher)
 
+  /**
+    * Starts the attack of the ADSR
+    * @param time Time in seconds
+    */
   def start(time: Double): Unit = {
     val func = () => {
       println(f"ADSR started at $time%.2f")
