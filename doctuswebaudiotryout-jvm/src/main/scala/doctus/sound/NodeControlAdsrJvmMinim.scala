@@ -2,21 +2,31 @@ package doctus.sound
 
 import akka.actor.{Actor, ActorRef, Props}
 import ddf.minim.ugens.Constant
+import scala.concurrent.duration._
+
+object AdsrConstants {
+
+  val rate = 7812.micro
+  val rateSeconds: Double = rate.toMicros * 1.0e-9
+  val zeroDb = -60.0
+
+}
+
 
 case class NodeControlAdsrJvmMinim(attack: Double, decay: Double, sustain: Double, release: Double, gain: Double, trend: Trend)
                                   (ctx: MinimContext) extends NodeControlEnvelope {
 
-  import scala.concurrent.duration._
-
   private val minimConst = new Constant(-60f)
 
-  var adsrActor: ActorRef = ctx.actorSystem.actorOf(AdsrActor.props(minimConst))
+  private val adsrParams = AdsrParams(attack, decay, sustain, release, gain, trend)
+
+  var adsrActor: ActorRef = ctx.actorSystem.actorOf(AdsrActor.props(minimConst, adsrParams))
 
   val f = () => {
     adsrActor ! AdsrTimeEvent(ctx.currentTime)
   }
 
-  val scheduler = ctx.actorSystem.scheduler.schedule(0.second, 7812.micro)(f())(ctx.actorSystem.dispatcher)
+  val scheduler = ctx.actorSystem.scheduler.schedule(0.second, AdsrConstants.rate)(f())(ctx.actorSystem.dispatcher)
 
   def start(time: Double): Unit = {
     val func = () => {
@@ -59,44 +69,68 @@ case object AdsrStopEvent
 
 object AdsrActor {
 
-  def props(const: Constant): Props = Props(classOf[AdsrActor], const)
+  def props(const: Constant, adsrParams: AdsrParams): Props = Props(classOf[AdsrActor], const, adsrParams)
 
 }
 
+case class AdsrParams(attack: Double, decay: Double, sustain: Double, release: Double, gain: Double, trend: Trend)
+
 case class AdsrMsg(time: Double)
 
-class AdsrActor(const: Constant) extends Actor {
+class AdsrActor(const: Constant, adsrParams: AdsrParams) extends Actor {
 
-  var value = -60f
+  var value = -60.0
+  var diffValue = 0.0
+
+  var time: Integer = 0
+  var targetTime: Integer = 0
+
+  val gainDb = DbCalc.lin2db(adsrParams.gain.toFloat)
+  val sustainDb = DbCalc.lin2db(adsrParams.gain.toFloat)
 
   def receive: Receive = {
 
     case AdsrTimeEvent(time) =>
-      // Nothing to do here
+    // Nothing to do here
+
+    case AdsrStartEvent =>
+      println(s"received ADSR start event $const")
+      time = 0
+      targetTime = (adsrParams.attack / AdsrConstants.rateSeconds).toInt
+      diffValue = (gainDb - value) / targetTime
+      context.become(attack)
 
     case AdsrStopEvent =>
       println(s"received ADSR stop event $const")
-      context.become(stopping)
-
-    case AdsrStartEvent =>
-      println(s"received ADSR stop event $const")
-      context.become(starting)
+      time = 0
+      targetTime = (adsrParams.release / AdsrConstants.rateSeconds).toInt
+      diffValue = (AdsrConstants.zeroDb - value) / targetTime
+      context.become(release)
 
     case msg: Any => {
-      println(s"AdsrActor $msg")
+      println(s"ERROR AdsrActor receive $msg")
       this.unhandled(msg)
     }
   }
 
-  def starting: Receive = {
-    case AdsrTimeEvent(time) =>
-      value += 0.1f
-      const.setConstant(value)
-      if (value >= 0.0) context.become(receive)
+  def attack: Receive = {
+    case AdsrTimeEvent(_) =>
+      if (time > targetTime) {
+        time = 0
+        targetTime = (adsrParams.decay / AdsrConstants.rateSeconds).toInt
+        diffValue = (gainDb - value) / targetTime
+        context.become(decay)
+      } else {
+        value += diffValue
+        const.setConstant(value.toFloat)
+      }
 
     case AdsrStopEvent =>
       println(s"received ADSR stop event $const")
-      context.become(stopping)
+      time = 0
+      targetTime = (adsrParams.release / AdsrConstants.rateSeconds).toInt
+      diffValue = (AdsrConstants.zeroDb - value) / targetTime
+      context.become(release)
 
     case msg: Any => {
       println(s"AdsrActor STARTING $msg")
@@ -105,15 +139,49 @@ class AdsrActor(const: Constant) extends Actor {
 
   }
 
-  def stopping: Receive = {
-    case AdsrTimeEvent(time) =>
-      value -= 0.1f
-      const.setConstant(value)
-      if (value <= -60) context.become(receive)
+  def decay: Receive = {
+    case AdsrTimeEvent(_) =>
+      if (time > targetTime) {
+        context.become(receive)
+      } else {
+        value += diffValue
+        const.setConstant(value.toFloat)
+      }
 
     case AdsrStartEvent =>
       println(s"received ADSR stop event $const")
-      context.become(starting)
+      time = 0
+      targetTime = (adsrParams.attack / AdsrConstants.rateSeconds).toInt
+      diffValue = (gainDb - value) / targetTime
+      context.become(attack)
+
+    case AdsrStopEvent =>
+      time = 0
+      targetTime = (adsrParams.release / AdsrConstants.rateSeconds).toInt
+      diffValue = (AdsrConstants.zeroDb - value) / targetTime
+      context.become(release)
+
+    case msg: Any => {
+      println(s"AdsrActor STARTING $msg")
+      this.unhandled(msg)
+    }
+
+  }
+
+  def release: Receive = {
+    case AdsrTimeEvent(time) =>
+      if (time > targetTime) {
+        context.become(receive)
+      } else {
+        value += diffValue
+        const.setConstant(value.toFloat)
+      }
+
+    case AdsrStartEvent =>
+      time = 0
+      targetTime = (adsrParams.attack / AdsrConstants.rateSeconds).toInt
+      diffValue = (gainDb - value) / targetTime
+      context.become(attack)
 
     case msg: Any => {
       println(s"AdsrActor STARTING $msg")
@@ -126,10 +194,15 @@ class AdsrActor(const: Constant) extends Actor {
 
 object DbCalc {
 
-  private val  a = 1.122f
-  private val lna = math.log(a).toFloat
+  private val a = 1.122f
+  private val lna = math.log(a)
 
-  def lin2db(linval: Float): Float = math.log(linval).toFloat / lna
-  def db2lin(dbval: Float): Float = math.pow(a, dbval).toFloat
+  def lin2db(linval: Double): Double = {
+    require(linval >= 0.0)
+    if (linval <= 0.001) -60
+    else math.log(linval) / lna
+  }
+
+  def db2lin(dbval: Double): Double = math.pow(a, dbval)
 
 }
