@@ -83,7 +83,10 @@ case class AdsrMsg(time: Double)
 
 class AdsrActor(const: Constant, adsrParams: AdsrParams) extends Actor {
 
-  var value = -60.0
+  var cnt = 0
+  val logFreq = 50
+
+  var value = AdsrConstants.zeroDb
   var diffValue = 0.0
 
   var time: Integer = 0
@@ -93,32 +96,35 @@ class AdsrActor(const: Constant, adsrParams: AdsrParams) extends Actor {
   val sustainDb = DbCalc.lin2db(adsrParams.gain.toFloat)
 
   def receive: Receive = {
-
-    case AdsrTimeEvent(time) =>
+    case AdsrTimeEvent(_) =>
+      cnt += 1
+      if (cnt % logFreq == 0) println(s"[receive] ADSR time event $value")
     // Nothing to do here
 
     case AdsrStartEvent =>
-      println(s"received ADSR start event $const")
+      println(s"[receive] ADSR start event $value")
       time = 0
       targetTime = (adsrParams.attack / AdsrConstants.rateSeconds).toInt
       diffValue = (gainDb - value) / targetTime
       context.become(attack)
 
     case AdsrStopEvent =>
-      println(s"received ADSR stop event $const")
+      println(s"[receive] ADSR stop event $value")
       time = 0
       targetTime = (adsrParams.release / AdsrConstants.rateSeconds).toInt
       diffValue = (AdsrConstants.zeroDb - value) / targetTime
       context.become(release)
 
     case msg: Any => {
-      println(s"ERROR AdsrActor receive $msg")
+      println(s"[receive] ADSR unhandled $msg")
       this.unhandled(msg)
     }
   }
 
   def attack: Receive = {
     case AdsrTimeEvent(_) =>
+      cnt += 1
+      if (cnt % logFreq == 0) println(s"[attack] ADSR time event $value")
       if (time > targetTime) {
         time = 0
         targetTime = (adsrParams.decay / AdsrConstants.rateSeconds).toInt
@@ -130,14 +136,14 @@ class AdsrActor(const: Constant, adsrParams: AdsrParams) extends Actor {
       }
 
     case AdsrStopEvent =>
-      println(s"received ADSR stop event $const")
+      println(s"[attack] ADSR stop event $value")
       time = 0
       targetTime = (adsrParams.release / AdsrConstants.rateSeconds).toInt
       diffValue = (AdsrConstants.zeroDb - value) / targetTime
       context.become(release)
 
     case msg: Any => {
-      println(s"AdsrActor STARTING $msg")
+      println(s"[attack] ADSR unhandled $msg")
       this.unhandled(msg)
     }
 
@@ -145,6 +151,8 @@ class AdsrActor(const: Constant, adsrParams: AdsrParams) extends Actor {
 
   def decay: Receive = {
     case AdsrTimeEvent(_) =>
+      cnt += 1
+      if (cnt % logFreq == 0) println(s"[decay] ADSR time event $value")
       if (time > targetTime) {
         context.become(receive)
       } else {
@@ -153,27 +161,30 @@ class AdsrActor(const: Constant, adsrParams: AdsrParams) extends Actor {
       }
 
     case AdsrStartEvent =>
-      println(s"received ADSR stop event $const")
+      println(s"[decay] ADSR start event $value")
       time = 0
       targetTime = (adsrParams.attack / AdsrConstants.rateSeconds).toInt
       diffValue = (gainDb - value) / targetTime
       context.become(attack)
 
     case AdsrStopEvent =>
+      println(s"[decay] ADSR stop event $value")
       time = 0
       targetTime = (adsrParams.release / AdsrConstants.rateSeconds).toInt
       diffValue = (AdsrConstants.zeroDb - value) / targetTime
       context.become(release)
 
     case msg: Any => {
-      println(s"AdsrActor STARTING $msg")
+      println(s"[decay] ADSR unhandled $msg")
       this.unhandled(msg)
     }
 
   }
 
   def release: Receive = {
-    case AdsrTimeEvent(time) =>
+    case AdsrTimeEvent(_) =>
+      cnt += 1
+      if (cnt % logFreq == 0) println(s"[release] ADSR time event $value")
       if (time > targetTime) {
         context.become(receive)
       } else {
@@ -182,13 +193,14 @@ class AdsrActor(const: Constant, adsrParams: AdsrParams) extends Actor {
       }
 
     case AdsrStartEvent =>
+      println(s"[release] ADSR start event $value")
       time = 0
       targetTime = (adsrParams.attack / AdsrConstants.rateSeconds).toInt
       diffValue = (gainDb - value) / targetTime
       context.become(attack)
 
     case msg: Any => {
-      println(s"AdsrActor STARTING $msg")
+      println(s"[release] ADSR unhandled $msg")
       this.unhandled(msg)
     }
 
