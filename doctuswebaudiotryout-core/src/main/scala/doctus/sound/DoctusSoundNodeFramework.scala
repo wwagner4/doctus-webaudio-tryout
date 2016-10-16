@@ -190,6 +190,10 @@ trait NodeThroughContainer extends NodeThrough {
 
   def connect(through: NodeThrough): NodeSource = source.connect(through)
 
+  override def toString: String = {
+    s"NodeThroughContainer[src:$source sink:$sink] "
+  }
+
 }
 
 /**

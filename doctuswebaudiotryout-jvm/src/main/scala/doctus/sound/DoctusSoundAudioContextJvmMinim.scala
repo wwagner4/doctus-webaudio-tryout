@@ -124,7 +124,18 @@ case class NodeThroughGainJvmMinim(ctx: MinimContext) extends NodeThroughGain wi
     }
   }
 
-  def connect(through: NodeThrough): NodeSource = ???
+  def connect(through: NodeThrough): NodeSource = {
+    through match {
+      case t: UGenAware =>
+        println(s"Preparing to connect OSCIL $minimGain to UGen ${t.uGen} ($through) <- stored in option")
+        minimGain.patch(t.uGen)
+        through
+
+      case _ =>
+        throw new IllegalArgumentException(
+          s"cannot connect $this to $through. $through is not 'UGenAware'")
+    }
+  }
 
   def uGen: UGen = minimGain
 }
