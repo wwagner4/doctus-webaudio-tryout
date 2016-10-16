@@ -92,10 +92,6 @@ case class AdsrExperiment(ctx: DoctusSoundAudioContext) extends SoundExperiment 
 
       def sink: NodeSink = gain
 
-      override def toString: String = {
-        "NodeThroughContainer %s -> %s" format(sink, source)
-      }
-
     }
 
   }

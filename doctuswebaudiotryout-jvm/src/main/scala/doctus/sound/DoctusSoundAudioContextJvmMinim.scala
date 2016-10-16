@@ -203,13 +203,25 @@ case class NodeSourceOscilJvmMinim(waveType: WaveType)(ctx: MinimContext) extend
     ctx.tell(me)
   }
 
-  def connect(sink: NodeSink): Unit = ???
+  def connect(sink: NodeSink): Unit = {
+    sink match {
+      case t: UGenAware =>
+        println(s"Preparing to connect OSCIL $minimOscil to UGen ${t.uGen} ($sink) <- stored in option")
+        patchable = Some(t.uGen)
+      case _ =>
+        throw new IllegalArgumentException(
+          s"cannot connect $this to $sink. $sink is not 'UGenAware'")
+    }
+  }
 
   def connect(through: NodeThrough): NodeSource = {
     through match {
       case t: UGenAware =>
         println(s"Preparing to connect OSCIL $minimOscil to UGen ${t.uGen} ($through) <- stored in option")
         patchable = Some(t.uGen)
+        through
+      case c: NodeThroughContainer =>
+        connect(c.sink)
         through
       case _ =>
         throw new IllegalArgumentException(
