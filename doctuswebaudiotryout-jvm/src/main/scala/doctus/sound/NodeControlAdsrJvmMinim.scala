@@ -7,7 +7,7 @@ import scala.concurrent.duration._
 object AdsrConstants {
 
   val rate = 7812.micro
-  val rateSeconds: Double = rate.toMicros * 1.0e-9
+  val rateSeconds: Double = rate.toMicros * 1.0e-6
   val zeroDb = -60.0
 
 }
@@ -98,14 +98,14 @@ class AdsrActor(const: Constant, adsrParams: AdsrParams) extends Actor {
   def receive: Receive = {
     case AdsrTimeEvent(_) =>
       cnt += 1
-      if (cnt % logFreq == 0) println(s"[receive] ADSR time event $value")
+      //if (cnt % logFreq == 0) println(s"[receive] ADSR time event $value")
     // Nothing to do here
 
     case AdsrStartEvent =>
-      println(s"[receive] ADSR start event $value")
       time = 0
       targetTime = (adsrParams.attack / AdsrConstants.rateSeconds).toInt
       diffValue = (gainDb - value) / targetTime
+      println(s"[receive] ADSR start event $value rateSeconds:${AdsrConstants.rateSeconds} attack:${adsrParams.attack} targetTime:$targetTime")
       context.become(attack)
 
     case AdsrStopEvent =>
@@ -123,16 +123,26 @@ class AdsrActor(const: Constant, adsrParams: AdsrParams) extends Actor {
 
   def attack: Receive = {
     case AdsrTimeEvent(_) =>
+      time += 1
       cnt += 1
-      if (cnt % logFreq == 0) println(s"[attack] ADSR time event $value")
+      //if (cnt % logFreq == 0) println(s"[attack] ADSR time event $value")
+      value += diffValue
+      const.setConstant(value.toFloat)
       if (time > targetTime) {
         time = 0
-        targetTime = (adsrParams.decay / AdsrConstants.rateSeconds).toInt
-        diffValue = (gainDb - value) / targetTime
-        context.become(decay)
-      } else {
-        value += diffValue
-        const.setConstant(value.toFloat)
+        if (adsrParams.decay <= 0.0) {
+          if (adsrParams.release <= 0.0) {
+            value = AdsrConstants.zeroDb
+            context.become(receive)
+          } else {
+            context.become(receive)
+          }
+        } else {
+          targetTime = (adsrParams.decay / AdsrConstants.rateSeconds).toInt
+          diffValue = (gainDb - value) / targetTime
+          println(s"become decay tt:$targetTime dv:$diffValue")
+          context.become(decay)
+        }
       }
 
     case AdsrStopEvent =>
@@ -151,13 +161,14 @@ class AdsrActor(const: Constant, adsrParams: AdsrParams) extends Actor {
 
   def decay: Receive = {
     case AdsrTimeEvent(_) =>
+      time += 1
       cnt += 1
-      if (cnt % logFreq == 0) println(s"[decay] ADSR time event $value")
+//      if (cnt % logFreq == 0) println(s"[decay] ADSR time event $value")
+      //println(s"[decay] ADSR time event $value")
+      value += diffValue
+      const.setConstant(value.toFloat)
       if (time > targetTime) {
         context.become(receive)
-      } else {
-        value += diffValue
-        const.setConstant(value.toFloat)
       }
 
     case AdsrStartEvent =>
@@ -183,8 +194,9 @@ class AdsrActor(const: Constant, adsrParams: AdsrParams) extends Actor {
 
   def release: Receive = {
     case AdsrTimeEvent(_) =>
+      time += 1
       cnt += 1
-      if (cnt % logFreq == 0) println(s"[release] ADSR time event $value")
+      //if (cnt % logFreq == 0) println(s"[release] ADSR time event $value")
       if (time > targetTime) {
         context.become(receive)
       } else {
