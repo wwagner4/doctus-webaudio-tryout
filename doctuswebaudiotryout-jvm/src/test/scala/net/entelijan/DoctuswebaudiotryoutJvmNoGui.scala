@@ -12,11 +12,11 @@ object DoctuswebaudiotryoutJvmNoGui extends App {
 
   pause(2.seconds)
   val ctx = new DoctusSoundAudioContextJvmMinim()
-  pause(2.seconds)
 
-  val exp = AdsrExperiment(ctx)
-  exp.start(N_00)
   pause(2.seconds)
+  val exp = AdsrExperiment(ctx)
+  exp.start(N_21) // 0.6, 0.1, 0.1, 1.3
+  pause(1.seconds)
   exp.stop()
   pause(2.seconds)
   ctx.terminate
