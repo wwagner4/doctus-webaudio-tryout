@@ -98,13 +98,12 @@ class AdsrActor(const: Constant, adsrParams: AdsrParams) extends Actor {
   def receive: Receive = {
     case AdsrTimeEvent(_) =>
       cnt += 1
-      //if (cnt % logFreq == 0) println(s"[receive] ADSR time event $value")
-    // Nothing to do here
+      println(s"[receive] ADSR time event $value")
 
     case AdsrStartEvent =>
       time = 0
       targetTime = (adsrParams.attack / AdsrConstants.rateSeconds).toInt
-      diffValue = (gainDb - value) / targetTime
+      diffValue = if (targetTime > 0) (gainDb - value) / targetTime else 0.0
       println(s"[receive] ADSR start event $value rateSeconds:${AdsrConstants.rateSeconds} attack:${adsrParams.attack} targetTime:$targetTime")
       context.become(attack)
 
@@ -112,20 +111,19 @@ class AdsrActor(const: Constant, adsrParams: AdsrParams) extends Actor {
       println(s"[receive] ADSR stop event $value")
       time = 0
       targetTime = (adsrParams.release / AdsrConstants.rateSeconds).toInt
-      diffValue = (AdsrConstants.zeroDb - value) / targetTime
+      diffValue = if (targetTime > 0) (AdsrConstants.zeroDb - value) / targetTime else 0.0
       context.become(release)
 
-    case msg: Any => {
+    case msg: Any =>
       println(s"[receive] ADSR unhandled $msg")
       this.unhandled(msg)
-    }
   }
 
   def attack: Receive = {
     case AdsrTimeEvent(_) =>
       time += 1
       cnt += 1
-      //if (cnt % logFreq == 0) println(s"[attack] ADSR time event $value")
+      println(s"[attack] ADSR time event $value")
       value += diffValue
       const.setConstant(value.toFloat)
       if (time > targetTime) {
@@ -139,7 +137,7 @@ class AdsrActor(const: Constant, adsrParams: AdsrParams) extends Actor {
           }
         } else {
           targetTime = (adsrParams.decay / AdsrConstants.rateSeconds).toInt
-          diffValue = (gainDb - value) / targetTime
+          diffValue = if (targetTime > 0) (gainDb - value) / targetTime else 0.0
           println(s"become decay tt:$targetTime dv:$diffValue")
           context.become(decay)
         }
@@ -149,13 +147,12 @@ class AdsrActor(const: Constant, adsrParams: AdsrParams) extends Actor {
       println(s"[attack] ADSR stop event $value")
       time = 0
       targetTime = (adsrParams.release / AdsrConstants.rateSeconds).toInt
-      diffValue = (AdsrConstants.zeroDb - value) / targetTime
+      diffValue = if (targetTime > 0) (AdsrConstants.zeroDb - value) / targetTime else 0.0
       context.become(release)
 
-    case msg: Any => {
+    case msg: Any =>
       println(s"[attack] ADSR unhandled $msg")
       this.unhandled(msg)
-    }
 
   }
 
@@ -163,8 +160,7 @@ class AdsrActor(const: Constant, adsrParams: AdsrParams) extends Actor {
     case AdsrTimeEvent(_) =>
       time += 1
       cnt += 1
-//      if (cnt % logFreq == 0) println(s"[decay] ADSR time event $value")
-      //println(s"[decay] ADSR time event $value")
+      println(s"[decay] ADSR time event $value")
       value += diffValue
       const.setConstant(value.toFloat)
       if (time > targetTime) {
@@ -175,20 +171,19 @@ class AdsrActor(const: Constant, adsrParams: AdsrParams) extends Actor {
       println(s"[decay] ADSR start event $value")
       time = 0
       targetTime = (adsrParams.attack / AdsrConstants.rateSeconds).toInt
-      diffValue = (gainDb - value) / targetTime
+      diffValue = if (targetTime > 0) (gainDb - value) / targetTime else 0.0
       context.become(attack)
 
     case AdsrStopEvent =>
       println(s"[decay] ADSR stop event $value")
       time = 0
       targetTime = (adsrParams.release / AdsrConstants.rateSeconds).toInt
-      diffValue = (AdsrConstants.zeroDb - value) / targetTime
+      diffValue = if (targetTime > 0) (AdsrConstants.zeroDb - value) / targetTime else 0.0
       context.become(release)
 
-    case msg: Any => {
+    case msg: Any =>
       println(s"[decay] ADSR unhandled $msg")
       this.unhandled(msg)
-    }
 
   }
 
@@ -196,7 +191,7 @@ class AdsrActor(const: Constant, adsrParams: AdsrParams) extends Actor {
     case AdsrTimeEvent(_) =>
       time += 1
       cnt += 1
-      //if (cnt % logFreq == 0) println(s"[release] ADSR time event $value")
+      println(s"[release] ADSR time event $value")
       if (time > targetTime) {
         context.become(receive)
       } else {
@@ -208,13 +203,12 @@ class AdsrActor(const: Constant, adsrParams: AdsrParams) extends Actor {
       println(s"[release] ADSR start event $value")
       time = 0
       targetTime = (adsrParams.attack / AdsrConstants.rateSeconds).toInt
-      diffValue = (gainDb - value) / targetTime
+      diffValue = if (targetTime > 0) (gainDb - value) / targetTime else 0.0
       context.become(attack)
 
-    case msg: Any => {
+    case msg: Any =>
       println(s"[release] ADSR unhandled $msg")
       this.unhandled(msg)
-    }
 
   }
 
