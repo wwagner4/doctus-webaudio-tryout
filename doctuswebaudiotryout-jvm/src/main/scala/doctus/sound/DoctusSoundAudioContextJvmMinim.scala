@@ -3,9 +3,19 @@ package doctus.sound
 import java.io.{File, FileInputStream, InputStream}
 
 import akka.actor.{Actor, ActorSystem, Props}
-import ddf.minim.javasound.JSMinim
 import ddf.minim.ugens._
 import ddf.minim.{AudioOutput, Minim, UGen}
+
+import scala.concurrent.duration._
+
+
+object MinimConstants {
+
+  val rate = 7812.micro
+  val rateSeconds: Double = rate.toMicros * 1.0e-6
+  val zero = 0.0
+
+}
 
 trait MinimContext {
 
