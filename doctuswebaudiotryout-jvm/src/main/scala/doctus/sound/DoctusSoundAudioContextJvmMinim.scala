@@ -102,13 +102,13 @@ case class NodeSinkJvmMinim(ctx: MinimContext) extends NodeSink with AudioOutput
 
 case class NodeThroughGainJvmMinim(ctx: MinimContext) extends NodeThroughGain with UGenAware {
 
-  private val minimGain = new Gain()
+  private val minimGain = new Multiplier()
 
   def gain: ControlParam = new ControlParamJvmMinimAbstract {
 
     def name: String = "NodeThroughGainJvmMinim::gain"
 
-    def uGenInput = minimGain.gain
+    def uGenInput = minimGain.amplitude
   }
 
   def connect(sink: NodeSink): Unit = {
