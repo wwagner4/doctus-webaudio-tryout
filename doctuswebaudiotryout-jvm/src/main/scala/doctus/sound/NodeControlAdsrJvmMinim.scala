@@ -117,7 +117,7 @@ class AdsrActor(minimConst: Constant, adsrParams: AdsrParams) extends Actor {
     case AdsrTimeEvent(sysTime) =>
       time += 1
       cnt += 1
-      println(f"A;$value%.3f;$sysTime%.3f")
+      //println(f"A;$value%.3f;$sysTime%.3f")
       if (time > targetTime) {
         time = 0
         if (adsrParams.decay <= 0.0) {
