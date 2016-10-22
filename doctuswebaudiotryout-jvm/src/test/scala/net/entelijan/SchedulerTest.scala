@@ -15,7 +15,7 @@ object SchedulerTest extends App {
   val sys = ActorSystem.create()
   println("created system")
 
-  val rates = List(10, 50, 100, 150, 200, 400, 800, 1500)
+  val rates = List(10, 50, 100, 150, 200, 400, 800, 1500, 3000)
 
   rates.foreach(rate => test(rate))
 
