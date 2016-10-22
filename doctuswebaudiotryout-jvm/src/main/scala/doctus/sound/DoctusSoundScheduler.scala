@@ -1,13 +1,16 @@
 package doctus.sound
 
 import akka.actor.AbstractSchedulerBase
+
 import scala.concurrent.duration.FiniteDuration
 import scala.concurrent.ExecutionContext
 import akka.actor.Cancellable
+import java.util.concurrent.{Executors, ScheduledExecutorService, ThreadFactory, TimeUnit}
 
-import java.util.concurrent.{ Executors, ScheduledExecutorService, TimeUnit }
+import akka.event.LoggingAdapter
+import com.typesafe.config.Config
 
-class DoctusSoundScheduler extends AbstractSchedulerBase {
+class DoctusSoundScheduler(cfg: Config, la: LoggingAdapter, tf: ThreadFactory) extends AbstractSchedulerBase {
 
   def maxFrequency(): Double = 1000
 
