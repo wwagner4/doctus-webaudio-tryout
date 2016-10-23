@@ -11,7 +11,7 @@ import scala.concurrent.duration._
 
 object MinimConstants {
 
-  val rate = 1500.0 // ticks per second
+  val rate = 125.0 // ticks per second
   val rateDurSeconds: Double = 1.0 / rate
   val rateDur: FiniteDuration = (rateDurSeconds * 1.0e9).nanos
 
