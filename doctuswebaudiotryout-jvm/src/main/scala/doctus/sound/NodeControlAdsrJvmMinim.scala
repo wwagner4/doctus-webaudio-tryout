@@ -56,6 +56,8 @@ case object AdsrStartDecayEvent
 
 case object AdsrStartSustainEvent
 
+case object AdsrStopReleaseEvent
+
 case object AdsrStartEvent
 
 case object AdsrStopEvent
@@ -93,9 +95,10 @@ class AdsrActor(ugenInput: UGen#UGenInput, adsrParams: AdsrParams) extends Actor
       minimLine.patch(ugenInput)
       minimLine.activate(dt.toFloat, ugenValue.value, adsrParams.gain.toFloat)
       ugenValue = UgenValue(minimLine)
-      context.system.scheduler.scheduleOnce((dt * 1e6).toLong.micro, self, AdsrStartDecayEvent)(context.dispatcher)
+      val fd = (dt * 1e6).toLong.micro
+      context.system.scheduler.scheduleOnce(fd, self, AdsrStartDecayEvent)(context.dispatcher)
       context.become(attack)
-      println(f"[receive] AdsrStartEvent Connected and activated Line for $dt%.5f seconds on $ugenInput")
+      println(f"[receive] AdsrStartEvent Connected and activated Line for $dt%.5f seconds ($fd) on $ugenInput")
 
     case AdsrStopEvent =>
       val dt = adsrParams.release
@@ -103,23 +106,16 @@ class AdsrActor(ugenInput: UGen#UGenInput, adsrParams: AdsrParams) extends Actor
       minimLine.patch(ugenInput)
       minimLine.activate(dt.toFloat, ugenValue.value, 0.0f)
       ugenValue = UgenValue(minimLine)
+      context.system.scheduler.scheduleOnce((dt * 1e6).toLong.micro, self, AdsrStopReleaseEvent)(context.dispatcher)
+      context.become(release)
       println(f"[receive] AdsrStopEvent")
 
-    case AdsrStartDecayEvent =>
-      println(f"[receive] AdsrStartDecayEvent")
-
-    case AdsrStartSustainEvent =>
-      println(f"[receive] AdsrStartSustainEvent")
-
     case msg: Any =>
-      println(s"[receive] ADSR unhandled $msg")
+      println(s"[receive] *ERROR* ADSR unhandled $msg")
       this.unhandled(msg)
   }
 
   def attack: Receive = {
-
-    case AdsrStartEvent =>
-      println(f"[attack] AdsrStartEvent")
 
     case AdsrStopEvent =>
       val dt = adsrParams.release
@@ -127,31 +123,27 @@ class AdsrActor(ugenInput: UGen#UGenInput, adsrParams: AdsrParams) extends Actor
       minimLine.patch(ugenInput)
       minimLine.activate(dt.toFloat, ugenValue.value, 0f)
       ugenValue = UgenValue(minimLine)
-      context.become(receive)
+      context.system.scheduler.scheduleOnce((dt * 1e6).toLong.micro, self, AdsrStopReleaseEvent)(context.dispatcher)
+      context.become(release)
       println(f"[attack] AdsrStopEvent")
 
     case AdsrStartDecayEvent =>
       val dt = adsrParams.decay
       val minimLine = new Line()
       minimLine.patch(ugenInput)
-      minimLine.activate(dt.toFloat, ugenValue.value, (adsrParams.gain.toFloat * adsrParams.sustain).toFloat)
+      val _v = ugenValue.value
+      minimLine.activate(dt.toFloat, adsrParams.gain.toFloat, (adsrParams.gain.toFloat * adsrParams.sustain).toFloat)
       ugenValue = UgenValue(minimLine)
       context.system.scheduler.scheduleOnce((dt * 1e6).toLong.micro, self, AdsrStartSustainEvent)(context.dispatcher)
       context.become(decay)
-      println(f"[attack] AdsrStartDecayEvent")
-
-    case AdsrStartSustainEvent =>
-      println(f"[attack] AdsrStartSustainEvent")
+      println(f"[attack] AdsrStartDecayEvent v:${_v}%.3f")
 
     case msg: Any =>
-      println(s"[attack] ADSR unhandled $msg")
+      println(s"[attack] *ERROR* ADSR unhandled $msg")
       this.unhandled(msg)
   }
 
   def decay: Receive = {
-
-    case AdsrStartEvent =>
-      println(f"[decay] AdsrStartEvent")
 
     case AdsrStopEvent =>
       val dt = adsrParams.release
@@ -159,11 +151,9 @@ class AdsrActor(ugenInput: UGen#UGenInput, adsrParams: AdsrParams) extends Actor
       minimLine.patch(ugenInput)
       minimLine.activate(dt.toFloat, ugenValue.value, 0f)
       ugenValue = UgenValue(minimLine)
-      context.become(receive)
+      context.system.scheduler.scheduleOnce((dt * 1e6).toLong.micro, self, AdsrStopReleaseEvent)(context.dispatcher)
+      context.become(release)
       println(f"[decay] AdsrStopEvent")
-
-    case AdsrStartDecayEvent =>
-      println(f"[decay] AdsrStartDecayEvent")
 
     case AdsrStartSustainEvent =>
       val minimConst = new Constant((adsrParams.gain * adsrParams.sustain).toFloat)
@@ -173,26 +163,21 @@ class AdsrActor(ugenInput: UGen#UGenInput, adsrParams: AdsrParams) extends Actor
       println(f"[decay] AdsrStartSustainEvent")
 
     case msg: Any =>
-      println(s"[decay] ADSR unhandled $msg")
+      println(s"[decay] *ERROR* ADSR unhandled $msg")
       this.unhandled(msg)
   }
 
   def release: Receive = {
 
-    case AdsrStartEvent =>
-      println(f"[release] AdsrStartEvent")
-
-    case AdsrStopEvent =>
-      println(f"[release] AdsrStopEvent")
-
-    case AdsrStartDecayEvent =>
-      println(f"[release] AdsrStartDecayEvent")
-
-    case AdsrStartSustainEvent =>
-      println(f"[release] AdsrStartSustainEvent")
+    case AdsrStopReleaseEvent =>
+      val minimConst = new Constant(0.0f)
+      ugenValue = UgenValue(minimConst)
+      minimConst.patch(ugenInput)
+      context.become(receive)
+      println(f"[release] AdsrStopReleaseEvent")
 
     case msg: Any =>
-      println(s"[release] ADSR unhandled $msg")
+      println(s"[release] *ERROR* ADSR unhandled $msg")
       this.unhandled(msg)
   }
 
