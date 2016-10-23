@@ -68,14 +68,22 @@ object AdsrActor {
 
 }
 
+case class UgenValue(uGen: UGen) {
+
+  def value: Float = {
+    if (uGen.getLastValues.length > 1) throw new IllegalStateException("cannot calc value for more than one channel")
+    uGen.getLastValues()(0)
+  }
+
+}
+
 class AdsrActor(ugenInput: UGen#UGenInput, adsrParams: AdsrParams) extends Actor {
 
-  {
-    val value = 0.0
-    val minimConst: UGen = new Constant(value.toFloat)
-    minimConst.patch(ugenInput)
-    println(f"AdsrActor connected $value%.3f to $ugenInput")
-  }
+  val value = 0.0
+  val minimConst: UGen = new Constant(value.toFloat)
+  minimConst.patch(ugenInput)
+  println(f"AdsrActor connected $value%.3f to $ugenInput")
+  var ugenValue = UgenValue(minimConst)
 
   def receive: Receive = {
 
@@ -83,7 +91,8 @@ class AdsrActor(ugenInput: UGen#UGenInput, adsrParams: AdsrParams) extends Actor
       val dt = adsrParams.attack
       val minimLine = new Line()
       minimLine.patch(ugenInput)
-      minimLine.activate(dt.toFloat, 0.0f, adsrParams.gain.toFloat)
+      minimLine.activate(dt.toFloat, ugenValue.value, adsrParams.gain.toFloat)
+      ugenValue = UgenValue(minimLine)
       context.system.scheduler.scheduleOnce((dt * 1e6).toLong.micro, self, AdsrStartDecayEvent)(context.dispatcher)
       context.become(attack)
       println(f"[receive] AdsrStartEvent Connected and activated Line for $dt%.5f seconds on $ugenInput")
@@ -92,7 +101,8 @@ class AdsrActor(ugenInput: UGen#UGenInput, adsrParams: AdsrParams) extends Actor
       val dt = adsrParams.release
       val minimLine = new Line()
       minimLine.patch(ugenInput)
-      minimLine.activate(dt.toFloat, (adsrParams.gain.toFloat * adsrParams.sustain).toFloat, 0f)
+      minimLine.activate(dt.toFloat, ugenValue.value, 0.0f)
+      ugenValue = UgenValue(minimLine)
       println(f"[receive] AdsrStopEvent")
 
     case AdsrStartDecayEvent =>
@@ -112,14 +122,20 @@ class AdsrActor(ugenInput: UGen#UGenInput, adsrParams: AdsrParams) extends Actor
       println(f"[attack] AdsrStartEvent")
 
     case AdsrStopEvent =>
-
+      val dt = adsrParams.release
+      val minimLine = new Line()
+      minimLine.patch(ugenInput)
+      minimLine.activate(dt.toFloat, ugenValue.value, 0f)
+      ugenValue = UgenValue(minimLine)
+      context.become(receive)
       println(f"[attack] AdsrStopEvent")
 
     case AdsrStartDecayEvent =>
       val dt = adsrParams.decay
       val minimLine = new Line()
       minimLine.patch(ugenInput)
-      minimLine.activate(dt.toFloat, adsrParams.gain.toFloat, (adsrParams.gain.toFloat * adsrParams.sustain).toFloat)
+      minimLine.activate(dt.toFloat, ugenValue.value, (adsrParams.gain.toFloat * adsrParams.sustain).toFloat)
+      ugenValue = UgenValue(minimLine)
       context.system.scheduler.scheduleOnce((dt * 1e6).toLong.micro, self, AdsrStartSustainEvent)(context.dispatcher)
       context.become(decay)
       println(f"[attack] AdsrStartDecayEvent")
@@ -138,6 +154,12 @@ class AdsrActor(ugenInput: UGen#UGenInput, adsrParams: AdsrParams) extends Actor
       println(f"[decay] AdsrStartEvent")
 
     case AdsrStopEvent =>
+      val dt = adsrParams.release
+      val minimLine = new Line()
+      minimLine.patch(ugenInput)
+      minimLine.activate(dt.toFloat, ugenValue.value, 0f)
+      ugenValue = UgenValue(minimLine)
+      context.become(receive)
       println(f"[decay] AdsrStopEvent")
 
     case AdsrStartDecayEvent =>
@@ -145,6 +167,7 @@ class AdsrActor(ugenInput: UGen#UGenInput, adsrParams: AdsrParams) extends Actor
 
     case AdsrStartSustainEvent =>
       val minimConst = new Constant((adsrParams.gain * adsrParams.sustain).toFloat)
+      ugenValue = UgenValue(minimConst)
       minimConst.patch(ugenInput)
       context.become(receive)
       println(f"[decay] AdsrStartSustainEvent")
