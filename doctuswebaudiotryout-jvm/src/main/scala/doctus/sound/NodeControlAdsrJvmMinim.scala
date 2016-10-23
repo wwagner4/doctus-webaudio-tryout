@@ -2,7 +2,7 @@ package doctus.sound
 
 import akka.actor.{Actor, ActorRef, Props}
 import ddf.minim.UGen
-import ddf.minim.ugens.Constant
+import ddf.minim.ugens.{Constant, Line}
 
 import scala.concurrent.duration._
 
@@ -10,20 +10,17 @@ case class NodeControlAdsrJvmMinim(attack: Double, decay: Double, sustain: Doubl
 
   private val adsrParams = AdsrParams(attack, decay, sustain, release, gain, trend)
 
-  var ugenInput = Option.empty[UGen#UGenInput]
-
-  var ugen = Option.empty[UGen]
-
-  var adsrActor: ActorRef = ctx.actorSystem.actorOf(AdsrActor.props(ugen, ugenInput, adsrParams))
+  var adsrActor = Option.empty[ActorRef]
 
   /**
-   * Starts the attack of the ADSR
-   * @param time Time in seconds
-   */
+    * Starts the attack of the ADSR
+    *
+    * @param time Time in seconds
+    */
   def start(time: Double): Unit = {
     val func = () => {
       println(f"ADSR started at $time%.2f")
-      adsrActor ! AdsrStartEvent
+      adsrActor.foreach(_ ! AdsrStartEvent)
     }
     val me = MusicEvent(time, func)
     println(s"Telling MUSICEVENT $me adsr start")
@@ -33,7 +30,7 @@ case class NodeControlAdsrJvmMinim(attack: Double, decay: Double, sustain: Doubl
   def stop(time: Double): Unit = {
     val func = () => {
       println(f"ADSR stopped at $time%.2f")
-      adsrActor ! AdsrStopEvent
+      adsrActor.foreach(_ ! AdsrStopEvent)
     }
     val me = MusicEvent(time, func)
     println(s"Telling MUSICEVENT $me adsr stop")
@@ -43,12 +40,9 @@ case class NodeControlAdsrJvmMinim(attack: Double, decay: Double, sustain: Doubl
   def connect(param: ControlParam): Unit = {
     param match {
       case p: UGenInputAware =>
-        ugenInput = Some(p.uGenInput)
-        val _ugen = new Constant(0.0f)
-        ugen = Some(_ugen)
-        _ugen.patch(p.uGenInput)
-        ugenInput = Some(p.uGenInput)
-        println(s"connecting ADSR ${_ugen} to ${p.uGenInput} ($param)")
+        val _actor = ctx.actorSystem.actorOf(AdsrActor.props(p.uGenInput, adsrParams))
+        adsrActor = Some(_actor)
+        println(s"connecting ADSR (creating the actor)")
 
       case _ =>
         throw new IllegalArgumentException(
@@ -68,7 +62,7 @@ case object AdsrStopEvent
 
 object AdsrActor {
 
-  def props(ugen: Option[UGen], ugenInput: Option[UGen#UGenInput], adsrParams: AdsrParams): Props = Props(classOf[AdsrActor], ugen, ugenInput, adsrParams)
+  def props(ugenInput: UGen#UGenInput, adsrParams: AdsrParams): Props = Props(classOf[AdsrActor], ugenInput, adsrParams)
 
 }
 
@@ -76,14 +70,31 @@ case class AdsrParams(attack: Double, decay: Double, sustain: Double, release: D
 
 case class AdsrMsg(time: Double)
 
-class AdsrActor(ugen: Option[UGen], ugenInput: Option[UGen#UGenInput],adsrParams: AdsrParams) extends Actor {
-  
+class AdsrActor(ugenInput: UGen#UGenInput, adsrParams: AdsrParams) extends Actor {
+
+  {
+    val value = 0.0
+    val minimConst: UGen = new Constant(value.toFloat)
+    minimConst.patch(ugenInput)
+    println(f"AdsrActor connected $value%.3f to $ugenInput")
+  }
+
   def receive: Receive = {
 
     case AdsrStartEvent =>
-      println(f"[receive] AdsrStartEvent")
+      val dt = adsrParams.attack
+      val minimLine = new Line()
+      minimLine.patch(ugenInput)
+      minimLine.activate(dt.toFloat, 0.0f, adsrParams.gain.toFloat)
+      context.system.scheduler.scheduleOnce((dt * 1e6).toLong.micro, self, AdsrStartDecayEvent)(context.dispatcher)
+      context.become(attack)
+      println(f"[receive] AdsrStartEvent Connected and activated Line for $dt%.5f seconds on $ugenInput")
 
     case AdsrStopEvent =>
+      val dt = adsrParams.release
+      val minimLine = new Line()
+      minimLine.patch(ugenInput)
+      minimLine.activate(dt.toFloat, (adsrParams.gain.toFloat * adsrParams.sustain).toFloat, 0f)
       println(f"[receive] AdsrStopEvent")
 
     case AdsrStartDecayEvent =>
@@ -103,9 +114,16 @@ class AdsrActor(ugen: Option[UGen], ugenInput: Option[UGen#UGenInput],adsrParams
       println(f"[attack] AdsrStartEvent")
 
     case AdsrStopEvent =>
+
       println(f"[attack] AdsrStopEvent")
 
     case AdsrStartDecayEvent =>
+      val dt = adsrParams.decay
+      val minimLine = new Line()
+      minimLine.patch(ugenInput)
+      minimLine.activate(dt.toFloat, adsrParams.gain.toFloat, (adsrParams.gain.toFloat * adsrParams.sustain).toFloat)
+      context.system.scheduler.scheduleOnce((dt * 1e6).toLong.micro, self, AdsrStartSustainEvent)(context.dispatcher)
+      context.become(decay)
       println(f"[attack] AdsrStartDecayEvent")
 
     case AdsrStartSustainEvent =>
@@ -128,6 +146,9 @@ class AdsrActor(ugen: Option[UGen], ugenInput: Option[UGen#UGenInput],adsrParams
       println(f"[decay] AdsrStartDecayEvent")
 
     case AdsrStartSustainEvent =>
+      val minimConst = new Constant((adsrParams.gain * adsrParams.sustain).toFloat)
+      minimConst.patch(ugenInput)
+      context.become(receive)
       println(f"[decay] AdsrStartSustainEvent")
 
     case msg: Any =>
