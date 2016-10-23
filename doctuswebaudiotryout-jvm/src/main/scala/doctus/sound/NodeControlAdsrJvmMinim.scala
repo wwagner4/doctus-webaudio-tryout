@@ -60,15 +60,13 @@ case object AdsrStartEvent
 
 case object AdsrStopEvent
 
+case class AdsrParams(attack: Double, decay: Double, sustain: Double, release: Double, gain: Double, trend: Trend)
+
 object AdsrActor {
 
   def props(ugenInput: UGen#UGenInput, adsrParams: AdsrParams): Props = Props(classOf[AdsrActor], ugenInput, adsrParams)
 
 }
-
-case class AdsrParams(attack: Double, decay: Double, sustain: Double, release: Double, gain: Double, trend: Trend)
-
-case class AdsrMsg(time: Double)
 
 class AdsrActor(ugenInput: UGen#UGenInput, adsrParams: AdsrParams) extends Actor {
 
