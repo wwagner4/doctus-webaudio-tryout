@@ -74,7 +74,7 @@ case class AdsrExperiment(ctx: DoctusSoundAudioContext) extends SoundExperiment 
 
   def createAdsr(a: Double, d: Double, s: Double, r: Double): NodeThrough with StartStoppable = {
     val gain = ctx.createNodeThroughGain
-    val adsr = ctx.createNodeControlAdsr(a, d, s, r)
+    val adsr = ctx.createNodeControlAdsr(a, d, s, r, 0.2)
 
     adsr >- gain.gain
 
